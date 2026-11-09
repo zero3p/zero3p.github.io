@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Zero | زيرو</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0b0e14;--bar:#10141c;--card:#141923;--bd:#1f2633;--tx:#e8ecf3;--mu:#8590a3;--ac:#3b82f6;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:'Cairo',system-ui,sans-serif}
+button,select{font:inherit;cursor:pointer;color:var(--tx)}
+.top{background:var(--bar);border-bottom:1px solid var(--bd);padding:10px 14px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:5}
+.logo{font-weight:800;font-size:22px;letter-spacing:1px;white-space:nowrap}
+.logo i{font-style:normal;color:var(--ac)}
+.search{flex:1;min-width:0;background:var(--bg);border:1px solid var(--bd);border-radius:999px;padding:8px 16px;color:var(--tx);font:inherit;font-size:14px}
+.lang{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:6px 12px;font-size:13px;white-space:nowrap}
+.tabs{display:flex;gap:8px;overflow-x:auto;padding:14px;justify-content:safe center;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:none;background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:7px 16px;font-size:13px;color:var(--mu)}
+.tab.on{background:#16233d;border-color:var(--ac);color:#fff}
+.w{max-width:1100px;margin:0 auto;padding:0 14px 20px}
+.head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}
+.head h2{margin:0;font-size:17px}
+.fl{display:flex;align-items:center;gap:10px;font-size:12px;color:var(--mu)}
+select{background:var(--card);border:1px solid var(--bd);border-radius:8px;padding:5px 10px;font-size:12px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
+@media(min-width:700px){.grid{grid-template-columns:repeat(3,1fr)}}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;overflow:hidden}
+.cover{position:relative;aspect-ratio:16/10;display:flex;align-items:center;justify-content:center;text-align:center;padding:10px}
+.cover strong{font-size:clamp(18px,3.4vw,28px);font-weight:800;line-height:1.2;text-shadow:0 3px 12px rgba(0,0,0,.7)}
+.pl{position:absolute;top:8px;inset-inline-start:8px;background:rgba(0,0,0,.55);border-radius:6px;padding:1px 8px;font-size:11px}
+.fav{position:absolute;top:6px;inset-inline-end:6px;background:rgba(0,0,0,.55);border:0;border-radius:50%;width:28px;height:28px;font-size:14px;line-height:28px;padding:0}
+.fav.on{color:#ff5470}
+.info{padding:10px 12px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.info b{font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;direction:ltr}
+.dl{flex:none;text-decoration:none;background:var(--ac);color:#fff;border-radius:8px;padding:4px 12px;font-size:12px}
+.empty{grid-column:1/-1;color:var(--mu);text-align:center;padding:50px 0}
+footer{color:var(--mu);font-size:12px;text-align:center;padding:10px}
+#splash{position:fixed;inset:0;z-index:100;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;transition:opacity .6s;cursor:pointer}
+#splash.out{opacity:0;pointer-events:none}
+.ring{stroke-dasharray:1;stroke-dashoffset:1;animation:dr 1.2s ease forwards}
+.wm{font-weight:800;font-size:38px;letter-spacing:6px;opacity:0;animation:fi .6s .8s forwards}
+.wm2{color:var(--mu);font-size:18px;opacity:0;animation:fi .6s 1.1s forwards}
+@keyframes dr{to{stroke-dashoffset:0}}
+@keyframes fi{to{opacity:1}}
+.logo{display:flex;align-items:center;gap:10px;flex:1;font-size:26px}
+.top{flex-wrap:wrap}
+.search{flex:1 1 100%;order:3}
+.wmb{background:#ef4444;color:#0b0e14;border-radius:8px;padding:0 10px;letter-spacing:2px;font-weight:800}
+.tab{color:var(--tc,#8590a3);border-color:var(--tc,#1f2633);background:color-mix(in srgb,var(--tc,#141923) 12%,#10141c)}
+.tab.on{background:var(--tc);color:#0b0e14;border-color:var(--tc)}
+.bolt{transform-origin:60px 60px;animation:pop .7s ease both;filter:drop-shadow(0 0 10px rgba(239,68,68,.7))}
+@keyframes pop{0%{opacity:0;transform:scale(.4) rotate(-12deg)}60%{transform:scale(1.15)}100%{opacity:1;transform:none}}
+.gear{display:none;background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:6px 10px}
+.adm .gear{display:block}
+#adm{position:fixed;inset:0;z-index:90;background:rgba(0,0,0,.75);display:none;align-items:flex-start;justify-content:center;overflow:auto;padding:16px}
+#adm.on{display:flex}
+.pn{background:var(--bar);border:1px solid var(--bd);border-radius:16px;width:100%;max-width:520px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.pn h3{margin:0;display:flex;justify-content:space-between;align-items:center;font-size:17px}
+.pn input,.pn select{width:100%;background:var(--bg);border:1px solid var(--bd);border-radius:10px;padding:9px 12px;color:var(--tx);font:inherit;font-size:14px}
+.r2{display:flex;gap:8px;align-items:center}
+.btn{background:#ef4444;border:0;border-radius:10px;padding:9px 14px;color:#fff;font-size:14px}
+.btn.g{background:var(--card);border:1px solid var(--bd)}
+.btn.d{background:#7f1d1d}
+.li{display:flex;align-items:center;gap:8px;border:1px solid var(--bd);border-radius:10px;padding:6px 10px;font-size:13px}
+.li span{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.li button{padding:4px 10px;font-size:12px}
+.pn textarea{width:100%;background:var(--bg);border:1px solid var(--bd);border-radius:10px;padding:9px 12px;color:var(--tx);font:inherit;font-size:14px;resize:vertical}
+#det{position:fixed;inset:0;z-index:80;background:rgba(0,0,0,.75);display:none;align-items:center;justify-content:center;overflow:auto;padding:16px}
+#det.on{display:flex}
+#cdw{position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;padding:16px}
+#cdw.on{display:flex}
+.cn{position:absolute;bottom:8px;inset-inline-start:8px;background:rgba(0,0,0,.6);border-radius:6px;padding:1px 8px;font-size:12px}
+.cdn{font-size:64px;font-weight:800;color:#ef4444;line-height:1}
+.subbox{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:14px;margin-top:18px;display:none}
+.subbox.on{display:block}
+.subbox p{margin:0 0 10px;font-size:14px}
+.adslot{display:none;max-width:1100px;margin:14px auto;padding:0 14px;text-align:center;min-height:100px}
+.ads .adslot{display:block}
+.adslot::before{content:attr(data-l);display:block;font-size:10px;color:var(--mu);margin-bottom:4px}
+#ad-bot{margin-top:28px}
+.pg{max-width:760px;margin:0 auto;padding:6px 14px 20px;line-height:1.9;font-size:15px}
+.pg h2{font-size:24px;margin:10px 0 14px}
+.pg h3{font-size:16px;margin:22px 0 4px;color:#fff}
+.pg p,.pg li{color:#c5ccd8;margin:6px 0}
+.pg ul{padding-inline-start:22px;margin:6px 0}
+.pg a:not(.btn){color:#f87171}
+.back{display:inline-block;color:var(--mu);text-decoration:none;font-size:13px;margin-top:6px}
+footer{max-width:1100px;margin:0 auto}
+#fnav{display:flex;gap:18px;justify-content:center;flex-wrap:wrap;padding:18px 0 12px;border-top:1px solid var(--bd);margin:0 14px 6px}
+#fnav a{color:var(--tx);text-decoration:none;font-size:13px;opacity:.85}
+#fnav a:hover{color:#ef4444;opacity:1}
+.subbox input{flex:1;min-width:0;background:var(--bg);border:1px solid var(--bd);border-radius:10px;padding:9px 12px;color:var(--tx);font:inherit;font-size:14px}
+.toast{position:fixed;bottom:24px;inset-inline:0;margin:auto;width:max-content;max-width:90%;background:#22c55e;color:#04210f;border-radius:10px;padding:8px 16px;z-index:120;display:none;font-size:14px}
+</style>
+</head>
+<body>
+<div id="splash"><svg viewBox="0 0 120 120" width="120" height="120"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f87171"/><stop offset="1" stop-color="#b91c1c"/></linearGradient></defs><path class="bolt" d="M70 6 24 68h30l-10 46 52-68H64z" fill="url(#g)" stroke="url(#g)" stroke-width="4" stroke-linejoin="round"/></svg><div class="wm"><span class="wmb">ZERO</span></div><div class="wm2">زيرو</div></div>
+<div class="top">
+<div class="logo" id="logo"><svg viewBox="0 0 120 120" width="36" height="36"><defs><linearGradient id="g2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f87171"/><stop offset="1" stop-color="#b91c1c"/></linearGradient></defs><path d="M70 6 24 68h30l-10 46 52-68H64z" fill="url(#g2)" stroke="url(#g2)" stroke-width="4" stroke-linejoin="round"/></svg><span class="wmb">ZERO</span></div><button class="gear" id="gear" onclick="openAdm()">⚙️</button><button class="lang" id="lang"></button>
+<input class="search" id="q" type="search">
+</div>
+<div class="tabs" id="tabs"></div>
+<div class="adslot" id="ad-top"><!-- كود الإعلان هنا / ad code here --></div>
+<div class="w" id="main">
+<div class="head">
+<h2 id="ttl"></h2>
+<div class="fl"><span id="cnt"></span><select id="sel"></select></div>
+</div>
+<div class="grid" id="grid"></div>
+<div class="subbox" id="subbox"><p id="subt"></p><div class="r2"><input id="sem" type="email" dir="ltr"><button class="btn" id="sbtn" onclick="subscribe()"></button></div></div>
+</div>
+<div class="pg" id="page" style="display:none"></div>
+<div class="adslot" id="ad-bot"><!-- كود الإعلان هنا / ad code here --></div>
+<footer id="foot"><nav id="fnav"></nav><div id="fcp"></div></footer>
+<div id="adm"><div class="pn">
+<h3><span>⚙️ إدارة الملفات</span><button class="btn g" onclick="closeAdm()">✕</button></h3>
+<div id="lg" style="display:none;flex-direction:column;gap:10px"><input id="lem" type="email" dir="ltr" placeholder="البريد الإلكتروني" style="display:none"><input id="pw" type="password" placeholder="كلمة السر"><button class="btn" onclick="login()">دخول</button></div>
+<div id="ad" style="display:none;flex-direction:column;gap:10px">
+<input id="fnE" placeholder="الاسم بالإنجليزي">
+<input id="fnA" placeholder="الاسم بالعربي">
+<div class="r2"><select id="fc"></select><select id="fl"><option value="">بدون لغة</option><option value="en">إنجليزي</option><option value="ar">عربي</option></select></div>
+<div class="r2"><input id="fs" placeholder="الحجم (مثال 2 GB)"><label style="display:flex;align-items:center;gap:6px;font-size:13px;white-space:nowrap"><input id="fnw" type="checkbox" style="width:auto">جديد</label></div>
+<input id="fu" placeholder="رابط التحميل https://..." dir="ltr">
+<div class="r2"><input id="fcn" placeholder="رقم النسخة (مثال CUSA-07408)" dir="ltr"><input id="fyr" placeholder="سنة الإصدار" inputmode="numeric"></div>
+<input id="fgv" placeholder="إصدار اللعبة (مثال v1.05)" dir="ltr">
+<div class="r2"><input id="frg" placeholder="المنطقة (مثال USA / EUR / ASIA)" list="lrg"><input id="ffm" placeholder="صيغة اللعبة (مثال PKG / FPKG)" list="lfm" dir="ltr"></div>
+<datalist id="lrg"><option value="USA"><option value="EUR"><option value="ASIA"><option value="JPN"><option value="ALL"></datalist><datalist id="lfm"><option value="PKG"><option value="FPKG"><option value="ISO"><option value="Backport"></datalist>
+<input id="frq" placeholder="متطلبات التشغيل (مثال: جلبريك 9.00 فما فوق)">
+<input id="fup" placeholder="رابط التحديث / التعريب https://..." dir="ltr">
+<input id="fad" placeholder="رابط الإضافة https://..." dir="ltr">
+<input id="fad2" placeholder="رابط الإضافة الثانية https://..." dir="ltr">
+<input id="fsv" placeholder="رابط ملف الحفظ https://..." dir="ltr">
+<input id="flc" placeholder="رابط ملف الترخيص https://..." dir="ltr">
+<input id="frv" placeholder="رابط المراجعة (يوتيوب) https://..." dir="ltr">
+<input id="fpw" placeholder="كلمة سر الملف (إن وجدت)">
+<textarea id="fd" rows="3" placeholder="عنوان / وصف اللعبة"></textarea>
+<textarea id="fnt" rows="2" placeholder="ملاحظة (اختياري)"></textarea>
+<input id="fi" type="file" accept="image/*">
+<div class="r2"><button class="btn" id="fsave" onclick="saveItem()">إضافة</button><button class="btn g" onclick="resetForm()">مسح</button></div>
+<div class="r2"><div id="subn" style="flex:1;font-size:14px"></div><button class="btn g" onclick="loadSubs()">تحديث</button></div>
+<div style="font-size:12px;color:var(--mu)">الإيميلات تشوفها من Firebase ← Realtime Database ← subs</div>
+<input id="ffb" placeholder="رابط Firebase للعداد (اختياري) https://xxx.firebaseio.com" dir="ltr"><button class="btn g" onclick="saveFb()">حفظ رابط العداد</button>
+<button class="btn g" id="mig" style="display:none" onclick="arm(this,sbMigrate)">نقل ملفاتي الحالية إلى Supabase</button>
+<div id="lst" style="display:flex;flex-direction:column;gap:6px"></div>
+<div class="r2" style="flex-wrap:wrap"><button class="btn" onclick="exportSite(1)">تصدير الموقع</button><button class="btn g" onclick="exportSite(0)">نسخة بلوحة الإدارة</button><button class="btn g" onclick="logoutAdm()">خروج</button><button class="btn d" onclick="arm(this,resetAll)">إرجاع الأصل</button></div>
+</div></div></div>
+<div id="det" onclick="if(event.target==this)closeDet()"><div class="pn" id="dbox"></div></div>
+<div id="cdw"><div class="pn" style="text-align:center;align-items:center"><div style="align-self:flex-end"><button class="btn g" onclick="closeCd()">✕</button></div><div id="cdt" style="font-size:15px"></div><div class="cdn" id="cdn">5</div><a class="btn g" id="cdb" target="_blank" rel="noopener" href="#" style="text-decoration:none;min-width:180px;pointer-events:none"></a></div></div>
+<div class="toast" id="toast"></div>
+<script>
+// عدّل القائمة لإضافة ملفاتك / Edit to add your files
+// c القسم, l اللغة (en/ar للألعاب), n الاسم, a الاسم عربي, s الحجم, u الرابط, new جديد
+var SRC='';try{SRC=document.documentElement.outerHTML}catch(e){}
+var FB_URL='';var PUBLIC=false;
+var SB_URL='https://nnzfzmpvmnromnaumujg.supabase.co',SB_KEY='sb_publishable_BaoKQfoBoDPuw-mXZ3E2tQ_OGhiQhNz',imgBlob=null,LOADING=false;
+var ITEMS=[
+{c:'ps5',l:'en',n:'Sample Game 1',a:'لعبة تجريبية ١',s:'45 GB',u:'#',new:1},
+{c:'ps5',l:'ar',n:'Arabic Sample Game',a:'لعبة عربية تجريبية',s:'30 GB',u:'#',new:1},
+{c:'ps4',l:'en',n:'Sample Game 2',a:'لعبة تجريبية ٢',s:'22 GB',u:'#'},
+{c:'ps3',l:'ar',n:'Arabic Sample PS3',a:'لعبة بلايستيشن ٣',s:'9 GB',u:'#'},
+{c:'ps2',l:'ar',n:'Arabic Sample PS2',a:'لعبة بلايستيشن ٢ عربية',s:'4 GB',u:'#'},
+{c:'psp',l:'en',n:'Sample PSP Game',a:'لعبة PSP تجريبية',s:'1 GB',u:'#'},
+{c:'pc',l:'en',n:'Sample PC Game',a:'لعبة كمبيوتر تجريبية',s:'18 GB',u:'#',new:1},
+{c:'x360',l:'en',n:'Sample Xbox 360 Game',a:'لعبة إكس بوكس ٣٦٠',s:'7 GB',u:'#'},
+{c:'emu',l:'en',n:'Sample Emulator',a:'محاكي تجريبي',s:'60 MB',u:'#'},
+{c:'app',n:'Direct',a:'دايركت',s:'',u:'https://www.rootz.so/d/psGY4',img:'data:image/jpeg;base64,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',new:1},
+{c:'theme',l:'en',n:'Sample Theme',a:'ثيم تجريبي',s:'8 MB',u:'#'},
+{c:'theme',l:'ar',n:'Arabic Sample Theme',a:'ثيم عربي تجريبي',s:'6 MB',u:'#'},
+{c:'app',l:'ar',n:'Arabic Sample Program',a:'برنامج عربي تجريبي',s:'80 MB',u:'#'}
+];
+var COL={ps5:['#1d4ed8','#0b1b4d'],ps4:['#0e7490','#082f3d'],ps3:['#475569','#111827'],ps2:['#4338ca','#14123d'],ps1:['#6b7280','#1f2937'],psp:['#0f766e','#052e2b'],pc:['#b45309','#2d1704'],x360:['#15803d','#052e16'],emu:['#a21caf','#2e0a35'],app:['#be123c','#3b0614'],theme:['#c2410c','#3a1306']};
+var G=['ps5','ps4','ps3','ps2','ps1','psp','pc','x360'];
+var TC={all:'#ef4444',fav:'#ec4899',new:'#22c55e',ps5:'#3b82f6',ps4:'#06b6d4',ps3:'#94a3b8',ps2:'#818cf8',ps1:'#d4d4d8',psp:'#14b8a6',pc:'#f59e0b',x360:'#4ade80',emu:'#d946ef',app:'#fb7185',theme:'#fb923c'};
+var TABS=[
+{id:'all',ar:'الكل',en:'All'},{id:'fav',ar:'المفضلة',en:'Favorites'},{id:'new',ar:'جديد',en:'New'},
+{id:'ps5',ar:'PS5',en:'PS5'},{id:'ps4',ar:'PS4',en:'PS4'},{id:'ps3',ar:'PS3',en:'PS3'},{id:'ps2',ar:'PS2',en:'PS2'},{id:'ps1',ar:'PS1',en:'PS1'},{id:'psp',ar:'PSP',en:'PSP'},{id:'pc',ar:'PC',en:'PC'},{id:'x360',ar:'Xbox 360',en:'Xbox 360'},
+{id:'emu',ar:'محاكيات',en:'Emulators'},{id:'app',ar:'برامج',en:'Programs'},{id:'theme',ar:'ثيمات',en:'Themes'}
+];
+var SEL=[{id:'all',ar:'كل اللغات',en:'All languages'},{id:'en',ar:'إنجليزي',en:'English'},{id:'ar',ar:'عربي',en:'Arabic'}];
+var T={ar:{s:'ابحث عن لعبة...',t:'أحدث الملفات',none:'لا توجد ملفات بعد.',dl:'تحميل',sw:'English',f:'زيرو © 2026',n:'ملف'},en:{s:'Search for a game...',t:'Latest files',none:'No files yet.',dl:'Download',sw:'العربية',f:'Zero © 2026',n:'files'}};
+var lang='ar',tab='all',sub='all',q='',favs={};
+try{lang=localStorage.getItem('zl')||'ar';favs=JSON.parse(localStorage.getItem('zf')||'{}')}catch(e){}
+function $(i){return document.getElementById(i)}
+function render(){
+ var d=document.documentElement;d.lang=lang;d.dir=lang=='ar'?'rtl':'ltr';
+ var L=T[lang];
+ $('lang').textContent=L.sw;$('q').placeholder=L.s;$('ttl').textContent=L.t;$('fcp').textContent=L.f;footUI();pageUI();
+ $('tabs').innerHTML=TABS.map(function(x){return '<button class="tab'+(x.id==tab?' on':'')+'" style="--tc:'+TC[x.id]+'" onclick="setTab(\''+x.id+'\')">'+x[lang]+'</button>'}).join('');
+ $('sel').innerHTML=SEL.map(function(x){return '<option value="'+x.id+'"'+(x.id==sub?' selected':'')+'>'+x[lang]+'</option>'}).join('');
+ var out=ITEMS.filter(function(i){
+  if(tab=='fav'&&!favs[i.n])return false;
+  if(tab=='new'&&!i.new)return false;
+  if(tab!='all'&&tab!='fav'&&tab!='new'&&i.c!=tab)return false;
+  if(sub!='all'&&i.l&&i.l!=sub)return false;
+  
+  return !q||(i.n+' '+i.a).toLowerCase().indexOf(q)>-1;
+ });
+ $('cnt').textContent=out.length+' '+L.n;subUI();
+ $('grid').innerHTML=out.length?out.map(function(i){
+  var c=COL[i.c],t=TABS.filter(function(x){return x.id==i.c})[0][lang];
+  return '<div class="card"><div class="cover" onclick="showDet('+ITEMS.indexOf(i)+')" style="cursor:pointer;background:'+(i.img?'#000 url('+i.img+') center/contain no-repeat':'linear-gradient(135deg,'+c[0]+','+c[1]+')')+'"><span class="pl">'+t+'</span>'+cnt(i)+'<button class="fav'+(favs[i.n]?' on':'')+'" onclick="event.stopPropagation();fav(\''+encodeURIComponent(i.n).replace(/'/g,'%27')+'\')">'+(favs[i.n]?'♥':'♡')+'</button>'+(i.img?'':'<strong>'+esc(lang=='ar'?i.a:i.n)+'</strong>')+'</div><div class="info"><b>'+esc(lang=='ar'?i.a:i.n)+'</b><a class="dl" href="#" onclick="return cd('+ITEMS.indexOf(i)+',\'u\')">'+L.dl+'</a></div></div>';
+ }).join(''):'<div class="empty">'+(LOADING?'…':L.none)+'</div>';
+}
+function setTab(t){tab=t;render()}
+function fav(n){n=decodeURIComponent(n);if(favs[n])delete favs[n];else favs[n]=1;try{localStorage.setItem('zf',JSON.stringify(favs))}catch(e){}render()}
+$('sel').onchange=function(){sub=this.value;render()};
+$('lang').onclick=function(){lang=lang=='ar'?'en':'ar';try{localStorage.setItem('zl',lang)}catch(e){}render()};
+$('q').oninput=function(){q=this.value.toLowerCase();render()};
+function hideSplash(){var s=$('splash');if(s){s.classList.add('out');setTimeout(function(){s.remove()},600)}}
+$('splash').onclick=hideSplash;setTimeout(hideSplash,2200);
+/* ===== لوحة الإدارة / Admin ===== */
+var ORIG=JSON.stringify(ITEMS),editing=-1,img='',taps=0,tp=0,tt=0,ADMIN_PASS='';
+try{var sv=JSON.parse(localStorage.getItem('zi')||'null');if(sv&&sv.length&&!PUBLIC&&!SB_URL)ITEMS=sv}catch(e){}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function isAdm(){if(PUBLIC)return false;if(SB_URL)return !!sess();try{return localStorage.getItem('za')=='1'}catch(e){return false}}
+function applyAdm(){document.body.classList.toggle('adm',isAdm())}
+function toast(m){var t=$('toast');t.textContent=m;t.style.display='block';clearTimeout(tt);tt=setTimeout(function(){t.style.display='none'},2400)}
+function openAdm(){if(PUBLIC)return;var a=isAdm();$('adm').classList.add('on');$('lg').style.display=a?'none':'flex';$('lem').style.display=SB_URL?'':'none';$('mig').style.display=SB_URL?'':'none';$('ad').style.display=a?'flex':'none';if(a){drawList();$('ffb').value=FB_URL;loadSubs()}}
+function closeAdm(){$('adm').classList.remove('on')}
+function login(){if(SB_URL)return sbLogin();if(!PUBLIC&&ADMIN_PASS&&$('pw').value===ADMIN_PASS){try{localStorage.setItem('za','1')}catch(e){}$('pw').value='';applyAdm();openAdm()}else toast('كلمة السر غلط')}
+function logoutAdm(){setSess(null);try{localStorage.removeItem('za')}catch(e){}applyAdm();closeAdm()}
+function arm(b,fn){if(b.dataset.a){fn();return}b.dataset.a=1;var t=b.textContent;b.textContent='تأكيد؟';setTimeout(function(){delete b.dataset.a;b.textContent=t},2500)}
+function persist(){try{localStorage.setItem('zi',JSON.stringify(ITEMS))}catch(e){toast('المساحة ممتلئة، استخدم صور أصغر')}render();drawList()}
+function resetForm(){editing=-1;img='';imgBlob=null;['fnE','fnA','fs','fu','fi','fup','fad','frv','fpw','fd','fcn','fyr','fad2','fsv','flc','fnt','fgv','frg','ffm','frq'].forEach(function(k){$(k).value=''});$('fnw').checked=false;$('fl').value='';$('fsave').textContent='إضافة'}
+function saveItem(){var n=$('fnE').value.trim(),a=$('fnA').value.trim(),u=$('fu').value.trim();
+ if(!n&&!a)return toast('اكتب الاسم');
+ if([u,$('fup').value,$('fad').value,$('fad2').value,$('fsv').value,$('flc').value,$('frv').value].some(function(v){v=v.trim();return v&&!/^https?:\/\//i.test(v)}))return toast('الرابط لازم يبدأ بـ https://');
+ var o={c:$('fc').value,n:n||a,a:a||n,s:$('fs').value.trim(),u:u||'#'},old=editing>-1?ITEMS[editing]:null;
+ if($('fl').value)o.l=$('fl').value;[['up','fup'],['ad','fad'],['ad2','fad2'],['sv','fsv'],['lc','flc'],['rv','frv'],['nt','fnt'],['rg','frg'],['fm','ffm'],['rq','frq']].forEach(function(p){var v=$(p[1]).value.trim();if(v)o[p[0]]=v});if($('fpw').value.trim())o.pw=$('fpw').value.trim();if($('fd').value.trim())o.d=$('fd').value.trim();if($('fcn').value.trim())o.cn=$('fcn').value.trim();if($('fyr').value.trim())o.yr=$('fyr').value.trim();if($('fgv').value.trim())o.gv=$('fgv').value.trim();if($('fnw').checked)o.new=1;
+ if(img)o.img=img;else if(old&&old.img)o.img=old.img;
+ if(SB_URL)return sbSave(o,editing>-1?ITEMS[editing]._id:0);if(editing>-1)ITEMS[editing]=o;else ITEMS.unshift(o);
+ resetForm();persist();toast('تم الحفظ ✅')}
+function editItem(k){var o=ITEMS[k];editing=k;img='';imgBlob=null;$('fnE').value=o.n||'';$('fnA').value=o.a||'';$('fc').value=o.c;$('fl').value=o.l||'';$('fs').value=o.s||'';$('fu').value=o.u=='#'?'':o.u;$('fup').value=o.up||'';$('fad').value=o.ad||'';$('frv').value=o.rv||'';$('fad2').value=o.ad2||'';$('fsv').value=o.sv||'';$('flc').value=o.lc||'';$('fnt').value=o.nt||'';$('fpw').value=o.pw||'';$('fd').value=o.d||'';$('fcn').value=o.cn||'';$('fyr').value=o.yr||'';$('fgv').value=o.gv||'';$('frg').value=o.rg||'';$('ffm').value=o.fm||'';$('frq').value=o.rq||'';$('fnw').checked=!!o.new;$('fsave').textContent='حفظ التعديل';$('adm').scrollTo(0,0)}
+function delItem(k){if(SB_URL)return sbDel(ITEMS[k]._id);ITEMS.splice(k,1);if(editing==k)resetForm();persist()}
+function resetAll(){if(SB_URL)return toast('غير متاح مع قاعدة البيانات');ITEMS=JSON.parse(ORIG);try{localStorage.removeItem('zi')}catch(e){}resetForm();render();drawList();toast('رجعت الملفات الأصلية')}
+function drawList(){$('lst').innerHTML=ITEMS.map(function(o,k){var t=TABS.filter(function(x){return x.id==o.c})[0];return '<div class="li"><span>'+esc(o.a||o.n)+' · '+(t?t.ar:'')+'</span><button class="btn g" onclick="editItem('+k+')">تعديل</button><button class="btn d" onclick="arm(this,function(){delItem('+k+')})">حذف</button></div>'}).join('')}
+$('fi').onchange=function(){var f=this.files[0];if(!f)return;var r=new FileReader();r.onload=function(){var m=new Image();m.onload=function(){var k=Math.min(1,480/Math.max(m.width,m.height)),c=document.createElement('canvas');c.width=Math.round(m.width*k);c.height=Math.round(m.height*k);c.getContext('2d').drawImage(m,0,0,c.width,c.height);img=c.toDataURL('image/jpeg',.78);c.toBlob(function(b){imgBlob=b},'image/jpeg',.78);toast('تم تجهيز الصورة ✅')};m.src=r.result};r.readAsDataURL(f)};
+function exportSite(pub){
+ var b='var ITEMS=[\n'+ITEMS.map(function(i){return JSON.stringify(i).replace(/</g,'\\u003c')}).join(',\n')+'\n];';
+ var h='<!DOCTYPE html>\n'+SRC.replace(/var FB_URL='[^']*';/,function(){return "var FB_URL='"+FB_URL.replace(/'/g,'')+"';"}).replace(/var ITEMS=\[[\s\S]*?\n\];/,function(){return b}).replace(/<script\b[^>]*>[\s\S]*?<\/script>/g,function(m){return m.indexOf('var ITEMS=')>-1?m:''});
+ if(pub)h=h.replace(/var PUBLIC=false;/,'var PUBLIC=true;').replace(/ADMIN_PASS='[^']*'/,"ADMIN_PASS=''");
+ function fb(){try{var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([h],{type:'text/html'}));a.download=pub?'index.html':'index-admin.html';document.body.appendChild(a);a.click();a.remove();toast('تم التصدير ✅')}catch(e){try{navigator.clipboard.writeText(h);toast('تم نسخ الكود')}catch(e2){toast('تعذر التصدير')}}}
+ if(window.claude&&claude.use){claude.use('downloads').then(function(d){if(!d)return fb();return d.save({filename:pub?'index.html':'index-admin.html',data:h}).then(function(){toast('تم التصدير ✅')},function(e){if(e&&e.code=='declined')toast('ألغيت');else fb()})},fb)}else fb()}
+$('logo').onclick=function(){var n=Date.now();if(n-tp>3000)taps=0;tp=n;taps++;if(taps>=5){taps=0;openAdm()}};
+$('fc').innerHTML=TABS.filter(function(x){return ['all','fav','new'].indexOf(x.id)<0}).map(function(x){return '<option value="'+x.id+'">'+x.ar+'</option>'}).join('');
+var DT={ar:{g:'تحميل',u:'التحديث / التعريب',a:'الإضافة',a2:'الإضافة الثانية',sv:'ملف الحفظ',lc:'ملف الترخيص',nt:'ملاحظة',r:'مراجعة اللعبة',p:'كلمة السر',cp:'نسخ',sz:'الحجم'},en:{g:'Download',u:'Update / Translation',a:'Add-on',a2:'Add-on 2',sv:'Save file',lc:'License file',nt:'Note',r:'Review',p:'Password',cp:'Copy',sz:'Size'}};
+function lnk(k,f,u,t,g){if(!u||u=='#')return '';var c='btn'+(g?' g':''),s='style="text-align:center;text-decoration:none"';return f=='rv'?'<a class="'+c+'" target="_blank" rel="noopener" href="'+esc(u)+'" '+s+'>'+t+'</a>':'<a class="'+c+'" href="#" onclick="return cd('+k+',\''+f+'\')" '+s+'>'+t+'</a>'}
+function showDet(k){var o=ITEMS[k],D=DT[lang],c=COL[o.c]||COL.app,nm=esc(lang=='ar'?o.a:o.n);
+ $('dbox').innerHTML='<h3><span>'+nm+'</span><button class="btn g" onclick="closeDet()">✕</button></h3><div class="cover" style="border-radius:12px;background:'+(o.img?'#000 url('+o.img+') center/contain no-repeat':'linear-gradient(135deg,'+c[0]+','+c[1]+')')+'">'+(o.img?'':'<strong>'+nm+'</strong>')+'</div>'+(o.d?'<p style="margin:0;color:var(--mu);font-size:14px;white-space:pre-wrap">'+esc(o.d)+'</p>':'')+[[D.sz,o.s],[lang=='ar'?'رقم النسخة':'Version ID',o.cn],[lang=='ar'?'سنة الإصدار':'Release year',o.yr],[lang=='ar'?'إصدار اللعبة':'Game version',o.gv],[lang=='ar'?'المنطقة':'Region',o.rg],[lang=='ar'?'صيغة اللعبة':'Format',o.fm],[lang=='ar'?'متطلبات التشغيل':'Requirements',o.rq],[lang=='ar'?'التحميلات':'Downloads',String(counts[ckey(o.n)]||0)]].map(function(r){return r[1]?'<div style="font-size:13px;color:var(--mu)">'+r[0]+': <span dir="auto">'+esc(r[1])+'</span></div>':''}).join('')+lnk(k,'u',o.u,D.g)+lnk(k,'up',o.up,D.u,1)+lnk(k,'ad',o.ad,D.a,1)+lnk(k,'ad2',o.ad2,D.a2,1)+lnk(k,'sv',o.sv,D.sv,1)+lnk(k,'lc',o.lc,D.lc,1)+lnk(k,'rv',o.rv,D.r,1)+(o.nt?'<div style="font-size:13px;color:var(--mu);white-space:pre-wrap">'+D.nt+': '+esc(o.nt)+'</div>':'')+(o.pw?'<div style="font-size:13px;color:var(--mu)">'+D.p+'</div><div class="r2"><input readonly dir="ltr" value="'+esc(o.pw)+'"><button class="btn g" onclick="copyPw('+k+')">'+D.cp+'</button></div>':'');
+ $('det').classList.add('on')}
+function closeDet(){$('det').classList.remove('on')}
+var cdTimer=0;
+function cd(k,f){var o=ITEMS[k],u=o&&o[f],L=lang=='ar';
+ if(!u||u=='#'){toast(L?'لا يوجد رابط بعد':'No link yet');return false}
+ if(!/^https?:\/\//i.test(u)){toast('رابط غير صالح');return false}
+ var n=5,b=$('cdb');cdKey=o.n;cdHit=false;clearInterval(cdTimer);
+ $('cdt').textContent=(L?'جاري تجهيز التحميل: ':'Preparing download: ')+(L?o.a:o.n);
+ b.className='btn g';b.href='#';b.style.pointerEvents='none';b.textContent=L?'انتظر...':'Please wait...';
+ $('cdn').textContent=n;$('cdw').classList.add('on');
+ cdTimer=setInterval(function(){n--;$('cdn').textContent=n;if(n<=0){clearInterval(cdTimer);$('cdn').textContent='✓';b.className='btn';b.href=u;b.style.pointerEvents='auto';b.textContent=L?'تحميل الآن':'Download now'}},1000);
+ return false}
+function closeCd(){clearInterval(cdTimer);$('cdw').classList.remove('on')}
+var counts={},cdKey='',cdHit=false;
+try{var fz=localStorage.getItem('zfb');if(fz&&!PUBLIC)FB_URL=fz}catch(e){}
+function ckey(n){return String(n).replace(/[.$#\[\]\/]/g,'_')}
+function cnt(i){return '<span class="cn">⬇ '+(counts[ckey(i.n)]||0)+'</span>'}
+function loadCounts(){fetch(FB_URL?FB_URL+'/counts.json':'/api/downloads',{cache:'no-store'}).then(function(r){return r.json()}).then(function(d){counts=d||{};render()}).catch(function(){})}
+function hit(n){var k=ckey(n);counts[k]=(counts[k]||0)+1;render();if(!FB_URL){fetch('/api/downloads',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({key:k})}).catch(function(){});return}fetch(FB_URL+'/counts/'+encodeURIComponent(k)+'.json',{method:'PUT',body:JSON.stringify({'.sv':{increment:1}})}).catch(function(){})}
+function saveFb(){var v=$('ffb').value.trim().replace(/\/+$/,'');if(v&&!/^https:\/\//i.test(v))return toast('الرابط لازم يبدأ بـ https://');FB_URL=v;try{localStorage.setItem('zfb',v)}catch(e){}counts={};loadCounts();render();toast('تم ✅')}
+$('cdb').addEventListener('click',function(){if(cdHit||this.style.pointerEvents=='none')return;cdHit=true;hit(cdKey)});
+var ADS=false;
+var PG={home:{ar:'الرئيسية',en:'Home'},about:{ar:'من نحن',en:'About Us'},privacy:{ar:'سياسة الخصوصية',en:'Privacy Policy'},contact:{ar:'اتصل بنا',en:'Contact Us'}};
+function wrap(h,b){return '<a class="back" href="#home">'+(lang=='ar'?'→ الرئيسية':'← Home')+'</a><h2>'+PG[h][lang]+'</h2>'+b}
+var PGS={
+about:function(){return wrap('about',lang=='ar'?`<p><b>ZERO</b> منصة عربية تهتم بألعاب وبرامج PlayStation 4، وتقدّم الشروحات والتحديثات في مكان واحد بشكل منظّم وسريع.</p><h3>رسالتنا</h3><p>تسهيل وصولك إلى ما تبحث عنه: أقسام واضحة، بحث سريع، ومعلومات مرتبة لكل ملف مثل الحجم ورقم النسخة وسنة الإصدار.</p><h3>ماذا نقدّم؟</h3><ul><li>ألعاب وبرامج PlayStation 4 مع تحديث المحتوى باستمرار.</li><li>شروحات تساعدك على التثبيت والاستخدام.</li><li>أخبار التحديثات والإصدارات الجديدة.</li><li>أقسام إضافية لمنصات أخرى وللمحاكيات والبرامج والثيمات.</li></ul><h3>لماذا ZERO؟</h3><p>واجهة بسيطة تدعم العربية والإنجليزية، تعمل بسلاسة على الهاتف والكمبيوتر، ومحتوى مصنّف لتصل إلى ما تريد بأقل خطوات.</p><p>تابعنا عبر قناتنا الرسمية على تلغرام لتصلك آخر التحديثات.</p>`:`<p><b>ZERO</b> is an Arabic-English platform focused on PlayStation 4 games and programs, along with guides and updates, organized in one fast, easy place.</p><h3>Our mission</h3><p>To make what you need easy to find: clear sections, quick search, and tidy details for every file such as size, version ID and release year.</p><h3>What we offer</h3><ul><li>PlayStation 4 games and programs, updated regularly.</li><li>Guides to help with installation and use.</li><li>News about updates and new releases.</li><li>Extra sections for other platforms, emulators, programs and themes.</li></ul><h3>Why ZERO?</h3><p>A simple interface in Arabic and English that runs smoothly on phones and desktops, with categorized content so you get where you want in fewer steps.</p><p>Follow our official Telegram channel for the latest updates.</p>`)},
+privacy:function(){return wrap('privacy',lang=='ar'?`<p>آخر تحديث: 3 نوفمبر 2026</p><p>تشرح هذه السياسة كيف يتعامل موقع ZERO مع بياناتك عند استخدامه. باستخدامك للموقع فأنت توافق على ما ورد أدناه.</p><h3>1. البيانات التي نجمعها</h3><ul><li><b>البريد الإلكتروني:</b> فقط عند اشتراكك الاختياري بالنشرة، ونستخدمه لإرسال الجديد فقط.</li><li><b>إحصائيات التحميل:</b> أعداد إجمالية لكل ملف دون ربطها بهويتك.</li><li><b>تفضيلات المتصفح:</b> مثل اللغة والمفضلة، تُحفظ محلياً على جهازك ولا تُرسل إلينا.</li><li><b>بيانات تقنية عامة:</b> قد تجمعها الاستضافة أو خدمات الطرف الثالث (مثل عنوان IP ونوع المتصفح).</li></ul><p>لا نطلب من الزوار أسماءً أو كلمات مرور.</p><h3>2. ملفات تعريف الارتباط (الكوكيز)</h3><p>قد يستخدم الموقع وشركاؤه ملفات تعريف الارتباط وتقنيات مشابهة لحفظ تفضيلاتك وتحليل الزيارات وعرض الإعلانات. يمكنك حذفها أو حظرها من إعدادات متصفحك، لكن بعض ميزات الموقع قد لا تعمل بشكل كامل عندها.</p><h3>3. الإعلانات</h3><p>قد نعرض مستقبلاً إعلانات عبر خدمات طرف ثالث مثل Google AdSense. هذه الجهات قد تستخدم ملفات تعريف الارتباط لعرض إعلانات بناءً على زياراتك لهذا الموقع ومواقع أخرى. يمكنك إدارة الإعلانات المخصصة من <a href="https://adssettings.google.com" target="_blank" rel="noopener">adssettings.google.com</a>. نضع الإعلانات في أماكن مخصصة بعيدة عن أزرار التحميل حتى لا تتعرض للالتباس.</p><h3>4. خدمات الطرف الثالث</h3><p>قد يعتمد الموقع على Google Fonts للخطوط، وخدمات قواعد بيانات مثل Firebase للعدادات والاشتراكات، وروابط تحميل ومواقع خارجية لها سياساتها الخاصة التي ننصحك بمراجعتها.</p><h3>5. مشاركة البيانات</h3><p>لا نبيع بياناتك الشخصية. قد تصل بيانات تقنية إلى مزودي الخدمات المذكورة أعلاه لتشغيل الموقع أو عرض الإعلانات.</p><h3>6. الحذف والتواصل</h3><p>لطلب حذف بريدك من قائمة الاشتراك أو لأي استفسار عن الخصوصية، تواصل معنا عبر <a href="#contact">صفحة اتصل بنا</a>.</p><h3>7. الأطفال</h3><p>الموقع غير موجّه للأطفال دون 13 عاماً ولا نجمع بياناتهم عن قصد.</p><h3>8. تعديل السياسة</h3><p>قد نحدّث هذه الصفحة من حين لآخر، وسيظهر تاريخ آخر تحديث في أعلاها.</p>`:`<p>Last updated: November 3, 2026</p><p>This policy explains how ZERO handles your data. By using the site, you agree to what is described below.</p><h3>1. Data we collect</h3><ul><li><b>Email address:</b> only if you choose to subscribe, and used only to send you updates.</li><li><b>Download statistics:</b> aggregate counts per file, not tied to your identity.</li><li><b>Browser preferences:</b> such as language and favorites, stored locally on your device and not sent to us.</li><li><b>General technical data:</b> may be collected by hosting or third-party services (e.g. IP address, browser type).</li></ul><p>We do not ask visitors for names or passwords.</p><h3>2. Cookies</h3><p>The site and its partners may use cookies and similar technologies to remember preferences, analyze visits and serve ads. You can delete or block them in your browser settings, though some features may not work fully.</p><h3>3. Advertising</h3><p>We may show ads in the future through third-party services such as Google AdSense. These vendors may use cookies to serve ads based on your visits to this and other sites. You can manage personalized ads at <a href="https://adssettings.google.com" target="_blank" rel="noopener">adssettings.google.com</a>. We place ads in dedicated spots away from download buttons to avoid confusion.</p><h3>4. Third-party services</h3><p>The site may rely on Google Fonts, a database service such as Firebase for counters and subscriptions, and external download or website links that have their own policies, which we encourage you to review.</p><h3>5. Data sharing</h3><p>We do not sell your personal data. Technical data may reach the service providers above to run the site or serve ads.</p><h3>6. Deletion and contact</h3><p>To remove your email from the subscription list or ask about privacy, reach us via the <a href="#contact">Contact Us</a> page.</p><h3>7. Children</h3><p>The site is not directed to children under 13 and we do not knowingly collect their data.</p><h3>8. Changes</h3><p>We may update this page from time to time; the last-updated date appears at the top.</p>`)},
+contact:function(){return wrap('contact',lang=='ar'?`<p>يسعدنا تواصلك لأي استفسار أو اقتراح أو مشكلة برابط أو ملف.</p><h3>قناتنا الرسمية على تلغرام</h3><p><a class="btn" target="_blank" rel="noopener" href="https://t.me/zerop3" style="display:inline-block;text-decoration:none">Telegram · @zerop3</a></p><h3>ماذا تراسلنا بشأنه؟</h3><ul><li>الإبلاغ عن رابط لا يعمل.</li><li>طلب إضافة لعبة أو برنامج.</li><li>طلبات حذف البريد من الاشتراك أو استفسارات الخصوصية.</li><li>إذا كنت صاحب حقوق وترى أن محتوىً معيناً يخالف حقوقك، راسلنا مع رابط المحتوى المقصود وسنراجعه بأقرب وقت.</li></ul>`:`<p>We are glad to hear from you about any question, suggestion, or problem with a link or file.</p><h3>Our official Telegram channel</h3><p><a class="btn" target="_blank" rel="noopener" href="https://t.me/zerop3" style="display:inline-block;text-decoration:none">Telegram · @zerop3</a></p><h3>What to contact us about</h3><ul><li>Reporting a broken link.</li><li>Requesting a game or program.</li><li>Email removal from the subscription list or privacy questions.</li><li>If you are a rights holder and believe specific content infringes your rights, send us the link to the content and we will review it promptly.</li></ul>`)}
+};
+function curPg(){var h=(location.hash||'').slice(1);return PGS[h]?h:''}
+function pageUI(){var h=curPg();$('main').style.display=h?'none':'';$('tabs').style.display=h?'none':'';$('page').style.display=h?'block':'none';if(h){$('page').innerHTML=PGS[h]();document.title=PG[h][lang]+' | ZERO'}else document.title='Zero | زيرو';var t=lang=='ar'?'إعلان':'Advertisement';$('ad-top').dataset.l=t;$('ad-bot').dataset.l=t;document.body.classList.toggle('ads',ADS)}
+function footUI(){$('fnav').innerHTML=['home','about','privacy','contact'].map(function(k){return '<a href="#'+k+'">'+PG[k][lang]+'</a>'}).join('')}
+window.addEventListener('hashchange',function(){render();window.scrollTo(0,0)});
+/* ===== Supabase ===== */
+function d2b(u){var p=u.split(','),m=p[0].match(/:(.*?);/)[1],b=atob(p[1]),n=b.length,a=new Uint8Array(n);while(n--)a[n]=b.charCodeAt(n);return new Blob([a],{type:m})}
+function sess(){try{var s=JSON.parse(localStorage.getItem('zsb')||'null');return s&&s.r?s:null}catch(e){return null}}
+function setSess(d){try{if(d)localStorage.setItem('zsb',JSON.stringify({a:d.access_token,r:d.refresh_token,e:Date.now()+(d.expires_in||3600)*1000}));else localStorage.removeItem('zsb')}catch(e){}}
+function sbH(t){return {apikey:SB_KEY,Authorization:'Bearer '+(t||SB_KEY),'Content-Type':'application/json'}}
+function sbTok(){var s=sess();if(!s)return Promise.reject('no');if(s.e-Date.now()>60000)return Promise.resolve(s.a);return fetch(SB_URL+'/auth/v1/token?grant_type=refresh_token',{method:'POST',headers:sbH(),body:JSON.stringify({refresh_token:s.r})}).then(function(r){if(!r.ok)throw 'exp';return r.json()}).then(function(d){setSess(d);return d.access_token})}
+function sbLoad(){if(!SB_URL)return;fetch(SB_URL+'/rest/v1/items?select=id,data&order=id.desc',{headers:sbH()}).then(function(r){if(!r.ok)throw 0;return r.json()}).then(function(rows){ITEMS=rows.map(function(x){var o=x.data||{};o._id=x.id;return o});LOADING=false;render();if(isAdm())drawList()}).catch(function(){LOADING=false;try{var z=JSON.parse(localStorage.getItem('zi')||'null');ITEMS=(z&&z.length)?z:JSON.parse(ORIG)}catch(e){ITEMS=JSON.parse(ORIG)}render();toast('تعذر الاتصال بقاعدة البيانات')})}
+function sbLogin(){var e=$('lem').value.trim(),p=$('pw').value;fetch(SB_URL+'/auth/v1/token?grant_type=password',{method:'POST',headers:sbH(),body:JSON.stringify({email:e,password:p})}).then(function(r){if(!r.ok)throw 0;return r.json()}).then(function(d){setSess(d);$('pw').value='';applyAdm();openAdm()}).catch(function(){toast('البريد أو كلمة السر غلط')})}
+function sbSave(o,id){var nm='';return sbTok().then(function(tok){var p=Promise.resolve();if(imgBlob){nm=Date.now()+'-'+Math.random().toString(36).slice(2,8)+'.jpg';var h=sbH(tok);h['Content-Type']='image/jpeg';p=fetch(SB_URL+'/storage/v1/object/covers/'+nm,{method:'POST',headers:h,body:imgBlob}).then(function(r){if(!r.ok)throw 'img';o.img=SB_URL+'/storage/v1/object/public/covers/'+nm})}return p.then(function(){return fetch(SB_URL+'/rest/v1/items'+(id?'?id=eq.'+id:''),{method:id?'PATCH':'POST',headers:sbH(tok),body:JSON.stringify({data:o})})}).then(function(r){if(!r.ok)throw 'db';resetForm();sbLoad();toast('تم الحفظ في قاعدة البيانات ✅')})}).catch(function(e){toast(e=='img'?'فشل رفع الصورة':e=='db'?'فشل الحفظ (تحقق من الصلاحيات)':'سجّل الدخول من جديد');if(e=='exp'||e=='no'){setSess(null);applyAdm()}})}
+function sbDel(id){sbTok().then(function(tok){return fetch(SB_URL+'/rest/v1/items?id=eq.'+id,{method:'DELETE',headers:sbH(tok)})}).then(function(r){if(!r.ok)throw 0;resetForm();sbLoad();toast('تم الحذف')}).catch(function(){toast('فشل الحذف')})}
+function sbMigrate(){var seed=JSON.parse(ORIG).filter(function(o){return o&&o.n});if(!seed.length)return toast('لا توجد ملفات للنقل');sbTok().then(function(tok){var rows=[],ch=Promise.resolve();seed.forEach(function(o,i){ch=ch.then(function(){if(o.img&&o.img.indexOf('data:')==0){var nm=Date.now()+'-'+i+'.jpg',h=sbH(tok);h['Content-Type']='image/jpeg';return fetch(SB_URL+'/storage/v1/object/covers/'+nm,{method:'POST',headers:h,body:d2b(o.img)}).then(function(r){if(r.ok)o.img=SB_URL+'/storage/v1/object/public/covers/'+nm;else delete o.img})}}).then(function(){delete o._id;rows.push({data:o})})});return ch.then(function(){return fetch(SB_URL+'/rest/v1/items',{method:'POST',headers:sbH(tok),body:JSON.stringify(rows.reverse())})})}).then(function(r){if(!r.ok)throw 0;sbLoad();toast('تم نقل '+seed.length+' ملف ✅')}).catch(function(){toast('فشل النقل')})}
+LOADING=!!SB_URL;if(SB_URL){ITEMS=[];sbLoad()}
+function subUI(){var b=$('subbox'),a=lang=='ar';b.classList.toggle('on',!!FB_URL);$('subt').textContent=a?'اشترك ليوصلك كل جديد من الملفات':'Subscribe to get new files';$('sbtn').textContent=a?'اشترك':'Subscribe';$('sem').placeholder=a?'بريدك الإلكتروني':'Your email'}
+function subscribe(){var e=$('sem').value.trim().toLowerCase(),a=lang=='ar';
+ if(!FB_URL||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)||e.length>120)return toast(a?'اكتب بريد صحيح':'Enter a valid email');
+ var k=e.replace(/[.$#\[\]\/]/g,',');
+ fetch(FB_URL+'/subs/'+encodeURIComponent(k)+'.json',{method:'PUT',body:JSON.stringify({e:e,t:Date.now()})}).then(function(r){
+  if(r.ok){fetch(FB_URL+'/subCount.json',{method:'PUT',body:JSON.stringify({'.sv':{increment:1}})}).catch(function(){});$('sem').value='';toast(a?'تم الاشتراك ✅':'Subscribed ✅')}
+  else if(r.status==401||r.status==403)toast(a?'هذا البريد مشترك مسبقاً':'Already subscribed');
+  else toast(a?'صار خطأ، حاول مرة ثانية':'Error, try again')}).catch(function(){toast(a?'صار خطأ، حاول مرة ثانية':'Error, try again')})}
+function loadSubs(){var el=$('subn');if(!FB_URL){el.textContent='اربط Firebase أولاً';return}fetch(FB_URL+'/subCount.json').then(function(r){return r.json()}).then(function(n){el.textContent='👥 المشتركون: '+(n||0)}).catch(function(){el.textContent='تعذر الجلب'})}
+loadCounts();
+function copyPw(k){try{navigator.clipboard.writeText(ITEMS[k].pw).then(function(){toast('✅')},function(){toast(ITEMS[k].pw)})}catch(e){toast(ITEMS[k].pw)}}
+applyAdm();if(location.hash=='#admin')openAdm();
+render();
+</script>
+</body>
+</html>

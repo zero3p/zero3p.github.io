@@ -1,0 +1,25 @@
+{
+  "name": "repo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://x-access-token:eyJ0eXAiOiJKV1QiLCJraWQiOiJwRFpsK3MrTmZBTVBCeExqdXlka0dYK2JYV01xbFprc1U1RW1DUE1mQXVnIiwiYWxnIjoiSFMyNTYifQ.eyJzY29wZSI6InJlcG86NzNiYTllMmMtZGU0MC00MWQ3LTkxYWMtYzM5ZDJjODQ3OTU2OndyaXRlIiwicmVwb19zbHVnIjoibXN0Zi1rem0vemVyb3AzIiwiZXhwIjoxNzkzNzQ5NjA2LCJpYXQiOjE3OTM3NDYwMDZ9.YX_iPPKGwZ7w_lZz1Hs6VVRofnJj5sWEFtUyWjhPczs@hgit.services-prod.nsvcs.net/mstf-kzm/zerop3.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "@netlify/database": "^2.0.1",
+    "@netlify/functions": "^6.0.3",
+    "drizzle-orm": "^1.0.0-beta.22"
+  },
+  "devDependencies": {
+    "drizzle-kit": "^1.0.0-beta.22"
+  }
+}
