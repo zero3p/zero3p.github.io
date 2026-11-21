@@ -143,7 +143,7 @@ footer{max-width:1100px;margin:0 auto}
 <div class="w" id="main">
 <div class="head">
 <h2 id="ttl"></h2>
-<div class="fl"><span id="cnt"></span><select id="srt"></select><select id="sel"></select></div>
+<div class="fl"><span id="cnt"></span><select id="srt"></select><select id="sel"></select><select id="genreFilter"><option value="all">كل الأنواع</option></select></div>
 </div>
 <div class="grid" id="grid"></div>
 <div class="subbox" id="subbox"><p id="subt"></p><div class="r2"><input id="sem" type="email" dir="ltr"><button class="btn" id="sbtn" onclick="subscribe()"></button></div></div>
@@ -159,6 +159,8 @@ footer{max-width:1100px;margin:0 auto}
 <input id="fnE" placeholder="الاسم بالإنجليزي">
 <input id="fnA" placeholder="الاسم بالعربي">
 <div class="r2"><select id="fc"></select><select id="fl"><option value="">بدون لغة</option><option value="en">إنجليزي</option><option value="ar">عربي</option></select></div>
+<div class="r2"><input id="fgenres" placeholder="أنواع اللعبة: أكشن، مغامرات، رعب (افصل بفاصلة)"><select id="fmode"><option value="">نوع اللعب</option><option value="single">فردي</option><option value="multi">جماعي</option><option value="both">فردي وجماعي</option></select></div>
+<div class="r2"><select id="fnetwork"><option value="">الاتصال</option><option value="online">Online</option><option value="offline">Offline</option><option value="both">Online و Offline</option></select><label style="display:flex;align-items:center;gap:6px;font-size:13px"><input id="ffeat" type="checkbox" style="width:auto"> لعبة مميزة</label></div>
 <div class="r2"><input id="fs" placeholder="الحجم (مثال 2 GB)"><label style="display:flex;align-items:center;gap:6px;font-size:13px;white-space:nowrap"><input id="fnw" type="checkbox" style="width:auto">جديد</label></div>
 <input id="fu" placeholder="رابط التحميل https://..." dir="ltr">
 <input id="fdp" placeholder="رابط مباشر لملف PKG (للإرسال للبلايستيشن) https://..." dir="ltr">
@@ -186,6 +188,12 @@ footer{max-width:1100px;margin:0 auto}
 <div style="font-size:12px;color:var(--mu)">الإيميلات تشوفها من Firebase ← Realtime Database ← subs</div>
 <input id="ffb" placeholder="رابط Firebase للعداد (اختياري) https://xxx.firebaseio.com" dir="ltr"><button class="btn g" onclick="saveFb()">حفظ رابط العداد</button>
 <button class="btn g" id="mig" style="display:none" onclick="arm(this,sbMigrate)">نقل ملفاتي الحالية إلى Supabase</button>
+<div style="font-weight:800;margin-top:12px">إدارة الأقسام</div>
+<div class="r2"><input id="catId" placeholder="معرّف إنجليزي مثل xbox"><input id="catAr" placeholder="اسم القسم بالعربي"></div>
+<div class="r2"><input id="catEn" placeholder="اسم القسم بالإنجليزي"><input id="catOrder" type="number" placeholder="الترتيب" value="50"></div>
+<button class="btn" onclick="saveCategory()">+ إضافة / حفظ القسم</button>
+<div id="catList" style="display:flex;flex-direction:column;gap:6px"></div>
+<div style="font-size:11px;color:var(--mu)">حذف القسم هنا يعني أرشفته حتى لا تضيع الألعاب المرتبطة به. تقدر تسترجعه بأي وقت.</div>
 <div style="font-weight:800;margin-top:6px">إحصائيات الموقع</div><div id="adstats" class="r2" style="flex-wrap:wrap;gap:8px"></div><div style="font-weight:800">طلبات الاشتراك</div><div id="reqs" style="display:flex;flex-direction:column;gap:6px"></div>
 <div class="r2"><input id="aun" placeholder="تفعيل يدوي: اسم المستخدم"><input id="adays" inputmode="numeric" placeholder="30" style="max-width:80px"><button class="btn" onclick="activate()">تفعيل</button></div>
 <input id="adminQ" placeholder="ابحث عن لعبة لإدارتها..." oninput="drawList()"><div id="lst" style="display:flex;flex-direction:column;gap:6px"></div>
@@ -216,18 +224,19 @@ var ITEMS=[
 {c:'theme',l:'ar',n:'Arabic Sample Theme',a:'ثيم عربي تجريبي',s:'6 MB',u:'#'},
 {c:'app',l:'ar',n:'Arabic Sample Program',a:'برنامج عربي تجريبي',s:'80 MB',u:'#'}
 ];
-var COL={ps5:['#1d4ed8','#0b1b4d'],ps4:['#0e7490','#082f3d'],ps3:['#475569','#111827'],ps2:['#4338ca','#14123d'],ps1:['#6b7280','#1f2937'],psp:['#0f766e','#052e2b'],pc:['#b45309','#2d1704'],x360:['#15803d','#052e16'],emu:['#a21caf','#2e0a35'],app:['#be123c','#3b0614'],theme:['#c2410c','#3a1306']};
+var COL={ps5:['#1d4ed8','#0b1b4d'],ps4:['#0e7490','#082f3d'],ps3:['#475569','#111827'],ps2:['#4338ca','#14123d'],ps1:['#6b7280','#1f2937'],psp:['#0f766e','#052e2b'],pc:['#b45309','#2d1704'],x360:['#15803d','#052e16'],xbox:['#16a34a','#052e16'],emu:['#a21caf','#2e0a35'],app:['#be123c','#3b0614'],theme:['#c2410c','#3a1306']};
 var G=['ps5','ps4','ps3','ps2','ps1','psp','pc','x360'];
-var TC={all:'#ef4444',fav:'#ec4899',new:'#22c55e',top:'#fbbf24',recent:'#38bdf8',ps5:'#3b82f6',ps4:'#06b6d4',ps3:'#94a3b8',ps2:'#818cf8',ps1:'#d4d4d8',psp:'#14b8a6',pc:'#f59e0b',x360:'#4ade80',emu:'#d946ef',app:'#fb7185',theme:'#fb923c'};
+var TC={all:'#ef4444',fav:'#ec4899',new:'#22c55e',top:'#fbbf24',recent:'#38bdf8',ps5:'#3b82f6',ps4:'#06b6d4',ps3:'#94a3b8',ps2:'#818cf8',ps1:'#d4d4d8',psp:'#14b8a6',pc:'#f59e0b',x360:'#4ade80',xbox:'#22c55e',emu:'#d946ef',app:'#fb7185',theme:'#fb923c'};
 var TABS=[
 {id:'all',ar:'الكل',en:'All'},{id:'fav',ar:'المفضلة',en:'Favorites'},{id:'new',ar:'جديد',en:'New'},{id:'top',ar:'الأعلى تقييماً',en:'Top rated'},{id:'recent',ar:'شوهدت مؤخراً',en:'Recently viewed'},
 {id:'ps5',ar:'PS5',en:'PS5'},{id:'ps4',ar:'PS4',en:'PS4'},{id:'ps3',ar:'PS3',en:'PS3'},{id:'ps2',ar:'PS2',en:'PS2'},{id:'ps1',ar:'PS1',en:'PS1'},{id:'psp',ar:'PSP',en:'PSP'},{id:'pc',ar:'PC',en:'PC'},{id:'x360',ar:'Xbox 360',en:'Xbox 360'},
 {id:'emu',ar:'محاكيات',en:'Emulators'},{id:'app',ar:'برامج',en:'Programs'},{id:'theme',ar:'ثيمات',en:'Themes'}
 ];
+var BASE_TABS=TABS.slice(0,5),CAT_ROWS=[];
 var SRT=[{id:'def',ar:'الأحدث',en:'Latest'},{id:'top',ar:'الأعلى تقييماً',en:'Top rated'},{id:'dl',ar:'الأكثر تحميلاً',en:'Most downloaded'},{id:'likes',ar:'الأكثر إعجاباً',en:'Most liked'},{id:'az',ar:'الاسم: أ إلى ي',en:'Name: A to Z'}];
 var SEL=[{id:'all',ar:'كل اللغات',en:'All languages'},{id:'en',ar:'إنجليزي',en:'English'},{id:'ar',ar:'عربي',en:'Arabic'}];
 var T={ar:{s:'ابحث عن لعبة...',t:'أحدث الملفات',none:'لا توجد ملفات بعد.',dl:'تحميل',sw:'English',f:'زيرو © 2026',n:'ملف'},en:{s:'Search for a game...',t:'Latest files',none:'No files yet.',dl:'Download',sw:'العربية',f:'Zero © 2026',n:'files'}};
-var lang='ar',tab='all',sub='all',q='',favs={},srt='def',RECENT=[];
+var lang='ar',tab='all',sub='all',q='',favs={},srt='def',RECENT=[],genreFilter='all';
 try{lang=localStorage.getItem('zl')||'ar';favs=JSON.parse(localStorage.getItem('zf')||'{}');RECENT=JSON.parse(localStorage.getItem('zrecent')||'[]');if(!Array.isArray(RECENT))RECENT=[]}catch(e){RECENT=[]}
 function rememberGame(name){RECENT=[name].concat(RECENT.filter(function(x){return x!==name})).slice(0,30);try{localStorage.setItem('zrecent',JSON.stringify(RECENT))}catch(e){}}
 function $(i){return document.getElementById(i)}
@@ -244,22 +253,25 @@ function render(){
  $('lang').textContent=L.sw;$('q').placeholder=L.s;$('ttl').textContent=L.t;$('fcp').textContent=L.f;footUI();pageUI();thUI();tgUI();accUI();
  $('tabs').innerHTML=TABS.map(function(x){return '<button class="tab'+(x.id==tab?' on':'')+'" style="--tc:'+TC[x.id]+'" onclick="setTab(\''+x.id+'\')">'+x[lang]+'</button>'}).join('');
  $('sel').innerHTML=SEL.map(function(x){return '<option value="'+x.id+'"'+(x.id==sub?' selected':'')+'>'+x[lang]+'</option>'}).join('');
+ var gf=$('genreFilter');if(gf){var gs=['all','أكشن','مغامرات','رعب','رياضة','سباق','قتال','عالم مفتوح','RPG','ألغاز','محاكاة','Action','Adventure','Horror','Sports','Racing','Fighting','Open World','Puzzle','Simulation'];gf.innerHTML=gs.map(function(x){return '<option value="'+esc(x)+'"'+(x==genreFilter?' selected':'')+'>'+(x=='all'?(lang=='ar'?'كل الأنواع':'All genres'):x)+'</option>'}).join('')} 
  $('srt').innerHTML=SRT.map(function(x){return '<option value="'+x.id+'"'+(x.id==srt?' selected':'')+'>'+x[lang]+'</option>'}).join('');
  var out=ITEMS.filter(function(i){
+  if(i.archived)return false;
+  if(genreFilter!='all'&&(i.genres||[]).indexOf(genreFilter)<0)return false;
   if(tab=='fav'&&!favs[i.n])return false;
   if(tab=='new'&&!i.new)return false;
   if(tab=='top'&&!(STATS[i.n]&&STATS[i.n].n>0))return false;
   if(tab=='recent'&&RECENT.indexOf(i.n)<0)return false;
   if(tab!='all'&&tab!='fav'&&tab!='new'&&tab!='top'&&tab!='recent'&&i.c!=tab)return false;
   if(sub!='all'&&i.l&&i.l!=sub)return false;
-  var cat=TABS.filter(function(x){return x.id==i.c})[0];
+  var cat=TABS.filter(function(x){return x.id==i.c})[0]||CAT_ROWS.filter(function(x){return x.slug==i.c})[0];
   var searchable=[i.n,i.a,i.d,i.cn,i.yr,i.gv,i.rg,i.fm,i.s,cat?cat.ar:'',cat?cat.en:''].join(' ').toLowerCase();
   return !q||searchable.indexOf(q)>-1;
  });
  var by=tab=='top'?'top':srt;if(by=='top')out.sort(function(x,y){var p=STATS[x.n]||{avg:0,n:0},r=STATS[y.n]||{avg:0,n:0};return (r.avg-p.avg)||(r.n-p.n)});else if(by=='dl')out.sort(function(x,y){return (counts[ckey(y.n)]||0)-(counts[ckey(x.n)]||0)});else if(by=='likes')out.sort(function(x,y){var a=STATS[x.n]||{l:0},b=STATS[y.n]||{l:0};return (b.l||0)-(a.l||0)});else if(by=='az')out.sort(function(x,y){return String(lang=='ar'?x.a:x.n).localeCompare(String(lang=='ar'?y.a:y.n),lang=='ar'?'ar':'en')});
  $('cnt').textContent=out.length+' '+L.n;subUI();
  $('grid').innerHTML=out.length?out.map(function(i){
-  var c=COL[i.c],t=TABS.filter(function(x){return x.id==i.c})[0][lang];
+  var c=COL[i.c]||['#6d28d9','#1e1b4b'],t=(TABS.filter(function(x){return x.id==i.c})[0]||CAT_ROWS.filter(function(x){return x.slug==i.c})[0]||{ar:i.c,en:i.c})[lang];
   return '<div class="card"><div class="cover" onclick="showDet('+ITEMS.indexOf(i)+')" style="cursor:pointer;background:'+(i.img?'#000 url('+i.img+') center/cover no-repeat':'linear-gradient(135deg,'+c[0]+','+c[1]+')')+'"><span class="pl">'+t+'</span>'+cnt(i)+rtb(i)+'<button class="fav'+(favs[i.n]?' on':'')+'" onclick="event.stopPropagation();fav(\''+encodeURIComponent(i.n).replace(/'/g,'%27')+'\')">'+(favs[i.n]?'♥':'♡')+'</button>'+(i.img?'':'<strong>'+esc(lang=='ar'?i.a:i.n)+'</strong>')+'</div><div class="info"><b>'+esc(lang=='ar'?i.a:i.n)+'</b><a class="dl" href="#" onclick="return dlClick('+ITEMS.indexOf(i)+')">'+L.dl+'</a></div></div>';
  }).join(''):'<div class="empty">'+(LOADING?'…':L.none)+'</div>';
 }
@@ -267,6 +279,7 @@ function setTab(t){tab=t;render()}
 function fav(n){n=decodeURIComponent(n);if(favs[n])delete favs[n];else favs[n]=1;try{localStorage.setItem('zf',JSON.stringify(favs))}catch(e){}render()}
 $('sel').onchange=function(){sub=this.value;render()};
 $('srt').onchange=function(){srt=this.value;render()};
+$('genreFilter').onchange=function(){genreFilter=this.value;render()};
 $('lang').onclick=function(){lang=lang=='ar'?'en':'ar';try{localStorage.setItem('zl',lang)}catch(e){}render()};
 $('q').oninput=function(){q=this.value.toLowerCase();render()};
 function hideSplash(){var s=$('splash');if(s){s.classList.add('out');setTimeout(function(){s.remove()},600)}}
@@ -278,27 +291,29 @@ function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){retur
 function isAdm(){if(PUBLIC)return false;if(SB_URL)return !!sess();try{return localStorage.getItem('za')=='1'}catch(e){return false}}
 function applyAdm(){document.body.classList.toggle('adm',isAdm())}
 function toast(m){var t=$('toast');t.textContent=m;t.style.display='block';clearTimeout(tt);tt=setTimeout(function(){t.style.display='none'},2400)}
-function openAdm(){if(PUBLIC)return;var a=isAdm();$('adm').classList.add('on');$('lg').style.display=a?'none':'flex';$('lem').style.display=SB_URL?'':'none';$('mig').style.display=SB_URL?'':'none';$('ad').style.display=a?'flex':'none';if(a){drawList();$('ffb').value=FB_URL;loadSubs();loadReqs()}}
+function openAdm(){if(PUBLIC)return;var a=isAdm();$('adm').classList.add('on');$('lg').style.display=a?'none':'flex';$('lem').style.display=SB_URL?'':'none';$('mig').style.display=SB_URL?'':'none';$('ad').style.display=a?'flex':'none';if(a){drawList();drawCategoryList();$('ffb').value=FB_URL;loadSubs();loadReqs();loadCategories()}}
 function closeAdm(){$('adm').classList.remove('on')}
 function login(){if(SB_URL)return sbLogin();if(!PUBLIC&&ADMIN_PASS&&$('pw').value===ADMIN_PASS){try{localStorage.setItem('za','1')}catch(e){}$('pw').value='';applyAdm();openAdm()}else toast('كلمة السر غلط')}
 function logoutAdm(){setSess(null);try{localStorage.removeItem('za')}catch(e){}applyAdm();closeAdm()}
 function arm(b,fn){if(b.dataset.a){fn();return}b.dataset.a=1;var t=b.textContent;b.textContent='تأكيد؟';setTimeout(function(){delete b.dataset.a;b.textContent=t},2500)}
 function persist(){try{localStorage.setItem('zi',JSON.stringify(ITEMS))}catch(e){toast('المساحة ممتلئة، استخدم صور أصغر')}render();drawList()}
-function resetForm(){editing=-1;img='';imgBlob=null;['fnE','fnA','fs','fu','fdp','fi','fup','fad','frv','fpw','fd','fcn','fyr','fad2','fsv','flc','fnt','fgv','frg','ffm','frq'].forEach(function(k){$(k).value=''});$('fnw').checked=false;$('fl').value='';setLinks([]);$('fsave').textContent='إضافة'}
+function resetForm(){editing=-1;img='';imgBlob=null;['fnE','fnA','fs','fu','fdp','fi','fup','fad','frv','fpw','fd','fcn','fyr','fad2','fsv','flc','fnt','fgv','frg','ffm','frq'].forEach(function(k){$(k).value=''});$('fnw').checked=false;$('ffeat').checked=false;$('fgenres').value='';$('fmode').value='';$('fnetwork').value='';$('fl').value='';setLinks([]);$('fsave').textContent='إضافة'}
 function saveItem(){var n=$('fnE').value.trim(),a=$('fnA').value.trim(),u=$('fu').value.trim();
  if(!n&&!a)return toast('اكتب الاسم');
  var lks=getLinks();if(lks===null)return toast('كل رابط لازم يبدأ بـ https://');
  if([u,$('fdp').value,$('fup').value,$('fad').value,$('fad2').value,$('fsv').value,$('flc').value,$('frv').value].some(function(v){v=v.trim();return v&&!/^https?:\/\//i.test(v)}))return toast('الرابط لازم يبدأ بـ https://');
- var o={c:$('fc').value,n:n||a,a:a||n,s:$('fs').value.trim(),u:u||'#'},old=editing>-1?ITEMS[editing]:null;
- if($('fl').value)o.l=$('fl').value;if(lks.length)o.links=lks;[['dp','fdp'],['up','fup'],['ad','fad'],['ad2','fad2'],['sv','fsv'],['lc','flc'],['rv','frv'],['nt','fnt'],['rg','frg'],['fm','ffm'],['rq','frq']].forEach(function(p){var v=$(p[1]).value.trim();if(v)o[p[0]]=v});if($('fpw').value.trim())o.pw=$('fpw').value.trim();if($('fd').value.trim())o.d=$('fd').value.trim();if($('fcn').value.trim())o.cn=$('fcn').value.trim();if($('fyr').value.trim())o.yr=$('fyr').value.trim();if($('fgv').value.trim())o.gv=$('fgv').value.trim();if($('fnw').checked)o.new=1;
+ var o={c:$('fc').value,n:n||a,a:a||n,s:$('fs').value.trim(),u:u||'#'},old=editing>-1?ITEMS[editing]:null;if(old&&old.archived)o.archived=true;
+ if($('fl').value)o.l=$('fl').value;if(lks.length)o.links=lks;var gs=$('fgenres').value.split(/[،,]/).map(function(x){return x.trim()}).filter(Boolean);if(gs.length)o.genres=gs;if($('fmode').value)o.mode=$('fmode').value;if($('fnetwork').value)o.network=$('fnetwork').value;if($('ffeat').checked)o.featured=true;[['dp','fdp'],['up','fup'],['ad','fad'],['ad2','fad2'],['sv','fsv'],['lc','flc'],['rv','frv'],['nt','fnt'],['rg','frg'],['fm','ffm'],['rq','frq']].forEach(function(p){var v=$(p[1]).value.trim();if(v)o[p[0]]=v});if($('fpw').value.trim())o.pw=$('fpw').value.trim();if($('fd').value.trim())o.d=$('fd').value.trim();if($('fcn').value.trim())o.cn=$('fcn').value.trim();if($('fyr').value.trim())o.yr=$('fyr').value.trim();if($('fgv').value.trim())o.gv=$('fgv').value.trim();if($('fnw').checked)o.new=1;
  if(img)o.img=img;else if(old&&old.img)o.img=old.img;
  if(SB_URL)return sbSave(o,editing>-1?ITEMS[editing]._id:0);if(editing>-1)ITEMS[editing]=o;else ITEMS.unshift(o);
  resetForm();persist();toast('تم الحفظ ✅')}
-function editItem(k){var o=ITEMS[k];editing=k;img='';imgBlob=null;$('fnE').value=o.n||'';$('fnA').value=o.a||'';$('fc').value=o.c;$('fl').value=o.l||'';$('fs').value=o.s||'';$('fu').value=o.u=='#'?'':o.u;$('fup').value=o.up||'';$('fad').value=o.ad||'';$('frv').value=o.rv||'';$('fad2').value=o.ad2||'';$('fsv').value=o.sv||'';$('flc').value=o.lc||'';$('fnt').value=o.nt||'';$('fpw').value=o.pw||'';$('fd').value=o.d||'';$('fcn').value=o.cn||'';$('fyr').value=o.yr||'';$('fgv').value=o.gv||'';$('frg').value=o.rg||'';$('ffm').value=o.fm||'';$('frq').value=o.rq||'';$('fdp').value=o.dp||'';setLinks(o.links);$('fnw').checked=!!o.new;$('fsave').textContent='حفظ التعديل';$('adm').scrollTo(0,0)}
-function delItem(k){if(SB_URL)return sbDel(ITEMS[k]._id);ITEMS.splice(k,1);if(editing==k)resetForm();persist()}
+function editItem(k){var o=ITEMS[k];editing=k;img='';imgBlob=null;$('fnE').value=o.n||'';$('fnA').value=o.a||'';$('fc').value=o.c;$('fl').value=o.l||'';$('fgenres').value=(o.genres||[]).join('، ');$('fmode').value=o.mode||'';$('fnetwork').value=o.network||'';$('ffeat').checked=!!o.featured;$('fs').value=o.s||'';$('fu').value=o.u=='#'?'':o.u;$('fup').value=o.up||'';$('fad').value=o.ad||'';$('frv').value=o.rv||'';$('fad2').value=o.ad2||'';$('fsv').value=o.sv||'';$('flc').value=o.lc||'';$('fnt').value=o.nt||'';$('fpw').value=o.pw||'';$('fd').value=o.d||'';$('fcn').value=o.cn||'';$('fyr').value=o.yr||'';$('fgv').value=o.gv||'';$('frg').value=o.rg||'';$('ffm').value=o.fm||'';$('frq').value=o.rq||'';$('fdp').value=o.dp||'';setLinks(o.links);$('fnw').checked=!!o.new;$('fsave').textContent='حفظ التعديل';$('adm').scrollTo(0,0)}
+function delItem(k){archiveItem(k)}
+function archiveItem(k){var o=Object.assign({},ITEMS[k]);o.archived=!o.archived;if(SB_URL)return sbSave(o,o._id);ITEMS[k]=o;if(editing==k)resetForm();persist();toast(o.archived?'تمت أرشفة اللعبة ويمكن استرجاعها':'تم استرجاع اللعبة')}
+
 function resetAll(){if(SB_URL)return toast('غير متاح مع قاعدة البيانات');ITEMS=JSON.parse(ORIG);try{localStorage.removeItem('zi')}catch(e){}resetForm();render();drawList();toast('رجعت الملفات الأصلية')}
-function drawList(){drawAdminStats();var term=$('adminQ')?$('adminQ').value.trim().toLowerCase():'';$('lst').innerHTML=ITEMS.map(function(o,k){return {o:o,k:k}}).filter(function(x){return !term||[x.o.n,x.o.a,x.o.c].join(' ').toLowerCase().indexOf(term)>-1}).map(function(x){var o=x.o,k=x.k,t=TABS.filter(function(x){return x.id==o.c})[0];return '<div class="li"><span>'+esc(o.a||o.n)+' · '+(t?t.ar:'')+'</span><button class="btn g" onclick="editItem('+k+')">تعديل</button><button class="btn d" onclick="arm(this,function(){delItem('+k+')})">حذف</button></div>'}).join('')||'<div style="font-size:13px;color:var(--mu)">لا توجد نتائج</div>'}
-function drawAdminStats(){var el=$('adstats');if(!el)return;var total=Object.keys(counts||{}).reduce(function(n,k){return n+(+counts[k]||0)},0),ratings=Object.keys(STATS||{}).reduce(function(n,k){return n+((STATS[k]&&+STATS[k].n)||0)},0),likes=Object.keys(STATS||{}).reduce(function(n,k){return n+((STATS[k]&&+STATS[k].l)||0)},0);el.innerHTML=[['🎮','الألعاب',ITEMS.length],['⬇️','التحميلات',total],['⭐','التقييمات',ratings],['👍','الإعجابات',likes]].map(function(x){return '<div style="flex:1;min-width:105px;background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:9px;text-align:center"><div style="font-size:19px">'+x[0]+'</div><b>'+x[2]+'</b><div style="font-size:11px;color:var(--mu)">'+x[1]+'</div></div>'}).join('')} 
+function drawList(){drawAdminStats();var term=$('adminQ')?$('adminQ').value.trim().toLowerCase():'';$('lst').innerHTML=ITEMS.map(function(o,k){return {o:o,k:k}}).filter(function(x){return !term||[x.o.n,x.o.a,x.o.c,(x.o.genres||[]).join(' ')].join(' ').toLowerCase().indexOf(term)>-1}).map(function(x){var o=x.o,k=x.k,t=TABS.filter(function(x){return x.id==o.c})[0]||{ar:o.c};return '<div class="li"><span>'+esc(o.a||o.n)+' · '+esc(t.ar)+(o.archived?' · (مؤرشفة)':'')+'</span><button class="btn g" onclick="editItem('+k+')">تعديل</button><button class="btn '+(o.archived?'g':'d')+'" onclick="archiveItem('+k+')">'+(o.archived?'استرجاع':'أرشفة')+'</button></div>'}).join('')||'<div style="font-size:13px;color:var(--mu)">لا توجد نتائج</div>';drawCategoryList()}
+function drawAdminStats(){var el=$('adstats');if(!el)return;var total=Object.keys(counts||{}).reduce(function(n,k){return n+(+counts[k]||0)},0),ratings=Object.keys(STATS||{}).reduce(function(n,k){return n+((STATS[k]&&+STATS[k].n)||0)},0),likes=Object.keys(STATS||{}).reduce(function(n,k){return n+((STATS[k]&&+STATS[k].l)||0)},0);el.innerHTML=[['🎮','الألعاب',ITEMS.filter(function(x){return !x.archived}).length],['🗄️','المؤرشفة',ITEMS.filter(function(x){return !!x.archived}).length],['⬇️','التحميلات',total],['⭐','التقييمات',ratings],['👍','الإعجابات',likes]].map(function(x){return '<div style="flex:1;min-width:105px;background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:9px;text-align:center"><div style="font-size:19px">'+x[0]+'</div><b>'+x[2]+'</b><div style="font-size:11px;color:var(--mu)">'+x[1]+'</div></div>'}).join('')} 
 $('fi').onchange=function(){var f=this.files[0];if(!f)return;var r=new FileReader();r.onload=function(){var m=new Image();m.onload=function(){var k=Math.min(1,720/Math.max(m.width,m.height)),c=document.createElement('canvas');c.width=Math.round(m.width*k);c.height=Math.round(m.height*k);c.getContext('2d').drawImage(m,0,0,c.width,c.height);img=c.toDataURL('image/jpeg',.78);c.toBlob(function(b){imgBlob=b},'image/jpeg',.78);toast('تم تجهيز الصورة ✅')};m.src=r.result};r.readAsDataURL(f)};
 function exportSite(pub){
  var b='var ITEMS=[\n'+ITEMS.map(function(i){return JSON.stringify(i).replace(/</g,'\\u003c')}).join(',\n')+'\n];';
@@ -307,12 +322,13 @@ function exportSite(pub){
  function fb(){try{var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([h],{type:'text/html'}));a.download=pub?'index.html':'index-admin.html';document.body.appendChild(a);a.click();a.remove();toast('تم التصدير ✅')}catch(e){try{navigator.clipboard.writeText(h);toast('تم نسخ الكود')}catch(e2){toast('تعذر التصدير')}}}
  if(window.claude&&claude.use){claude.use('downloads').then(function(d){if(!d)return fb();return d.save({filename:pub?'index.html':'index-admin.html',data:h}).then(function(){toast('تم التصدير ✅')},function(e){if(e&&e.code=='declined')toast('ألغيت');else fb()})},fb)}else fb()}
 $('logo').onclick=function(){var n=Date.now();if(n-tp>3000)taps=0;tp=n;taps++;if(taps>=5){taps=0;openAdm()}};
-$('fc').innerHTML=TABS.filter(function(x){return ['all','fav','new','top','recent'].indexOf(x.id)<0}).map(function(x){return '<option value="'+x.id+'">'+x.ar+'</option>'}).join('');
+function refreshCategorySelect(){var active=TABS.filter(function(x){return ['all','fav','new','top','recent'].indexOf(x.id)<0});$('fc').innerHTML=active.map(function(x){return '<option value="'+esc(x.id)+'">'+esc(x.ar)+'</option>'}).join('')}
+refreshCategorySelect();
 var DT={ar:{g:'تحميل',u:'التحديث / التعريب',a:'الإضافة',a2:'الإضافة الثانية',sv:'ملف الحفظ',lc:'ملف الترخيص',nt:'ملاحظة',r:'مراجعة اللعبة',p:'كلمة السر',cp:'نسخ',sz:'الحجم'},en:{g:'Download',u:'Update / Translation',a:'Add-on',a2:'Add-on 2',sv:'Save file',lc:'License file',nt:'Note',r:'Review',p:'Password',cp:'Copy',sz:'Size'}};
 function lnk(k,f,u,t,g){if(!u||u=='#')return '';var c='btn'+(g?' g':''),s='style="text-align:center;text-decoration:none"';return f=='rv'?'<a class="'+c+'" target="_blank" rel="noopener" href="'+esc(u)+'" '+s+'>'+t+'</a>':'<a class="'+c+'" href="#" onclick="return cd('+k+',\''+f+'\')" '+s+'>'+t+'</a>'}
 var detHistoryOpen=false;
 function showDet(k){var o=ITEMS[k],D=DT[lang],c=COL[o.c]||COL.app,nm=esc(lang=='ar'?o.a:o.n);
- $('dbox').innerHTML='<h3><span>'+nm+'</span><button class="btn g" onclick="closeDet()">✕</button></h3><div class="cover dcv" style="border-radius:12px;background:'+(o.img?'#000 url('+o.img+') center/cover no-repeat':'linear-gradient(135deg,'+c[0]+','+c[1]+')')+'">'+(o.img?'':'<strong>'+nm+'</strong>')+'</div>'+(o.d?'<p style="margin:0;color:var(--mu);font-size:14px;white-space:pre-wrap">'+esc(o.d)+'</p>':'')+[[D.sz,o.s],[lang=='ar'?'رقم النسخة':'Version ID',o.cn],[lang=='ar'?'سنة الإصدار':'Release year',o.yr],[lang=='ar'?'إصدار اللعبة':'Game version',o.gv],[lang=='ar'?'المنطقة':'Region',o.rg],[lang=='ar'?'صيغة اللعبة':'Format',o.fm],[lang=='ar'?'متطلبات التشغيل':'Requirements',o.rq],[lang=='ar'?'التحميلات':'Downloads',String(counts[ckey(o.n)]||0)]].map(function(r){return r[1]?'<div style="font-size:13px;color:var(--mu)">'+r[0]+': <span dir="auto">'+esc(r[1])+'</span></div>':''}).join('')+lnk(k,'u',o.u,D.g)+(o.links||[]).map(function(l,i){return l&&l.u?lnk(k,'L'+i,l.u,esc(l.t||D.g)):''}).join('')+(o.dp?'<div class="r2"><input id="ps4ip" dir="ltr" inputmode="decimal" placeholder="PS4 IP  192.168.x.x" value="'+esc(ps4ip())+'"><button class="btn" style="white-space:nowrap" onclick="sendPs4('+k+')">'+(lang=='ar'?'إرسال للبلايستيشن':'Send to PS4')+'</button></div>':'')+lnk(k,'up',o.up,D.u,1)+lnk(k,'ad',o.ad,D.a,1)+lnk(k,'ad2',o.ad2,D.a2,1)+lnk(k,'sv',o.sv,D.sv,1)+lnk(k,'lc',o.lc,D.lc,1)+lnk(k,'rv',o.rv,D.r,1)+(o.nt?'<div style="font-size:13px;color:var(--mu);white-space:pre-wrap">'+D.nt+': '+esc(o.nt)+'</div>':'')+(o.pw?'<div style="font-size:13px;color:var(--mu)">'+D.p+'</div><div class="r2"><input readonly dir="ltr" value="'+esc(o.pw)+'"><button class="btn g" onclick="copyPw('+k+')">'+D.cp+'</button></div>':'')+'<div id="soc"></div>';
+ $('dbox').innerHTML='<h3><span>'+nm+'</span><button class="btn g" onclick="closeDet()">✕</button></h3><div class="cover dcv" style="border-radius:12px;background:'+(o.img?'#000 url('+o.img+') center/cover no-repeat':'linear-gradient(135deg,'+c[0]+','+c[1]+')')+'">'+(o.img?'':'<strong>'+nm+'</strong>')+'</div>'+(o.d?'<p style="margin:0;color:var(--mu);font-size:14px;white-space:pre-wrap">'+esc(o.d)+'</p>':'')+(o.genres&&o.genres.length?'<div style="font-size:13px;color:var(--mu)">'+(lang=='ar'?'النوع':'Genres')+': '+esc(o.genres.join('، '))+'</div>':'')+(o.mode?'<div style="font-size:13px;color:var(--mu)">'+(lang=='ar'?'اللعب':'Play mode')+': '+esc(o.mode=='single'?'فردي':o.mode=='multi'?'جماعي':'فردي وجماعي')+'</div>':'')+(o.network?'<div style="font-size:13px;color:var(--mu)">'+(lang=='ar'?'الاتصال':'Network')+': '+esc(o.network)+'</div>':'')+(o.featured?'<div style="font-size:13px;color:#f59e0b">★ '+(lang=='ar'?'لعبة مميزة':'Featured')+'</div>':'')+[[D.sz,o.s],[lang=='ar'?'رقم النسخة':'Version ID',o.cn],[lang=='ar'?'سنة الإصدار':'Release year',o.yr],[lang=='ar'?'إصدار اللعبة':'Game version',o.gv],[lang=='ar'?'المنطقة':'Region',o.rg],[lang=='ar'?'صيغة اللعبة':'Format',o.fm],[lang=='ar'?'متطلبات التشغيل':'Requirements',o.rq],[lang=='ar'?'التحميلات':'Downloads',String(counts[ckey(o.n)]||0)]].map(function(r){return r[1]?'<div style="font-size:13px;color:var(--mu)">'+r[0]+': <span dir="auto">'+esc(r[1])+'</span></div>':''}).join('')+lnk(k,'u',o.u,D.g)+(o.links||[]).map(function(l,i){return l&&l.u?lnk(k,'L'+i,l.u,esc(l.t||D.g)):''}).join('')+(o.dp?'<div class="r2"><input id="ps4ip" dir="ltr" inputmode="decimal" placeholder="PS4 IP  192.168.x.x" value="'+esc(ps4ip())+'"><button class="btn" style="white-space:nowrap" onclick="sendPs4('+k+')">'+(lang=='ar'?'إرسال للبلايستيشن':'Send to PS4')+'</button></div>':'')+lnk(k,'up',o.up,D.u,1)+lnk(k,'ad',o.ad,D.a,1)+lnk(k,'ad2',o.ad2,D.a2,1)+lnk(k,'sv',o.sv,D.sv,1)+lnk(k,'lc',o.lc,D.lc,1)+lnk(k,'rv',o.rv,D.r,1)+(o.nt?'<div style="font-size:13px;color:var(--mu);white-space:pre-wrap">'+D.nt+': '+esc(o.nt)+'</div>':'')+(o.pw?'<div style="font-size:13px;color:var(--mu)">'+D.p+'</div><div class="r2"><input readonly dir="ltr" value="'+esc(o.pw)+'"><button class="btn g" onclick="copyPw('+k+')">'+D.cp+'</button></div>':'')+'<div id="soc"></div>';
  rememberGame(o.n);curK=k;var det=$('det');
  if(!det.classList.contains('on')){
   det.classList.add('on');
@@ -347,7 +363,7 @@ function closeCd(){clearInterval(cdTimer);$('cdw').classList.remove('on')}
 var counts={},cdKey='',cdHit=false;
 try{var fz=localStorage.getItem('zfb');if(fz&&!PUBLIC)FB_URL=fz}catch(e){}
 function ckey(n){return String(n).replace(/[.$#\[\]\/]/g,'_')}
-function cnt(i){return '<span class="cn">⬇ '+(counts[ckey(i.n)]||0)+'</span>'}
+function cnt(i){return ''} // عداد التحميلات مخفي على صورة اللعبة؛ يبقى ظاهراً داخل التفاصيل
 function loadCounts(){fetch(FB_URL?FB_URL+'/counts.json':'/api/downloads',{cache:'no-store'}).then(function(r){return r.json()}).then(function(d){counts=d||{};render();drawAdminStats()}).catch(function(){})}
 function hit(n){var k=ckey(n);counts[k]=(counts[k]||0)+1;render();if(!FB_URL){fetch('/api/downloads',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({key:k})}).catch(function(){});return}fetch(FB_URL+'/counts/'+encodeURIComponent(k)+'.json',{method:'PUT',body:JSON.stringify({'.sv':{increment:1}})}).catch(function(){})}
 function saveFb(){var v=$('ffb').value.trim().replace(/\/+$/,'');if(v&&!/^https:\/\//i.test(v))return toast('الرابط لازم يبدأ بـ https://');FB_URL=v;try{localStorage.setItem('zfb',v)}catch(e){}counts={};loadCounts();render();toast('تم ✅')}
@@ -364,6 +380,13 @@ function curPg(){var h=(location.hash||'').slice(1);return PGS[h]?h:''}
 function pageUI(){var h=curPg();$('main').style.display=h?'none':'';$('tabs').style.display=h?'none':'';$('page').style.display=h?'block':'none';if(h){$('page').innerHTML=PGS[h]();document.title=PG[h][lang]+' | ZERO'}else document.title='ZE – ZERO | زيرو';var t=lang=='ar'?'إعلان':'Advertisement';$('ad-top').dataset.l=t;$('ad-bot').dataset.l=t;document.body.classList.toggle('ads',ADS&&!isPrem())}
 function footUI(){$('fnav').innerHTML=['home','about','privacy','contact'].map(function(k){return '<a href="#'+k+'">'+PG[k][lang]+'</a>'}).join('')}
 window.addEventListener('hashchange',function(){render();window.scrollTo(0,0);openFromHash()});
+/* ===== Dynamic categories ===== */
+function catHeaders(tok){return {apikey:SB_KEY,Authorization:'Bearer '+(tok||SB_KEY),'Content-Type':'application/json','Prefer':'return=representation'}}
+function loadCategories(){if(!SB_URL)return;fetch(SB_URL+'/rest/v1/site_categories?select=slug,name_ar,name_en,color,sort_order,is_active&order=sort_order.asc',{headers:sbH()}).then(function(r){if(!r.ok)throw 0;return r.json()}).then(function(rows){CAT_ROWS=rows||[];TABS=BASE_TABS.concat(CAT_ROWS.filter(function(x){return x.is_active}).map(function(x){return {id:x.slug,ar:x.name_ar,en:x.name_en}}));CAT_ROWS.forEach(function(x){if(x.color)COL[x.slug]=[x.color,'#17112b']});refreshCategorySelect();render();if(isAdm())drawCategoryList()}).catch(function(){/* Keep built-in tabs if category table has not been installed yet. */})}
+function drawCategoryList(){var el=$('catList');if(!el)return;el.innerHTML=CAT_ROWS.map(function(c){return '<div class="li"><span>'+esc(c.name_ar)+' · '+esc(c.slug)+(c.is_active?'':' · مؤرشف')+'</span><button class="btn g" onclick="editCategory(\''+esc(c.slug)+'\')">تعديل</button><button class="btn '+(c.is_active?'d':'g')+'" onclick="toggleCategory(\''+esc(c.slug)+'\','+(!c.is_active)+')">'+(c.is_active?'أرشفة':'استرجاع')+'</button></div>'}).join('')||'<small style="color:var(--mu)">شغّل كود إعداد الأقسام في Supabase أولاً</small>'}
+function editCategory(id){var c=CAT_ROWS.filter(function(x){return x.slug===id})[0];if(!c)return;$('catId').value=c.slug;$('catAr').value=c.name_ar;$('catEn').value=c.name_en;$('catOrder').value=c.sort_order||50}
+function saveCategory(){var id=$('catId').value.trim().toLowerCase(),ar=$('catAr').value.trim(),en=$('catEn').value.trim(),ord=parseInt($('catOrder').value,10)||50;if(!/^[a-z0-9_-]{2,32}$/.test(id)||['all','fav','new','top','recent'].indexOf(id)>-1||!ar||!en)return toast('اكتب معرّفاً صالحاً واسم القسم باللغتين');if(!SB_URL)return toast('يلزم ربط قاعدة البيانات');sbTok().then(function(tok){return fetch(SB_URL+'/rest/v1/site_categories?on_conflict=slug',{method:'POST',headers:Object.assign(catHeaders(tok),{'Prefer':'resolution=merge-duplicates,return=representation'}),body:JSON.stringify({slug:id,name_ar:ar,name_en:en,sort_order:ord,is_active:true})})}).then(function(r){if(!r.ok)return r.text().then(function(t){throw t});$('catId').value=$('catAr').value=$('catEn').value='';loadCategories();toast('تم حفظ القسم')}).catch(function(e){toast('فشل حفظ القسم: '+String(e).slice(0,100))})}
+function toggleCategory(id,active){var c=CAT_ROWS.filter(function(x){return x.slug===id})[0];if(!c)return;sbTok().then(function(tok){return fetch(SB_URL+'/rest/v1/site_categories?slug=eq.'+encodeURIComponent(id),{method:'PATCH',headers:catHeaders(tok),body:JSON.stringify({is_active:active})})}).then(function(r){if(!r.ok)throw 0;loadCategories();toast(active?'تم استرجاع القسم':'تمت أرشفة القسم')}).catch(function(){toast('فشل تحديث القسم')})}
 /* ===== Supabase ===== */
 function d2b(u){var p=u.split(','),m=p[0].match(/:(.*?);/)[1],b=atob(p[1]),n=b.length,a=new Uint8Array(n);while(n--)a[n]=b.charCodeAt(n);return new Blob([a],{type:m})}
 function sess(){try{var s=JSON.parse(localStorage.getItem('zsb')||'null');return s&&s.r?s:null}catch(e){return null}}
@@ -397,7 +420,7 @@ function sbSave(o,id){
 }
 function sbDel(id){sbTok().then(function(tok){return fetch(SB_URL+'/rest/v1/items?id=eq.'+id,{method:'DELETE',headers:sbH(tok)})}).then(function(r){if(!r.ok)throw 0;resetForm();sbLoad();toast('تم الحذف')}).catch(function(){toast('فشل الحذف')})}
 function sbMigrate(){var seed=JSON.parse(ORIG).filter(function(o){return o&&o.n});if(!seed.length)return toast('لا توجد ملفات للنقل');sbTok().then(function(tok){var rows=[],ch=Promise.resolve();seed.forEach(function(o,i){ch=ch.then(function(){if(o.img&&o.img.indexOf('data:')==0){var nm=Date.now()+'-'+i+'.jpg',h=sbH(tok);h['Content-Type']='image/jpeg';return fetch(SB_URL+'/storage/v1/object/covers/'+nm,{method:'POST',headers:h,body:d2b(o.img)}).then(function(r){if(r.ok)o.img=SB_URL+'/storage/v1/object/public/covers/'+nm;else delete o.img})}}).then(function(){delete o._id;rows.push({data:o})})});return ch.then(function(){return fetch(SB_URL+'/rest/v1/items',{method:'POST',headers:sbH(tok),body:JSON.stringify(rows.reverse())})})}).then(function(r){if(!r.ok)throw 0;sbLoad();toast('تم نقل '+seed.length+' ملف ✅')}).catch(function(){toast('فشل النقل')})}
-LOADING=!!SB_URL;if(SB_URL){ITEMS=[];sbLoad()}
+LOADING=!!SB_URL;if(SB_URL){ITEMS=[];sbLoad();loadCategories()}
 function subUI(){var b=$('subbox'),a=lang=='ar';b.classList.toggle('on',!!FB_URL);$('subt').textContent=a?'اشترك ليوصلك كل جديد من الملفات':'Subscribe to get new files';$('sbtn').textContent=a?'اشترك':'Subscribe';$('sem').placeholder=a?'بريدك الإلكتروني':'Your email'}
 function subscribe(){var e=$('sem').value.trim().toLowerCase(),a=lang=='ar';
  if(!FB_URL||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)||e.length>120)return toast(a?'اكتب بريد صحيح':'Enter a valid email');
