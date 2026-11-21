@@ -1,4 +1,5 @@
- <!DOCTYPE html>
+ <!DOCTYPE 
+
 <html lang="ar" dir="rtl">
 <head><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9854046049264898"
      crossorigin="anonymous"></script>
@@ -7,7 +8,8 @@
 <title>Zero | زيرو</title>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0b0e14;--bar:#10141c;--card:#141923;--bd:#1f2633;--tx:#e8ecf3;--mu:#8590a3;--ac:#3b82f6;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+:root{--bg:#0a0612;--bar:#110a1c;--card:#170f26;--bd:#2a1d40;--tx:#f3ecfb;--mu:#9a8fb0;--ac:#d946ef;--grad:linear-gradient(135deg,#ec4899,#a855f7 55%,#f97316);color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+[data-theme=light]{--bg:#f6f3fa;--bar:#ffffff;--card:#ffffff;--bd:#e3dcee;--tx:#1b1325;--mu:#6b6080;--ac:#c026d3;color-scheme:light}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--tx);font-family:'Cairo',system-ui,sans-serif}
 button,select{font:inherit;cursor:pointer;color:var(--tx)}
@@ -29,13 +31,13 @@ select{background:var(--card);border:1px solid var(--bd);border-radius:8px;paddi
 @media(min-width:700px){.grid{grid-template-columns:repeat(3,1fr)}}
 .card{background:var(--card);border:1px solid var(--bd);border-radius:12px;overflow:hidden}
 .cover{position:relative;aspect-ratio:16/10;display:flex;align-items:center;justify-content:center;text-align:center;padding:10px}
-.cover strong{font-size:clamp(18px,3.4vw,28px);font-weight:800;line-height:1.2;text-shadow:0 3px 12px rgba(0,0,0,.7)}
-.pl{position:absolute;top:8px;inset-inline-start:8px;background:rgba(0,0,0,.55);border-radius:6px;padding:1px 8px;font-size:11px}
-.fav{position:absolute;top:6px;inset-inline-end:6px;background:rgba(0,0,0,.55);border:0;border-radius:50%;width:28px;height:28px;font-size:14px;line-height:28px;padding:0}
+.cover strong{font-size:clamp(18px,3.4vw,28px);font-weight:800;line-height:1.2;text-shadow:0 3px 12px rgba(0,0,0,.7);color:#fff}
+.pl{position:absolute;top:8px;inset-inline-start:8px;background:rgba(0,0,0,.55);border-radius:6px;padding:1px 8px;font-size:11px;color:#fff}
+.fav{position:absolute;top:6px;inset-inline-end:6px;background:rgba(0,0,0,.55);border:0;border-radius:50%;width:28px;height:28px;font-size:14px;line-height:28px;padding:0;color:#fff}
 .fav.on{color:#ff5470}
 .info{padding:10px 12px;display:flex;justify-content:space-between;align-items:center;gap:8px}
 .info b{font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;direction:ltr}
-.dl{flex:none;text-decoration:none;background:var(--ac);color:#fff;border-radius:8px;padding:4px 12px;font-size:12px}
+.dl{flex:none;text-decoration:none;background:var(--grad);color:#fff;border-radius:8px;padding:4px 12px;font-size:12px}
 .empty{grid-column:1/-1;color:var(--mu);text-align:center;padding:50px 0}
 footer{color:var(--mu);font-size:12px;text-align:center;padding:10px}
 #splash{position:fixed;inset:0;z-index:100;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;transition:opacity .6s;cursor:pointer}
@@ -48,10 +50,13 @@ footer{color:var(--mu);font-size:12px;text-align:center;padding:10px}
 .logo{display:flex;align-items:center;gap:10px;flex:1;font-size:26px}
 .top{flex-wrap:wrap}
 .search{flex:1 1 100%;order:3}
-.wmb{background:#ef4444;color:#0b0e14;border-radius:8px;padding:0 10px;letter-spacing:2px;font-weight:800}
-.tab{color:var(--tc,#8590a3);border-color:var(--tc,#1f2633);background:color-mix(in srgb,var(--tc,#141923) 12%,#10141c)}
+.wmb{background:var(--grad);color:#fff;border-radius:8px;padding:0 10px;letter-spacing:2px;font-weight:800}
+.tab{color:var(--tc,#9a8fb0);border-color:var(--tc,#2a1d40);background:color-mix(in srgb,var(--tc,#170f26) 12%,var(--bar))}
 .tab.on{background:var(--tc);color:#0b0e14;border-color:var(--tc)}
-.bolt{transform-origin:60px 60px;animation:pop .7s ease both;filter:drop-shadow(0 0 10px rgba(239,68,68,.7))}
+[data-theme=light] .tab:not(.on){color:color-mix(in srgb,var(--tc,#6b6080) 65%,#000)}
+.lgo{position:relative;display:inline-block;flex:none}
+.lgo svg,.lgo img{position:absolute;inset:0;width:100%;height:100%;border-radius:50%;object-fit:cover}
+.bolt{animation:pop .7s ease both;filter:drop-shadow(0 0 16px rgba(217,70,239,.7))}
 @keyframes pop{0%{opacity:0;transform:scale(.4) rotate(-12deg)}60%{transform:scale(1.15)}100%{opacity:1;transform:none}}
 .gear{display:none;background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:6px 10px}
 .adm .gear{display:block}
@@ -61,9 +66,9 @@ footer{color:var(--mu);font-size:12px;text-align:center;padding:10px}
 .pn h3{margin:0;display:flex;justify-content:space-between;align-items:center;font-size:17px}
 .pn input,.pn select{width:100%;background:var(--bg);border:1px solid var(--bd);border-radius:10px;padding:9px 12px;color:var(--tx);font:inherit;font-size:14px}
 .r2{display:flex;gap:8px;align-items:center}
-.btn{background:#ef4444;border:0;border-radius:10px;padding:9px 14px;color:#fff;font-size:14px}
-.btn.g{background:var(--card);border:1px solid var(--bd)}
-.btn.d{background:#7f1d1d}
+.btn{background:var(--grad);border:0;border-radius:10px;padding:9px 14px;color:#fff;font-size:14px}
+.btn.g{background:var(--card);border:1px solid var(--bd);color:var(--tx)}
+.btn.d{background:#7f1d1d;color:#fff}
 .li{display:flex;align-items:center;gap:8px;border:1px solid var(--bd);border-radius:10px;padding:6px 10px;font-size:13px}
 .li span{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .li button{padding:4px 10px;font-size:12px}
@@ -73,8 +78,8 @@ footer{color:var(--mu);font-size:12px;text-align:center;padding:10px}
 #det .pn{max-height:calc(100vh - 32px);max-height:calc(100dvh - 32px);overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
 #cdw{position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;padding:16px}
 #cdw.on{display:flex}
-.cn{position:absolute;bottom:8px;inset-inline-start:8px;background:rgba(0,0,0,.6);border-radius:6px;padding:1px 8px;font-size:12px}
-.cdn{font-size:64px;font-weight:800;color:#ef4444;line-height:1}
+.cn{position:absolute;bottom:8px;inset-inline-start:8px;background:rgba(0,0,0,.6);border-radius:6px;padding:1px 8px;font-size:12px;color:#fff}
+.cdn{font-size:64px;font-weight:800;color:#ec4899;line-height:1}
 .subbox{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:14px;margin-top:18px;display:none}
 .subbox.on{display:block}
 .subbox p{margin:0 0 10px;font-size:14px}
@@ -84,23 +89,29 @@ footer{color:var(--mu);font-size:12px;text-align:center;padding:10px}
 #ad-bot{margin-top:28px}
 .pg{max-width:760px;margin:0 auto;padding:6px 14px 20px;line-height:1.9;font-size:15px}
 .pg h2{font-size:24px;margin:10px 0 14px}
-.pg h3{font-size:16px;margin:22px 0 4px;color:#fff}
-.pg p,.pg li{color:#c5ccd8;margin:6px 0}
+.pg h3{font-size:16px;margin:22px 0 4px;color:var(--tx)}
+.pg p,.pg li{color:var(--mu);margin:6px 0}
 .pg ul{padding-inline-start:22px;margin:6px 0}
-.pg a:not(.btn){color:#f87171}
+.pg a:not(.btn){color:#ec4899}
 .back{display:inline-block;color:var(--mu);text-decoration:none;font-size:13px;margin-top:6px}
 footer{max-width:1100px;margin:0 auto}
 #fnav{display:flex;gap:18px;justify-content:center;flex-wrap:wrap;padding:18px 0 12px;border-top:1px solid var(--bd);margin:0 14px 6px}
 #fnav a{color:var(--tx);text-decoration:none;font-size:13px;opacity:.85}
-#fnav a:hover{color:#ef4444;opacity:1}
+#fnav a:hover{color:#ec4899;opacity:1}
 .subbox input{flex:1;min-width:0;background:var(--bg);border:1px solid var(--bd);border-radius:10px;padding:9px 12px;color:var(--tx);font:inherit;font-size:14px}
 .toast{position:fixed;bottom:24px;inset-inline:0;margin:auto;width:max-content;max-width:90%;background:#22c55e;color:#04210f;border-radius:10px;padding:8px 16px;z-index:120;display:none;font-size:14px}
+#tg{position:fixed;inset-inline:12px;bottom:12px;z-index:70;max-width:440px;margin:0 auto;background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:12px 14px;display:none;align-items:center;gap:10px;box-shadow:0 8px 30px rgba(0,0,0,.35)}
+#tg.on{display:flex}
+#tg .t{flex:1;font-size:13px;line-height:1.6}
+#tg a.btn{text-decoration:none;white-space:nowrap;font-size:13px;padding:7px 14px}
+#tg button{padding:6px 10px;font-size:13px}
 </style>
 </head> 
 <body>
-<div id="splash"><svg viewBox="0 0 120 120" width="120" height="120"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f87171"/><stop offset="1" stop-color="#b91c1c"/></linearGradient></defs><path class="bolt" d="M70 6 24 68h30l-10 46 52-68H64z" fill="url(#g)" stroke="url(#g)" stroke-width="4" stroke-linejoin="round"/></svg><div class="wm"><span class="wmb">ZERO</span></div><div class="wm2">زيرو</div></div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><linearGradient id="gz" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d946ef"/><stop offset=".35" stop-color="#ec4899"/><stop offset=".7" stop-color="#f97316"/><stop offset="1" stop-color="#fbbf24"/></linearGradient></defs></svg>
+<div id="splash"><span class="lgo bolt" style="width:150px;height:150px"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="#000"/><text x="50" y="62" text-anchor="middle" font-family="Arial Black,Impact,sans-serif" font-weight="900" font-size="46" fill="url(#gz)" stroke="#f5d0fe" stroke-width="1">ZE</text></svg><img src="logo.png" alt="ZE" onerror="this.style.display='none'"></span><div class="wm"><span class="wmb">ZERO</span></div><div class="wm2">زيرو</div></div>
 <div class="top">
-<div class="logo" id="logo"><svg viewBox="0 0 120 120" width="36" height="36"><defs><linearGradient id="g2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f87171"/><stop offset="1" stop-color="#b91c1c"/></linearGradient></defs><path d="M70 6 24 68h30l-10 46 52-68H64z" fill="url(#g2)" stroke="url(#g2)" stroke-width="4" stroke-linejoin="round"/></svg><span class="wmb">ZERO</span></div><button class="gear" id="gear" onclick="openAdm()">⚙️</button><button class="lang" id="lang"></button>
+<div class="logo" id="logo"><span class="lgo" style="width:40px;height:40px"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="#000"/><text x="50" y="62" text-anchor="middle" font-family="Arial Black,Impact,sans-serif" font-weight="900" font-size="46" fill="url(#gz)" stroke="#f5d0fe" stroke-width="1">ZE</text></svg><img src="logo.png" alt="ZE" onerror="this.style.display='none'"></span><span class="wmb">ZERO</span></div><button class="gear" id="gear" onclick="openAdm()">⚙️</button><button class="lang" id="thm" aria-label="theme"></button><button class="lang" id="lang"></button>
 <input class="search" id="q" type="search">
 </div>
 <div class="tabs" id="tabs"></div>
@@ -116,6 +127,7 @@ footer{max-width:1100px;margin:0 auto}
 <div class="pg" id="page" style="display:none"></div>
 <div class="adslot" id="ad-bot"><!-- كود الإعلان هنا / ad code here --></div>
 <footer id="foot"><nav id="fnav"></nav><div id="fcp"></div></footer>
+<div id="tg"><span class="t" id="tgt"></span><a class="btn" id="tgb" target="_blank" rel="noopener" href="https://t.me/zerop3"></a><button class="btn g" onclick="closeTg()">✕</button></div>
 <div id="adm"><div class="pn">
 <h3><span>⚙️ إدارة الملفات</span><button class="btn g" onclick="closeAdm()">✕</button></h3>
 <div id="lg" style="display:none;flex-direction:column;gap:10px"><input id="lem" type="email" dir="ltr" placeholder="البريد الإلكتروني" style="display:none"><input id="pw" type="password" placeholder="كلمة السر"><button class="btn" onclick="login()">دخول</button></div>
@@ -185,10 +197,17 @@ var T={ar:{s:'ابحث عن لعبة...',t:'أحدث الملفات',none:'لا 
 var lang='ar',tab='all',sub='all',q='',favs={};
 try{lang=localStorage.getItem('zl')||'ar';favs=JSON.parse(localStorage.getItem('zf')||'{}')}catch(e){}
 function $(i){return document.getElementById(i)}
+/* ===== الثيم + إشعار تلغرام / Theme + Telegram notice ===== */
+var th='dark';try{th=localStorage.getItem('zt')||'dark'}catch(e){}
+function thUI(){document.documentElement.setAttribute('data-theme',th);$('thm').textContent=th=='dark'?'☀️':'🌙'}
+$('thm').onclick=function(){th=th=='dark'?'light':'dark';try{localStorage.setItem('zt',th)}catch(e){}thUI()};
+function tgUI(){var a=lang=='ar';$('tgt').textContent=a?'📢 تابع قناتنا على تلغرام لآخر الألعاب والتحديثات':'📢 Join our Telegram channel for the latest games & updates';$('tgb').textContent=a?'انضم':'Join'}
+function closeTg(){$('tg').classList.remove('on');try{localStorage.setItem('ztg',Date.now())}catch(e){}}
+setTimeout(function(){var t=0;try{t=+localStorage.getItem('ztg')||0}catch(e){}if(Date.now()-t>3*864e5)$('tg').classList.add('on')},3500);
 function render(){
  var d=document.documentElement;d.lang=lang;d.dir=lang=='ar'?'rtl':'ltr';
  var L=T[lang];
- $('lang').textContent=L.sw;$('q').placeholder=L.s;$('ttl').textContent=L.t;$('fcp').textContent=L.f;footUI();pageUI();
+ $('lang').textContent=L.sw;$('q').placeholder=L.s;$('ttl').textContent=L.t;$('fcp').textContent=L.f;footUI();pageUI();thUI();tgUI();
  $('tabs').innerHTML=TABS.map(function(x){return '<button class="tab'+(x.id==tab?' on':'')+'" style="--tc:'+TC[x.id]+'" onclick="setTab(\''+x.id+'\')">'+x[lang]+'</button>'}).join('');
  $('sel').innerHTML=SEL.map(function(x){return '<option value="'+x.id+'"'+(x.id==sub?' selected':'')+'>'+x[lang]+'</option>'}).join('');
  var out=ITEMS.filter(function(i){
