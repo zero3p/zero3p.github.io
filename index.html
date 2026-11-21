@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+  <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9854046049264898"
      crossorigin="anonymous"></script>
@@ -356,7 +356,29 @@ function sbH(t){return {apikey:SB_KEY,Authorization:'Bearer '+(t||SB_KEY),'Conte
 function sbTok(){var s=sess();if(!s)return Promise.reject('no');if(s.e-Date.now()>60000)return Promise.resolve(s.a);return fetch(SB_URL+'/auth/v1/token?grant_type=refresh_token',{method:'POST',headers:sbH(),body:JSON.stringify({refresh_token:s.r})}).then(function(r){if(!r.ok)throw 'exp';return r.json()}).then(function(d){setSess(d);return d.access_token})}
 function sbLoad(){if(!SB_URL)return;fetch(SB_URL+'/rest/v1/items?select=id,data&order=id.desc',{headers:sbH()}).then(function(r){if(!r.ok)throw 0;return r.json()}).then(function(rows){ITEMS=rows.map(function(x){var o=x.data||{};o._id=x.id;return o});LOADING=false;render();if(isAdm())drawList();openFromHash()}).catch(function(){LOADING=false;try{var z=JSON.parse(localStorage.getItem('zi')||'null');ITEMS=(z&&z.length)?z:JSON.parse(ORIG)}catch(e){ITEMS=JSON.parse(ORIG)}render();toast('تعذر الاتصال بقاعدة البيانات')})}
 function sbLogin(){var e=$('lem').value.trim(),p=$('pw').value;fetch(SB_URL+'/auth/v1/token?grant_type=password',{method:'POST',headers:sbH(),body:JSON.stringify({email:e,password:p})}).then(function(r){if(!r.ok)throw 0;return r.json()}).then(function(d){setSess(d);$('pw').value='';applyAdm();openAdm()}).catch(function(){toast('البريد أو كلمة السر غلط')})}
-function sbSave(o,id){var nm='';return sbTok().then(function(tok){var p=Promise.resolve();if(imgBlob){nm=Date.now()+'-'+Math.random().toString(36).slice(2,8)+'.jpg';var h=sbH(tok);h['Content-Type']='image/jpeg';p=fetch(SB_URL+'/storage/v1/object/covers/'+nm,{method:'POST',headers:h,body:imgBlob}).then(function(r){if(!r.ok)throw 'img';o.img=SB_URL+'/storage/v1/object/public/covers/'+nm})}return p.then(function(){return fetch(SB_URL+'/rest/v1/items'+(id?'?id=eq.'+id:''),{method:id?'PATCH':'POST',headers:sbH(tok),body:JSON.stringify({data:o})})}).then(function(r){if(!r.ok)throw 'db';resetForm();sbLoad();toast('تم الحفظ في قاعدة البيانات ✅')})}).catch(function(e){toast(e=='img'?'فشل رفع الصورة':e=='db'?'فشل الحفظ (تحقق من الصلاحيات)':'سجّل الدخول من جديد');if(e=='exp'||e=='no'){setSess(null);applyAdm()}})}
+function sbErrText(t){try{var j=JSON.parse(t);return j.message||j.error_description||j.error||j.msg||t}catch(e){return t||'لا توجد تفاصيل من الخادم'}}
+function sbSave(o,id){
+ var nm='';
+ if(img&&!imgBlob)return toast('الصورة بعدها قيد التجهيز، انتظر لحظة ثم اضغط حفظ مرة ثانية');
+ return sbTok().then(function(tok){
+  var p=Promise.resolve();
+  if(imgBlob){
+   nm=Date.now()+'-'+Math.random().toString(36).slice(2,8)+'.jpg';
+   var h=sbH(tok);h['Content-Type']='image/jpeg';h['x-upsert']='false';
+   p=fetch(SB_URL+'/storage/v1/object/covers/'+nm,{method:'POST',headers:h,body:imgBlob}).then(function(r){
+    if(!r.ok)return r.text().then(function(t){throw {kind:'img',status:r.status,detail:sbErrText(t)}});
+    o.img=SB_URL+'/storage/v1/object/public/covers/'+nm;
+   });
+  }
+  return p.then(function(){return fetch(SB_URL+'/rest/v1/items'+(id?'?id=eq.'+id:''),{method:id?'PATCH':'POST',headers:sbH(tok),body:JSON.stringify({data:o})})})
+   .then(function(r){if(!r.ok)return r.text().then(function(t){throw {kind:'db',status:r.status,detail:sbErrText(t)}});resetForm();sbLoad();toast('تم الحفظ في قاعدة البيانات ✅')});
+ }).catch(function(e){
+  if(e&&e.kind){var msg=(e.kind==='img'?'فشل رفع الصورة':'فشل حفظ بيانات اللعبة')+' ('+e.status+'): '+e.detail;toast(msg);console.error('ZERO Supabase save error:',e);return}
+  toast(e==='exp'||e==='no'?'انتهت الجلسة أو لم يتم تسجيل الدخول؛ سجّل دخول الأدمن من جديد':'تعذر الاتصال بـ Supabase: '+String(e&&e.message||e||'خطأ غير معروف'));
+  console.error('ZERO Supabase save error:',e);
+  if(e==='exp'||e==='no'){setSess(null);applyAdm()}
+ });
+}
 function sbDel(id){sbTok().then(function(tok){return fetch(SB_URL+'/rest/v1/items?id=eq.'+id,{method:'DELETE',headers:sbH(tok)})}).then(function(r){if(!r.ok)throw 0;resetForm();sbLoad();toast('تم الحذف')}).catch(function(){toast('فشل الحذف')})}
 function sbMigrate(){var seed=JSON.parse(ORIG).filter(function(o){return o&&o.n});if(!seed.length)return toast('لا توجد ملفات للنقل');sbTok().then(function(tok){var rows=[],ch=Promise.resolve();seed.forEach(function(o,i){ch=ch.then(function(){if(o.img&&o.img.indexOf('data:')==0){var nm=Date.now()+'-'+i+'.jpg',h=sbH(tok);h['Content-Type']='image/jpeg';return fetch(SB_URL+'/storage/v1/object/covers/'+nm,{method:'POST',headers:h,body:d2b(o.img)}).then(function(r){if(r.ok)o.img=SB_URL+'/storage/v1/object/public/covers/'+nm;else delete o.img})}}).then(function(){delete o._id;rows.push({data:o})})});return ch.then(function(){return fetch(SB_URL+'/rest/v1/items',{method:'POST',headers:sbH(tok),body:JSON.stringify(rows.reverse())})})}).then(function(r){if(!r.ok)throw 0;sbLoad();toast('تم نقل '+seed.length+' ملف ✅')}).catch(function(){toast('فشل النقل')})}
 LOADING=!!SB_URL;if(SB_URL){ITEMS=[];sbLoad()}
