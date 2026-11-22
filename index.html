@@ -335,6 +335,36 @@ body{background:radial-gradient(ellipse at 50% -15%,#123a39 0,transparent 42%),l
 }
 @media(min-width:700px) and (max-width:1050px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}.zero-hero{min-height:300px}}
 
+
+/* ===== requested finishing touches ===== */
+.platform-icon{display:grid;place-items:center;width:30px;height:30px;color:#00efa0;filter:drop-shadow(0 0 7px #00e99555)}
+.platform-icon svg{width:27px;height:27px;fill:none;stroke:currentColor;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.tab[data-id^="ps"] .platform-icon svg{stroke:#eaf2ff;stroke-width:2.1}
+.tab[data-id="xbox"] .platform-icon svg,.tab[data-id="x360"] .platform-icon svg{stroke:#00e995}
+.tab{flex:0 0 clamp(78px,10vw,118px);min-width:78px;gap:5px}
+.tabs{justify-content:flex-start;scroll-snap-type:x proximity}
+.tab{scroll-snap-align:start}
+/* Portrait game covers: recommended source artwork 800x1100 or 800x1200 */
+.card .cover{aspect-ratio:3/4!important;background-position:center!important;background-size:cover!important}
+#det .dcv{aspect-ratio:3/4!important;max-width:320px}
+.recently-visited{grid-column:1/-1;margin:30px 0 8px;padding:18px 0 4px;border-top:1px solid #12634e}
+.recently-visited .home-section-head{margin-bottom:14px}
+.recently-visited .home-section-head h3{display:flex;align-items:center;gap:8px;color:#effff8}
+.recently-visited .home-section-head button{border-color:#00c982;color:#00efa0;background:#071c25;border-radius:20px;padding:7px 16px}
+.recently-visited .grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+.av.big{width:92px;height:92px;border:2px solid #00e995;box-shadow:0 0 18px #00e99544}
+#acc .pn .av{border:2px solid #00d98b}
+@media(max-width:699px){
+ .tabs{gap:8px;padding:11px 10px 15px}
+ .tab{flex:0 0 78px;min-width:78px;min-height:76px;padding:7px 5px;font-size:11px}
+ .platform-icon{width:32px;height:32px}.platform-icon svg{width:29px;height:29px}
+ .card .cover{aspect-ratio:3/4!important}
+ .recently-visited{margin-top:24px;padding-top:14px}
+ .recently-visited .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+ #det .dcv{aspect-ratio:3/4!important;max-width:260px}
+}
+@media(min-width:700px){.tabs{gap:10px}.tab{flex-basis:clamp(90px,10%,125px)}}
+
 </style>
 </head> 
 <body>
@@ -466,11 +496,31 @@ $('thm').onclick=function(){th=th=='dark'?'light':'dark';try{localStorage.setIte
 function tgUI(){var a=lang=='ar';$('tgt').textContent=a?'📢 تابع قناتنا على تلغرام لآخر الألعاب والتحديثات':'📢 Join our Telegram channel for the latest games & updates';$('tgb').textContent=a?'انضم':'Join'}
 function closeTg(){$('tg').classList.remove('on');try{localStorage.setItem('ztg',Date.now())}catch(e){}}
 setTimeout(function(){var t=0;try{t=+localStorage.getItem('ztg')||0}catch(e){}if(Date.now()-t>3*864e5)$('tg').classList.add('on')},3500);
+function platformIcon(id){
+ var common='viewBox="0 0 48 48" aria-hidden="true" focusable="false"';
+ var paths={
+  ps5:'<path d="M15 5v37M15 5c10 0 16 5 16 13 0 7-5 11-13 11M15 29l19 8c3 1 4 4 1 5l-4 1M15 29l-8 3c-3 1-3 4 0 5l10 4"/>',
+  ps4:'<path d="M16 5c9 0 16 5 16 13 0 7-5 11-13 11M16 5v37M16 29l19 8c3 1 4 4 1 5l-4 1M16 29l-8 3c-3 1-3 4 0 5l10 4"/>',
+  ps3:'<path d="M16 5c9 0 16 5 16 13 0 7-5 11-13 11M16 5v37M16 29l19 8c3 1 4 4 1 5l-4 1M16 29l-8 3c-3 1-3 4 0 5l10 4"/>',
+  ps2:'<path d="M16 5c9 0 16 5 16 13 0 7-5 11-13 11M16 5v37M16 29l19 8c3 1 4 4 1 5l-4 1M16 29l-8 3c-3 1-3 4 0 5l10 4"/>',
+  ps1:'<path d="M16 5c9 0 16 5 16 13 0 7-5 11-13 11M16 5v37M16 29l19 8c3 1 4 4 1 5l-4 1M16 29l-8 3c-3 1-3 4 0 5l10 4"/>',
+  xbox:'<path d="M8 10c9-7 23-7 32 0M8 38c9 7 23 7 32 0M10 9c10 7 18 21 19 31M38 9c-10 7-18 21-19 31"/>',
+  pc:'<rect x="5" y="7" width="38" height="27" rx="3"/><path d="M24 34v8M15 42h18"/>',
+  psp:'<rect x="4" y="11" width="40" height="26" rx="7"/><path d="M12 24h10m-5-5v10M31 21h.1M36 27h.1"/>',
+  x360:'<path d="M8 10c9-7 23-7 32 0M8 38c9 7 23 7 32 0M10 9c10 7 18 21 19 31M38 9c-10 7-18 21-19 31"/>',
+  emu:'<circle cx="24" cy="24" r="17"/><path d="M12 24h24M24 12v24"/>',
+  app:'<rect x="9" y="5" width="30" height="38" rx="4"/><path d="M16 15h16M16 23h16M16 31h11"/>',
+  theme:'<path d="M24 4l18 20-18 20L6 24 24 4z"/><circle cx="24" cy="24" r="6"/>'
+ };
+ if(id==='all')return '<svg '+common+'><path d="M6 14h14l4 4h18v17H6z"/><path d="M6 14V9h14l4 5"/></svg>';
+ return '<svg '+common+'>'+ (paths[id]||'<circle cx="24" cy="24" r="16"/>') +'</svg>';
+}
+function clearRecent(){RECENT=[];try{localStorage.removeItem('zrecent')}catch(e){}render();toast(lang=='ar'?'تم مسح سجل المشاهدة':'Recently visited cleared')}
 function render(){
  var d=document.documentElement;d.lang=lang;d.dir=lang=='ar'?'rtl':'ltr';
  var L=T[lang];
  $('lang').textContent=L.sw;$('q').placeholder=L.s;$('ttl').textContent=L.t;$('fcp').textContent=L.f;footUI();pageUI();thUI();tgUI();accUI();
- $('tabs').innerHTML=TABS.filter(function(x){return ['fav','new','top','recent'].indexOf(x.id)<0}).map(function(x){return '<button data-id="'+x.id+'" class="tab'+(x.id==tab?' on':'')+'" style="--tc:'+TC[x.id]+'" onclick="setTab(\''+x.id+'\')">'+x[lang]+'</button>'}).join('');
+ $('tabs').innerHTML=TABS.filter(function(x){return ['fav','new','top','recent'].indexOf(x.id)<0}).map(function(x){return '<button data-id="'+x.id+'" class="tab'+(x.id==tab?' on':'')+'" style="--tc:'+(TC[x.id]||'#00e995')+'" onclick="setTab(\''+x.id+'\')"><span class="platform-icon">'+platformIcon(x.id)+'</span><span>'+esc(x[lang])+'</span></button>'}).join('');
  var mn=['mn-home','mn-games','mn-fav','mn-recent','mn-settings'];mn.forEach(function(id){var el=$(id);if(el)el.classList.remove('on')});var activeNav=tab=='fav'?'mn-fav':srt=='dl'?'mn-recent':tab=='all'?'mn-games':'mn-games';if($(activeNav))$(activeNav).classList.add('on');
  $('sel').innerHTML=SEL.map(function(x){return '<option value="'+x.id+'"'+(x.id==sub?' selected':'')+'>'+x[lang]+'</option>'}).join('');
  var gf=$('genreFilter');if(gf){var gs=['all','أكشن','مغامرات','رعب','رياضة','سباق','قتال','عالم مفتوح','RPG','ألغاز','محاكاة','Action','Adventure','Horror','Sports','Racing','Fighting','Open World','Puzzle','Simulation'];gf.innerHTML=gs.map(function(x){return '<option value="'+esc(x)+'"'+(x==genreFilter?' selected':'')+'>'+(x=='all'?(lang=='ar'?'كل الأنواع':'All genres'):x)+'</option>'}).join('')} 
@@ -502,6 +552,7 @@ function render(){
   TABS.filter(function(x){return ['all','fav','new','top','recent'].indexOf(x.id)<0}).forEach(function(cat){var items=out.filter(function(i){return i.c==cat.id}).slice(0,8);if(items.length)sections.push({title:cat[lang]||cat.ar,items:items,tab:cat.id})});
   $('grid').innerHTML=sections.length?sections.map(function(sec){return '<section class="home-section"><div class="home-section-head"><h3>'+esc(sec.title)+'</h3><button onclick="setTab(\''+sec.tab+'\')">'+(lang=='ar'?'عرض الكل':'View all')+' ←</button></div><div class="grid">'+sec.items.map(gameCard).join('')+'</div></section>'}).join(''):'<div class="empty">'+(LOADING?'…':L.none)+'</div>';
  }else $('grid').innerHTML=out.length?out.map(gameCard).join(''):'<div class="empty">'+(LOADING?'…':L.none)+'</div>';
+ if(homeMode){var seen=RECENT.map(function(n){return ITEMS.filter(function(i){return i.n===n&&!i.archived})[0]}).filter(Boolean).slice(0,8);var rs=document.getElementById('recentlyVisited');if(rs)rs.remove();if(seen.length){var box=document.createElement('section');box.id='recentlyVisited';box.className='recently-visited';box.innerHTML='<div class="home-section-head"><h3>◷ '+(lang=='ar'?'شوهدت مؤخراً':'Recently Visited')+'</h3><button type="button" onclick="clearRecent()">'+(lang=='ar'?'مسح الكل':'Clear')+'</button></div><div class="grid">'+seen.map(gameCard).join('')+'</div>';$('grid').appendChild(box)}}
 }
 function setTab(t){tab=t;render()}
 function fav(n){n=decodeURIComponent(n);if(favs[n])delete favs[n];else favs[n]=1;try{localStorage.setItem('zf',JSON.stringify(favs))}catch(e){}render()}
