@@ -1027,9 +1027,10 @@ try{(function(){
  var _r=render;render=function(){var r=_r.apply(this,arguments);try{heroUI()}catch(e){console.error('hero suggest:',e)}return r};
 })()}catch(e){console.error('hero suggest init:',e)}
 /* ===== جلب معلومات اللعبة تلقائياً (للأدمن والمشرف) =====
-   يستدعي Edge Function باسم fetch-game-info على Supabase. لا توجد أي مفاتيح API هنا؛
+   يستدعي Edge Function باسم hyper-endpoint على Supabase (المتغير GF_FN). لا توجد أي مفاتيح API هنا؛
    المفاتيح محفوظة كأسرار في Supabase، والدالة نفسها تتحقق أن المستخدم أدمن/مشرف.
    لا يحفظ شيئاً: يملأ حقول النموذج فقط، والحفظ يتم بزر «إضافة/حفظ التعديل» وبنفس صلاحياته. */
+var GF_FN='hyper-endpoint';/* اسم Edge Function كما هو منشور في Supabase */
 var GF={busy:false,seq:0,ids:[]};
 var GF_PLAT={ps5:1,ps4:1,ps3:1,ps2:1,ps1:1,psp:1,pc:1,x360:1};
 var GF_GENRE_AR={'Point-and-click':'اضغط وانقر','Fighting':'قتال','Shooter':'تصويب','Music':'موسيقى','Platform':'منصات','Puzzle':'ألغاز','Racing':'سباقات','Real Time Strategy (RTS)':'استراتيجية آنية','Role-playing (RPG)':'لعب أدوار','Simulator':'محاكاة','Sport':'رياضة','Strategy':'استراتيجية','Turn-based strategy (TBS)':'استراتيجية بالأدوار','Tactical':'تكتيكية',"Hack and slash/Beat 'em up":'قتال بالسيوف / ضرب','Quiz/Trivia':'أسئلة ومعلومات','Pinball':'بينبول','Adventure':'مغامرات','Indie':'مستقلة','Arcade':'أركيد','Visual Novel':'رواية بصرية','Card & Board Game':'ورق ولوحية','MOBA':'MOBA'};
@@ -1079,7 +1080,7 @@ function gfFetch(){
  GF.busy=true;$('gfBtn').disabled=true;gfCands(null);
  gfShow('⏳ جاري البحث عن معلومات اللعبة...','');
  guard('staff').then(sbTok).then(function(tok){
-  return fetch(SB_URL+'/functions/v1/fetch-game-info',{method:'POST',headers:sbH(tok),body:JSON.stringify({name:n,platform:cat})});
+  return fetch(SB_URL+'/functions/v1/'+GF_FN,{method:'POST',headers:sbH(tok),body:JSON.stringify({name:n,platform:cat})});
  }).then(function(r){
   return r.text().then(function(t){var j=null;try{j=JSON.parse(t)}catch(e){}if(!r.ok)throw {http:r.status,j:j};return j});
  }).then(function(d){
@@ -1091,13 +1092,13 @@ function gfFetch(){
   if(e&&e.http){
    var code=e.j&&e.j.error;
    if(e.http===401||e.http===403)gfShow('ليست لديك صلاحية لاستخدام جلب المعلومات.','err');
-   else if(e.http===404)gfShow('دالة جلب المعلومات غير منشورة بعد على Supabase (fetch-game-info).','err');
+   else if(e.http===404)gfShow('دالة جلب المعلومات غير منشورة بعد على Supabase ('+GF_FN+').','err');
    else if(code==='not_configured')gfShow('لم يتم إعداد مفاتيح البحث على الخادم بعد (IGDB). راجع خطوات الإعداد.','err');
    else if(e.http===429)gfShow('محاولات كثيرة خلال وقت قصير؛ انتظر قليلاً ثم أعد المحاولة.','warn');
    else gfShow('تعذر جلب المعلومات حالياً (رمز '+e.http+'). يمكنك إكمال الحقول يدوياً.','err');
    return;
   }
-  console.error('ZERO fetch-game-info error:',e);
+  console.error('ZERO '+GF_FN+' error:',e);
   gfShow('تعذر الاتصال بخدمة جلب المعلومات. تحقق من الإنترنت أو أكمل الحقول يدوياً.','err');
  }).then(function(){GF.busy=false;var b=$('gfBtn');if(b)b.disabled=false});
 }
