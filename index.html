@@ -129,6 +129,61 @@ footer{max-width:1100px;margin:0 auto}
 #tg .t{flex:1;font-size:13px;line-height:1.6}
 #tg a.btn{text-decoration:none;white-space:nowrap;font-size:13px;padding:7px 14px}
 #tg button{padding:6px 10px;font-size:13px}
+
+/* ===== ZE ZERO neon mobile redesign (presentation only) ===== */
+:root{--bg:#050d1c;--bar:#071326;--card:#0b1930;--bd:#203b5b;--tx:#f2f7ff;--mu:#a9b8d1;--ac:#00e6a0;--grad:linear-gradient(110deg,#00d99a,#00b985);color-scheme:dark}
+[data-theme=light]{--bg:#eef4f8;--bar:#fff;--card:#fff;--bd:#cbd9e6;--tx:#102238;--mu:#62758b;--ac:#00a878;--grad:linear-gradient(110deg,#00c98d,#00a978)}
+body{background:radial-gradient(ellipse at 50% -15%,rgba(0,230,160,.10),transparent 48%),var(--bg)}
+.top{background:rgba(5,13,28,.96);border-bottom:1px solid rgba(0,230,160,.2);padding:12px max(14px,env(safe-area-inset-right)) 14px max(14px,env(safe-area-inset-left));gap:9px;backdrop-filter:blur(16px)}
+.logo{justify-content:center;flex:1 1 100%;order:0;font-size:clamp(25px,6vw,34px);letter-spacing:2px;gap:12px}
+.logo .lgo{width:46px!important;height:46px!important;border:2px solid var(--ac);border-radius:14px;box-shadow:0 0 18px rgba(0,230,160,.2)}
+.wmb{background:none;color:var(--tx);padding:0;letter-spacing:2px;text-shadow:0 0 18px rgba(0,230,160,.2)}
+.logo .wmb:after{content:' منصة الألعاب والبرامج';display:block;font-size:10px;letter-spacing:0;color:var(--mu);font-weight:600;text-align:center}
+.top>.gear,.top>#accb,.top>#thm,.top>#lang{order:1;background:#0b1930;border:1px solid #203b5b;border-radius:13px;min-height:42px}
+.search{order:2;flex:1 1 100%;background:#0b1930;border:1px solid #294665;border-radius:24px;padding:12px 18px;font-size:15px;min-height:48px}
+.tabs{justify-content:flex-start;gap:9px;padding:14px 16px 18px;scroll-snap-type:x proximity}
+.tab{scroll-snap-align:start;min-width:66px;border-radius:15px;padding:9px 14px;font-weight:800;font-size:13px;background:#0b1930;color:#d8e6f8;border:1px solid #294665;box-shadow:0 5px 14px rgba(0,0,0,.18)}
+.tab:before{display:block;font-size:19px;line-height:1.2;margin-bottom:2px;content:'🎮'}
+.tab[data-id="all"]:before{content:'✦'}.tab[data-id="ps5"]:before,.tab[data-id="ps4"]:before,.tab[data-id="ps3"]:before,.tab[data-id="ps2"]:before,.tab[data-id="ps1"]:before{content:'♧'}.tab[data-id="pc"]:before{content:'▣'}.tab[data-id="psp"]:before{content:'▰'}.tab[data-id="xbox"]:before,.tab[data-id="x360"]:before{content:'✕'}.tab[data-id="emu"]:before{content:'◉'}.tab[data-id="app"]:before{content:'▤'}.tab[data-id="theme"]:before{content:'◈'}
+.tab.on{background:var(--ac);color:#041b17;border-color:var(--ac);box-shadow:0 0 18px rgba(0,230,160,.24)}
+.w{max-width:1240px;padding:0 16px 100px}
+.head{align-items:center;margin:4px 0 16px;flex-wrap:wrap}
+.head h2{font-size:20px;font-weight:800}
+.head h2:before{content:'🎮';margin-inline-end:9px}
+.fl{gap:6px;flex-wrap:wrap}
+select{background:#0b1930;border:1px solid #294665;border-radius:12px;padding:7px 9px;color:var(--tx)}
+.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.card{background:#08162a;border:1px solid rgba(0,230,160,.7);border-radius:19px;box-shadow:0 8px 22px rgba(0,0,0,.2)}
+.cover{aspect-ratio:3/4;padding:8px}
+.pl{background:rgba(0,0,0,.7);border:1px solid var(--ac);border-radius:20px;color:#00e6a0;font-size:11px;font-weight:800}
+.fav{width:31px;height:31px;line-height:31px;background:rgba(3,12,27,.82);font-size:18px}
+.info{padding:9px;display:flex;flex-direction:column;align-items:stretch;gap:8px;background:#0b1930}
+.info b{font-size:12px;text-align:center;white-space:nowrap}
+.dl{display:block;text-align:center;border-radius:24px;background:var(--grad);color:#031b16;font-weight:800;font-size:14px;padding:8px 10px}
+#fnav{gap:10px;justify-content:space-around}
+@media(max-width:699px){
+ .top{position:relative;padding-top:12px}
+ .logo{font-size:27px}
+ .logo .lgo{width:42px!important;height:42px!important}
+ .top>.gear,.top>#accb,.top>#thm,.top>#lang{flex:1 1 auto;padding:7px 9px;font-size:12px}
+ .tabs{padding-top:12px;padding-bottom:16px}
+ .head{gap:8px}.head h2{width:100%;text-align:center}
+ .fl{width:100%;justify-content:space-between}.fl select{max-width:32%;font-size:11px}
+ .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+ .cover{aspect-ratio:3/4}
+ .info b{font-size:11px}
+ #fnav{padding-bottom:calc(14px + env(safe-area-inset-bottom));}
+ #mobileNav{display:flex}
+ body{padding-bottom:76px}
+}
+@media(min-width:700px){.grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:18px}.cover{aspect-ratio:3/4}#mobileNav{display:none}}
+#mobileNav{display:none;position:fixed;z-index:60;inset-inline:8px;bottom:calc(8px + env(safe-area-inset-bottom));min-height:68px;align-items:center;justify-content:space-around;gap:3px;padding:7px 5px;background:rgba(5,13,28,.96);border:1px solid #294665;border-radius:24px;box-shadow:0 10px 35px rgba(0,0,0,.45);backdrop-filter:blur(18px)}
+#mobileNav button{flex:1;min-width:0;border:0;background:none;color:#a9b8d1;display:flex;flex-direction:column;align-items:center;gap:1px;font-size:10px;font-weight:700;padding:3px 1px}
+#mobileNav button span:first-child{font-size:21px;line-height:1.25}
+#mobileNav button.on{color:#00e6a0}
+#mobileNav button.on span:last-child{border-bottom:2px solid #00e6a0;padding-bottom:3px}
+[data-theme=light] .top,[data-theme=light] #mobileNav{background:rgba(255,255,255,.96)}
+
 </style>
 </head> 
 <body>
@@ -203,6 +258,14 @@ footer{max-width:1100px;margin:0 auto}
 <div id="det" onclick="if(event.target==this)closeDet()"><div class="pn" id="dbox"></div></div>
 <div id="cdw"><div class="pn" style="text-align:center;align-items:center"><div style="align-self:flex-end"><button class="btn g" onclick="closeCd()">✕</button></div><div id="cdt" style="font-size:15px"></div><div class="cdn" id="cdn">5</div><a class="btn g" id="cdb" target="_blank" rel="noopener" href="#" style="text-decoration:none;min-width:180px;pointer-events:none"></a></div></div>
 <div class="toast" id="toast"></div>
+<nav id="mobileNav" aria-label="التنقل الرئيسي">
+<button type="button" onclick="setTab('all')" id="mn-home"><span>⌂</span><span>الرئيسية</span></button>
+<button type="button" onclick="setTab('all')" id="mn-games"><span>🎮</span><span>الألعاب</span></button>
+<button type="button" onclick="setTab('fav')" id="mn-fav"><span>☆</span><span>المفضلة</span></button>
+<button type="button" onclick="srt='dl';tab='all';render()" id="mn-recent"><span>↓</span><span>التحميلات</span></button>
+<button type="button" onclick="openAcc()" id="mn-settings"><span>⚙</span><span>الإعدادات</span></button>
+</nav>
+
 <script>
 // عدّل القائمة لإضافة ملفاتك / Edit to add your files
 // c القسم, l اللغة (en/ar للألعاب), n الاسم, a الاسم عربي, s الحجم, u الرابط, new جديد
@@ -251,7 +314,8 @@ function render(){
  var d=document.documentElement;d.lang=lang;d.dir=lang=='ar'?'rtl':'ltr';
  var L=T[lang];
  $('lang').textContent=L.sw;$('q').placeholder=L.s;$('ttl').textContent=L.t;$('fcp').textContent=L.f;footUI();pageUI();thUI();tgUI();accUI();
- $('tabs').innerHTML=TABS.map(function(x){return '<button class="tab'+(x.id==tab?' on':'')+'" style="--tc:'+TC[x.id]+'" onclick="setTab(\''+x.id+'\')">'+x[lang]+'</button>'}).join('');
+ $('tabs').innerHTML=TABS.filter(function(x){return ['fav','new','top','recent'].indexOf(x.id)<0}).map(function(x){return '<button data-id="'+x.id+'" class="tab'+(x.id==tab?' on':'')+'" style="--tc:'+TC[x.id]+'" onclick="setTab(\''+x.id+'\')">'+x[lang]+'</button>'}).join('');
+ var mn=['mn-home','mn-games','mn-fav','mn-recent','mn-settings'];mn.forEach(function(id){var el=$(id);if(el)el.classList.remove('on')});var activeNav=tab=='fav'?'mn-fav':srt=='dl'?'mn-recent':tab=='all'?'mn-games':'mn-games';if($(activeNav))$(activeNav).classList.add('on');
  $('sel').innerHTML=SEL.map(function(x){return '<option value="'+x.id+'"'+(x.id==sub?' selected':'')+'>'+x[lang]+'</option>'}).join('');
  var gf=$('genreFilter');if(gf){var gs=['all','أكشن','مغامرات','رعب','رياضة','سباق','قتال','عالم مفتوح','RPG','ألغاز','محاكاة','Action','Adventure','Horror','Sports','Racing','Fighting','Open World','Puzzle','Simulation'];gf.innerHTML=gs.map(function(x){return '<option value="'+esc(x)+'"'+(x==genreFilter?' selected':'')+'>'+(x=='all'?(lang=='ar'?'كل الأنواع':'All genres'):x)+'</option>'}).join('')} 
  $('srt').innerHTML=SRT.map(function(x){return '<option value="'+x.id+'"'+(x.id==srt?' selected':'')+'>'+x[lang]+'</option>'}).join('');
