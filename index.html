@@ -470,6 +470,7 @@ body:not(.r-admin) .ao{display:none!important}
 <button class="btn" id="gfBtn" type="button" onclick="gfFetch()" style="width:100%">🔎 جلب المعلومات</button>
 <div id="gfMsg" role="status" aria-live="polite" style="display:none;white-space:pre-line;font-size:13px;line-height:1.8;border:1px solid var(--bd);border-radius:10px;padding:8px 10px;background:var(--card);color:var(--mu)"></div>
 <div id="gfCands" style="display:none;flex-wrap:wrap;gap:6px"></div>
+<div id="gfPrev" style="display:none;gap:10px;align-items:center;border:1px solid var(--bd);border-radius:10px;padding:8px;background:var(--card)"></div>
 </div>
 <div class="r2"><select id="fc"></select><select id="fl"><option value="">بدون لغة</option><option value="en">إنجليزي</option><option value="ar">عربي</option></select></div>
 <div class="r2"><input id="fgenres" placeholder="أنواع اللعبة: أكشن، مغامرات، رعب (افصل بفاصلة)"><select id="fmode"><option value="">نوع اللعب</option><option value="single">فردي</option><option value="multi">جماعي</option><option value="both">فردي وجماعي</option></select></div>
@@ -851,14 +852,14 @@ function saveItem(){if(!isStaff())return toast(NOPERM);var n=$('fnE').value.trim
  if(img)o.img=img;else if(old&&old.img)o.img=old.img;
  if(SB_URL)return sbSave(o,editing>-1?ITEMS[editing]._id:0);if(editing>-1)ITEMS[editing]=o;else ITEMS.unshift(o);
  resetForm();persist();toast('تم الحفظ ✅')}
-function editItem(k){if(!isStaff())return toast(NOPERM);var o=ITEMS[k];editing=k;img='';imgBlob=null;$('fnE').value=o.n||'';$('fnA').value=o.a||'';$('fc').value=o.c;$('fl').value=o.l||'';$('fgenres').value=(o.genres||[]).join('، ');$('fmode').value=o.mode||'';$('fnetwork').value=o.network||'';$('ffeat').checked=!!o.featured;$('fs').value=o.s||'';$('fu').value=o.u=='#'?'':o.u;$('fup').value=o.up||'';$('fad').value=o.ad||'';$('frv').value=o.rv||'';$('fad2').value=o.ad2||'';$('fsv').value=o.sv||'';$('flc').value=o.lc||'';$('fnt').value=o.nt||'';$('fpw').value=o.pw||'';$('fd').value=o.d||'';$('fcn').value=o.cn||'';$('fyr').value=o.yr||'';$('fgv').value=o.gv||'';$('frg').value=o.rg||'';$('ffm').value=o.fm||'';$('frq').value=o.rq||'';$('fdp').value=o.dp||'';setLinks(o.links);$('fnw').checked=!!o.new;$('fsave').textContent='حفظ التعديل';$('adm').scrollTo(0,0)}
+function editItem(k){if(!isStaff())return toast(NOPERM);var o=ITEMS[k];editing=k;img='';imgBlob=null;gfPrevSync();$('fnE').value=o.n||'';$('fnA').value=o.a||'';$('fc').value=o.c;$('fl').value=o.l||'';$('fgenres').value=(o.genres||[]).join('، ');$('fmode').value=o.mode||'';$('fnetwork').value=o.network||'';$('ffeat').checked=!!o.featured;$('fs').value=o.s||'';$('fu').value=o.u=='#'?'':o.u;$('fup').value=o.up||'';$('fad').value=o.ad||'';$('frv').value=o.rv||'';$('fad2').value=o.ad2||'';$('fsv').value=o.sv||'';$('flc').value=o.lc||'';$('fnt').value=o.nt||'';$('fpw').value=o.pw||'';$('fd').value=o.d||'';$('fcn').value=o.cn||'';$('fyr').value=o.yr||'';$('fgv').value=o.gv||'';$('frg').value=o.rg||'';$('ffm').value=o.fm||'';$('frq').value=o.rq||'';$('fdp').value=o.dp||'';setLinks(o.links);$('fnw').checked=!!o.new;$('fsave').textContent='حفظ التعديل';$('adm').scrollTo(0,0)}
 function delItem(k){if(!isAdmin())return toast(NOPERM);archiveItem(k)}
 function archiveItem(k){if(!isAdmin())return toast(NOPERM);var o=Object.assign({},ITEMS[k]);o.archived=!o.archived;if(SB_URL)return guard('admin').then(function(){return sbSave(o,o._id)}).catch(function(){});ITEMS[k]=o;if(editing==k)resetForm();persist();toast(o.archived?'تمت أرشفة اللعبة ويمكن استرجاعها':'تم استرجاع اللعبة')}
 
 function resetAll(){if(!isAdmin())return toast(NOPERM);if(SB_URL)return toast('غير متاح مع قاعدة البيانات');ITEMS=JSON.parse(ORIG);try{localStorage.removeItem('zi')}catch(e){}resetForm();render();drawList();toast('رجعت الملفات الأصلية')}
 function drawList(){drawAdminStats();var term=$('adminQ')?$('adminQ').value.trim().toLowerCase():'';$('lst').innerHTML=ITEMS.map(function(o,k){return {o:o,k:k}}).filter(function(x){return !term||[x.o.n,x.o.a,x.o.c,(x.o.genres||[]).join(' ')].join(' ').toLowerCase().indexOf(term)>-1}).map(function(x){var o=x.o,k=x.k,t=TABS.filter(function(x){return x.id==o.c})[0]||{ar:o.c};return '<div class="li"><span>'+esc(o.a||o.n)+' · '+esc(t.ar)+(o.archived?' · (مؤرشفة)':'')+'</span><button class="btn g" onclick="editItem('+k+')">تعديل</button><button class="btn g" title="فحص روابط هذه اللعبة" onclick="lcOne('+k+')">🔗</button>'+(isAdmin()?'<button class="btn '+(o.archived?'g':'d')+'" onclick="archiveItem('+k+')">'+(o.archived?'استرجاع':'أرشفة')+'</button>':'')+'</div>'}).join('')||'<div style="font-size:13px;color:var(--mu)">لا توجد نتائج</div>';drawCategoryList()}
 function drawAdminStats(){var el=$('adstats');if(!el)return;var total=Object.keys(counts||{}).reduce(function(n,k){return n+(+counts[k]||0)},0),ratings=Object.keys(STATS||{}).reduce(function(n,k){return n+((STATS[k]&&+STATS[k].n)||0)},0),likes=Object.keys(STATS||{}).reduce(function(n,k){return n+((STATS[k]&&+STATS[k].l)||0)},0);el.innerHTML=[['🎮','الألعاب',ITEMS.filter(function(x){return !x.archived}).length],['🗄️','المؤرشفة',ITEMS.filter(function(x){return !!x.archived}).length],['⬇️','التحميلات',total],['⭐','التقييمات',ratings],['👍','الإعجابات',likes]].map(function(x){return '<div style="flex:1;min-width:105px;background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:9px;text-align:center"><div style="font-size:19px">'+x[0]+'</div><b>'+x[2]+'</b><div style="font-size:11px;color:var(--mu)">'+x[1]+'</div></div>'}).join('')} 
-$('fi').onchange=function(){var f=this.files[0];if(!f)return;var r=new FileReader();r.onload=function(){var m=new Image();m.onload=function(){var k=Math.min(1,720/Math.max(m.width,m.height)),c=document.createElement('canvas');c.width=Math.round(m.width*k);c.height=Math.round(m.height*k);c.getContext('2d').drawImage(m,0,0,c.width,c.height);img=c.toDataURL('image/jpeg',.78);c.toBlob(function(b){imgBlob=b},'image/jpeg',.78);toast('تم تجهيز الصورة ✅')};m.src=r.result};r.readAsDataURL(f)};
+$('fi').onchange=function(){var f=this.files[0];if(!f)return;var r=new FileReader();r.onload=function(){var m=new Image();m.onload=function(){var k=Math.min(1,720/Math.max(m.width,m.height)),c=document.createElement('canvas');c.width=Math.round(m.width*k);c.height=Math.round(m.height*k);c.getContext('2d').drawImage(m,0,0,c.width,c.height);img=c.toDataURL('image/jpeg',.78);c.toBlob(function(b){imgBlob=b},'image/jpeg',.78);toast('تم تجهيز الصورة ✅');gfPrevSync()};m.src=r.result};r.readAsDataURL(f)};
 function exportSite(pub){
  if(!isAdmin())return toast(NOPERM);
  var b='var ITEMS=[\n'+ITEMS.map(function(i){return JSON.stringify(i).replace(/</g,'\\u003c')}).join(',\n')+'\n];';
@@ -1175,10 +1176,22 @@ function gfCover(url,valid,done){
   try{var bin=atob(mt[2]),u8=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)u8[i]=bin.charCodeAt(i);b=new Blob([u8],{type:mt[1]})}catch(e){done('fail');return}
   if(!valid()){done('stale');return}
   if(gfHasImg()){done('kept');return}
-  img=url;imgBlob=b;done('ok',w,h)
+  img=url;imgBlob=b;gfPrevSync();done('ok',w,h)
  };
  m.onerror=function(){done('fail')};
  m.src=url;
+}
+function gfPrevSync(){
+ var b=document.getElementById('gfPrev');if(!b)return;
+ if(!img){b.style.display='none';b.innerHTML='';return}
+ b.style.display='flex';b.innerHTML='';
+ var im=document.createElement('img');im.src=img;im.alt='';
+ im.style.cssText='max-width:120px;max-height:160px;border-radius:10px;object-fit:contain;background:#000';
+ var t=document.createElement('div');t.style.cssText='font-size:12px;color:var(--mu);display:flex;flex-direction:column;gap:6px';
+ var s=document.createElement('span');s.textContent='معاينة صورة الغلاف الجديدة. لن تُحفظ إلا عند الضغط على حفظ.';
+ var x=document.createElement('button');x.type='button';x.className='btn g';x.textContent='إزالة الصورة';
+ x.onclick=function(){img='';imgBlob=null;gfPrevSync()};
+ t.appendChild(s);t.appendChild(x);b.appendChild(im);b.appendChild(t)
 }
 var GF_PLAT={ps5:1,ps4:1,ps3:1,ps2:1,ps1:1,psp:1,pc:1,x360:1};
 var GF_GENRE_AR={'Point-and-click':'اضغط وانقر','Fighting':'قتال','Shooter':'تصويب','Music':'موسيقى','Platform':'منصات','Puzzle':'ألغاز','Racing':'سباقات','Real Time Strategy (RTS)':'استراتيجية آنية','Role-playing (RPG)':'لعب أدوار','Simulator':'محاكاة','Sport':'رياضة','Strategy':'استراتيجية','Turn-based strategy (TBS)':'استراتيجية بالأدوار','Tactical':'تكتيكية',"Hack and slash/Beat 'em up":'قتال بالسيوف / ضرب','Quiz/Trivia':'أسئلة ومعلومات','Pinball':'بينبول','Adventure':'مغامرات','Indie':'مستقلة','Arcade':'أركيد','Visual Novel':'رواية بصرية','Card & Board Game':'ورق ولوحية','MOBA':'MOBA'};
@@ -1197,7 +1210,8 @@ function gfClean(d){
  var ds=typeof d.desc_ar==='string'?d.desc_ar.trim().slice(0,1500):'';
  if((ds.match(/[؀-ۿ]/g)||[]).length<20)ds='';
  var cv=d.cover&&typeof d.cover.data_url==='string'&&d.cover.data_url.length<3000000&&/^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+\/=]+$/.test(d.cover.data_url)?d.cover.data_url:'';
- return {yr:yr,gs:gs,mode:mode,ids:ids,ver:ver,fmt:fmt,size:gfSize(d.size),desc:ds,cover:cv};
+ var dg=typeof d.diag==='string'?d.diag.replace(/[^\x20-\x7e]/g,'').slice(0,300):'';
+ return {yr:yr,gs:gs,mode:mode,ids:ids,ver:ver,fmt:fmt,size:gfSize(d.size),desc:ds,cover:cv,dg:dg};
 }
 function gfApply(d){
  var st=d&&d.status;
@@ -1220,13 +1234,14 @@ function gfApply(d){
  var coverTodo=false;
  if(c.cover){if(gfHasImg())kept.push('صورة الغلاف');else coverTodo=true}
  else if(d.cover_note==='not_portrait')none.push('صورة الغلاف (المتوفر ليس عمودياً)');
- else none.push('صورة الغلاف');
+ else none.push(d.cover_note==='fetch_failed'?'صورة الغلاف (تعذر تنزيلها من IGDB)':'صورة الغلاف (لم يُرجع IGDB غلافاً لهذه اللعبة؛ هذا لا يعني أنه غير موجود)');
  var parts=[];
  if(filled.length)parts.push('✅ تم جلب المعلومات وملء: '+filled.join('، ')+'.\nراجعها وعدّلها قبل الحفظ.');
  else if(!multi)parts.push('لم تُملأ حقول جديدة.');
  if(multi)parts.push('اختر النسخة/المنطقة من الأزرار أدناه.');
- if(filled.indexOf('الوصف العربي')>-1)parts.push('مصدر الوصف: '+(d.desc_source==='steam'?'متجر Steam (عربي)':'متجر PlayStation (عربي)')+'.');
+ if(filled.indexOf('الوصف العربي')>-1)parts.push('مصدر الوصف: '+(d.desc_source==='mt'?'ترجمة آلية لملخص IGDB الإنجليزي، راجع الصياغة وصحّحها قبل الحفظ':d.desc_source==='steam'?'متجر Steam (عربي)':'متجر PlayStation (عربي)')+'.');
  if(none.length)parts.push('لم تتوفر معلومة مؤكدة (تُركت فارغة): '+none.join('، ')+'.');
+ if(none.length&&c.dg)parts.push('تشخيص (للمطوّر): '+c.dg);
  if(kept.length)parts.push('لم تُستبدل لأنها مملوءة ومختلفة: '+kept.join('، ')+'.');
  var msg=parts.join('\n'),kk=(filled.length||multi||coverTodo)?'ok':'warn',n0=gfName(),ed0=editing,seq=GF.seq;
  gfShow(msg+(coverTodo?'\n⏳ جاري تجهيز صورة الغلاف...':''),kk);
@@ -1274,7 +1289,7 @@ function gfFetch(){
  ['fnE','fnA'].forEach(function(id){var el=$(id);if(el)el.addEventListener('input',gfUI)});
  var fc=$('fc');if(fc)fc.addEventListener('change',function(){gfShow('');gfCands(null)});
  /* نغلّف الدالتين دون تغيير سلوكهما: تحديث ظهور الزر بعد التعديل/المسح */
- var _re=resetForm;resetForm=function(){var r=_re.apply(this,arguments);try{gfShow('');gfCands(null);gfUI()}catch(e){}return r};
+ var _re=resetForm;resetForm=function(){var r=_re.apply(this,arguments);try{gfShow('');gfCands(null);gfUI();gfPrevSync()}catch(e){}return r};
  var _ed=editItem;editItem=function(){var r=_ed.apply(this,arguments);try{gfShow('');gfCands(null);gfUI()}catch(e){}return r};
 })();
 /* ===== مراقبة الموقع (للمالك) + فحص الروابط (للأدمن والمشرف) ===== */
