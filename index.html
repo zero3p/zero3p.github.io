@@ -1267,7 +1267,7 @@ function gfFetch(){
    return;
   }
   console.error('ZERO '+GF_FN+' error:',e);
-  gfShow('تعذر الاتصال بخدمة جلب المعلومات. تحقق من الإنترنت أو أكمل الحقول يدوياً.','err');
+  gfShow('تعذر الاتصال بخدمة جلب المعلومات. تحقق من الإنترنت أو أكمل الحقول يدوياً.\nإن استمر الخطأ: تأكد أن الدالة '+GF_FN+' منشورة بكودها الكامل (يحتوي Deno.serve)، وأن ALLOWED_ORIGIN هو https://zero3p.github.io بدون / في النهاية.','err');
  }).then(function(){GF.busy=false;var b=$('gfBtn');if(b)b.disabled=false});
 }
 (function(){
