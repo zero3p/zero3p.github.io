@@ -551,7 +551,7 @@ var ZM=(function(){
  function queue(p){try{var q=JSON.parse(localStorage.getItem(QK)||'[]');q.push(p);localStorage.setItem(QK,JSON.stringify(q.slice(-20)))}catch(e){}}
  function post(p,cb){
   if(!rawFetch){if(cb)cb(false);return}
-  rawFetch(SB_URL+'/functions/v1/'+FN,{method:'POST',headers:{'Content-Type':'application/json',apikey:SB_KEY},body:JSON.stringify(p),keepalive:true})
+  rawFetch(SB_URL+'/functions/v1/'+FN,{method:'POST',headers:{'Content-Type':'text/plain;charset=UTF-8'},body:JSON.stringify(p),keepalive:true})
    .then(function(r){if(cb)cb(r.status<500)},function(){if(cb)cb(false)})
  }
  function flush(){
@@ -949,8 +949,9 @@ function sbSave(o,id){
   return sbTok()}).then(function(tok){
   var p=Promise.resolve();
   if(imgBlob){
-   nm=Date.now()+'-'+Math.random().toString(36).slice(2,8)+'.jpg';
-   var h=sbH(tok);h['Content-Type']='image/jpeg';h['x-upsert']='false';
+   var ct=imgBlob.type||'image/jpeg',ex=ct==='image/png'?'.png':ct==='image/webp'?'.webp':'.jpg';
+   nm=Date.now()+'-'+Math.random().toString(36).slice(2,8)+ex;
+   var h=sbH(tok);h['Content-Type']=ct;h['x-upsert']='false';
    p=fetch(SB_URL+'/storage/v1/object/covers/'+nm,{method:'POST',headers:h,body:imgBlob}).then(function(r){
     if(!r.ok)return r.text().then(function(t){throw {kind:'img',status:r.status,detail:sbErrText(t)}});
     o.img=SB_URL+'/storage/v1/object/public/covers/'+nm;
@@ -1168,16 +1169,13 @@ function gfCover(url,valid,done){
  m.onload=function(){
   var w=m.naturalWidth,h=m.naturalHeight;
   if(!(h>w)){done('landscape');return}
-  var k=Math.min(1,600/w,800/h),cw=Math.round(w*k),ch=Math.round(h*k),cv=document.createElement('canvas');
-  cv.width=cw;cv.height=ch;
-  var cx=cv.getContext('2d');cx.fillStyle='#fff';cx.fillRect(0,0,cw,ch);cx.drawImage(m,0,0,cw,ch);
-  var du=cv.toDataURL('image/jpeg',.82);
-  cv.toBlob(function(b){
-   if(!b){done('fail');return}
-   if(!valid()){done('stale');return}
-   if(gfHasImg()){done('kept');return}
-   img=du;imgBlob=b;done('ok',cw,ch)
-  },'image/jpeg',.82)
+  var mt=String(url).match(/^data:(image\/(?:jpeg|png|webp));base64,(.+)$/);
+  if(!mt){done('fail');return}
+  var b;
+  try{var bin=atob(mt[2]),u8=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)u8[i]=bin.charCodeAt(i);b=new Blob([u8],{type:mt[1]})}catch(e){done('fail');return}
+  if(!valid()){done('stale');return}
+  if(gfHasImg()){done('kept');return}
+  img=url;imgBlob=b;done('ok',w,h)
  };
  m.onerror=function(){done('fail')};
  m.src=url;
@@ -1346,7 +1344,7 @@ function fnErr(e,name){
  if(e&&(e.http===401||e.http===403))return 'ليست لديك صلاحية لهذا الإجراء.';
  if(e&&e.http===429)return 'محاولات كثيرة؛ انتظر قليلاً ثم أعد المحاولة.';
  if(e&&e.http)return 'تعذر تنفيذ الطلب (رمز '+e.http+(e.j&&e.j.error?': '+e.j.error:'')+').';
- return 'تعذر الاتصال بالخدمة. تحقق من الإنترنت ومن نشر الدالة '+name+'.'
+ return 'تعذر الوصول إلى الدالة '+name+'. الأرجح أن المتصفح رفض الطلب بسبب CORS: تأكد أن ALLOWED_ORIGIN في Supabase هو https://zero3p.github.io بدون شرطة / في النهاية، وأن الدالة محدّثة بآخر نسخة، ثم أعد المحاولة. وإن لم يكن ذلك فتحقق من الإنترنت.'
 }
 /* ---- مراقبة الأخطاء (المالك فقط) ---- */
 function zmMsg(m,k){boxMsg('zmMsg',m,k)}
