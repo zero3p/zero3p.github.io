@@ -492,7 +492,7 @@ body:not(.r-admin) .ao{display:none!important}
 <input id="flc" placeholder="رابط ملف الترخيص https://..." dir="ltr">
 <input id="frv" placeholder="رابط المراجعة (يوتيوب) https://..." dir="ltr">
 <input id="fpw" placeholder="كلمة سر الملف (إن وجدت)">
-<textarea id="fd" rows="3" placeholder="عنوان / وصف اللعبة"></textarea>
+<textarea id="fd" rows="3" dir="rtl" placeholder="عنوان / وصف اللعبة"></textarea>
 <textarea id="fnt" rows="2" placeholder="ملاحظة (اختياري)"></textarea>
 <div style="font-size:12px;color:var(--mu)">صورة الغلاف: يفضّل بالطول (مثال 600×800)</div>
 <input id="fi" type="file" accept="image/*">
@@ -507,8 +507,10 @@ body:not(.r-admin) .ao{display:none!important}
 <button class="btn" onclick="saveCategory()">+ إضافة / حفظ القسم</button>
 <div id="catList" style="display:flex;flex-direction:column;gap:6px"></div>
 <div style="font-size:11px;color:var(--mu)">حذف القسم هنا يعني أرشفته حتى لا تضيع الألعاب المرتبطة به. تقدر تسترجعه بأي وقت.</div></div>
+<div class="ao" id="zmBox" style="display:flex;flex-direction:column;gap:8px"><div style="font-weight:800;margin-top:12px">🛡️ مراقبة الموقع والأخطاء <span id="zmBadge" style="display:none;font-size:11px;padding:2px 8px;border-radius:99px;background:#f59e0b;color:#000"></span></div><div class="r2" style="flex-wrap:wrap;gap:8px"><select id="zmFilter" onchange="zmLoad()" style="flex:1"><option value="new">الأخطاء الجديدة فقط</option><option value="all">الكل (مع المعالَجة)</option></select><button class="btn g" type="button" onclick="zmLoad()">تحديث</button></div><div id="zmMsg" style="display:none;font-size:13px;white-space:pre-wrap"></div><div id="zmList" style="display:flex;flex-direction:column;gap:6px"></div></div>
 <div style="font-weight:800;margin-top:6px">إحصائيات الموقع</div><div id="adstats" class="r2" style="flex-wrap:wrap;gap:8px"></div><div class="ao" style="display:flex;flex-direction:column;gap:10px"><div style="font-weight:800">طلبات الاشتراك</div><div id="reqs" style="display:flex;flex-direction:column;gap:6px"></div>
 <div class="r2"><input id="aun" placeholder="تفعيل يدوي: اسم المستخدم"><input id="adays" inputmode="numeric" placeholder="30" style="max-width:80px"><button class="btn" onclick="activate()">تفعيل</button></div></div>
+<div id="lcBox" style="display:flex;flex-direction:column;gap:8px"><div style="font-weight:800;margin-top:6px">🔗 فحص روابط التحميل</div><div class="r2" style="flex-wrap:wrap;gap:8px"><button class="btn" type="button" onclick="arm(this,lcAll)">فحص كل الألعاب</button><button class="btn g" type="button" onclick="lcRecheck()">إعادة فحص المشاكل</button><button class="btn g" type="button" onclick="lcLoad()">آخر النتائج</button><select id="lcFilter" onchange="lcDraw()" style="flex:1"><option value="bad">المشاكل فقط</option><option value="all">كل الروابط</option></select></div><div style="font-size:12px;color:var(--mu)">الفحص للعرض فقط: لا يحذف ولا يعدّل أي رابط. بعض المواقع تمنع الفحص الآلي، فتظهر «تعذر التأكد» بدل «لا يعمل».</div><div id="lcMsg" style="display:none;font-size:13px;white-space:pre-wrap"></div><div id="lcList" style="display:flex;flex-direction:column;gap:6px"></div></div>
 <input id="adminQ" placeholder="ابحث عن لعبة لإدارتها..." oninput="drawList()"><div id="lst" style="display:flex;flex-direction:column;gap:6px"></div>
 <div class="r2" style="flex-wrap:wrap"><button class="btn ao" onclick="exportSite(1)">تصدير الموقع</button><button class="btn g ao" onclick="exportSite(0)">نسخة بلوحة الإدارة</button><button class="btn g" onclick="logoutAdm()">خروج</button><button class="btn d ao" onclick="arm(this,resetAll)">إرجاع الأصل</button></div>
 </div></div></div>
@@ -527,6 +529,133 @@ body:not(.r-admin) .ao{display:none!important}
 <script>
 // عدّل القائمة لإضافة ملفاتك / Edit to add your files
 // c القسم, l اللغة (en/ar للألعاب), n الاسم, a الاسم عربي, s الحجم, u الرابط, new جديد
+/* site monitor: sends sanitized front-end errors to the report-error function */
+var ZM=(function(){
+ var FN='report-error',sent=0,seen={},QK='zmq',busy=false;
+ var rawFetch=window.fetch?window.fetch.bind(window):null;
+ function on(){return typeof SB_URL==='string'&&!!SB_URL&&typeof SB_KEY==='string'}
+ function scrub(s){
+  return String(s==null?'':s)
+   .replace(/eyJ[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]*/g,'[jwt]')
+   .replace(/sb_(publishable|secret)_[A-Za-z0-9_-]+/g,'[key]')
+   .replace(/Bearer\s+[A-Za-z0-9._~+\/=-]+/gi,'Bearer [x]')
+   .replace(/(apikey|api_key|access_token|refresh_token|password|passwd|secret|token)(["']?\s*[:=]\s*["']?)[^&\s"',}]+/gi,'$1$2[x]')
+   .replace(/(https?:\/\/[^\s?#"']+)\?[^\s"']*/g,'$1')
+ }
+ function where(){
+  try{
+   var a=document.getElementById('adm'),d=document.getElementById('det');
+   return (a&&a.classList.contains('on')?'admin-panel':d&&d.classList.contains('on')?'game-page':'home')+' '+location.pathname+(location.hash||'')
+  }catch(e){return 'unknown'}
+ }
+ function queue(p){try{var q=JSON.parse(localStorage.getItem(QK)||'[]');q.push(p);localStorage.setItem(QK,JSON.stringify(q.slice(-20)))}catch(e){}}
+ function post(p,cb){
+  if(!rawFetch){if(cb)cb(false);return}
+  rawFetch(SB_URL+'/functions/v1/'+FN,{method:'POST',headers:{'Content-Type':'application/json',apikey:SB_KEY},body:JSON.stringify(p),keepalive:true})
+   .then(function(r){if(cb)cb(r.status<500)},function(){if(cb)cb(false)})
+ }
+ function flush(){
+  try{
+   if(!on()||busy)return;
+   var q=JSON.parse(localStorage.getItem(QK)||'[]');
+   if(!q.length)return;
+   busy=true;localStorage.removeItem(QK);
+   var i=0;
+   (function next(){
+    if(i>=q.length){busy=false;return}
+    var p=q[i++];
+    post(p,function(ok){if(!ok)queue(p);setTimeout(next,400)})
+   })()
+  }catch(e){busy=false}
+ }
+ function report(kind,msg,detail,status,wh){
+  try{
+   if(!on())return;
+   msg=scrub(msg).slice(0,300);
+   if(msg.length<2)return;
+   wh=scrub(wh||where()).slice(0,200);
+   var key=kind+'|'+wh+'|'+msg.slice(0,80),now=Date.now();
+   if(seen[key]&&now-seen[key]<300000)return;
+   seen[key]=now;
+   if(sent>=15)return;
+   sent++;
+   var p={kind:kind,message:msg,detail:scrub(detail||'').slice(0,1500),status:status||0,location:wh,ua:String(navigator.userAgent||'').slice(0,200)};
+   post(p,function(ok){if(!ok)queue(p)})
+  }catch(e){}
+ }
+ function http(u,m,r){
+  if(r.ok||r.status===429)return;
+  var path=u.slice(SB_URL.length).split('?')[0],s=r.status,wr=m!=='GET'&&m!=='HEAD';
+  var fn=path.match(/^\/functions\/v1\/([\w-]+)/);
+  if(fn){report('edge_function','Edge function '+fn[1]+' returned HTTP '+s,m+' '+path,s,'fn:'+fn[1]);return}
+  if(/^\/storage\/v1\/object\//.test(path)){
+   if(wr)report('upload','Storage upload failed HTTP '+s,m+' '+path,s,'storage:'+(path.split('/')[4]||''));
+   return
+  }
+  if(/^\/rest\/v1\//.test(path)){
+   var tb=path.split('/')[3]||'';
+   if(tb==='rpc'){if(s>=500)report('supabase','RPC failed HTTP '+s,m+' '+path,s,'rpc:'+(path.split('/')[4]||''));return}
+   if(wr){if(s===401||s===403||s===409)return;report('save','Write to '+tb+' failed HTTP '+s,m+' '+path,s,'rest:'+tb);return}
+   if(tb==='items'){if(s===401)return;report('load','Loading items failed HTTP '+s,m+' '+path,s,'rest:items');return}
+   if(s>=500)report('supabase','Read from '+tb+' failed HTTP '+s,m+' '+path,s,'rest:'+tb);
+   return
+  }
+  if(s>=500)report('supabase','Supabase returned HTTP '+s,m+' '+path,s,'sb:'+path.split('/').slice(0,4).join('/'))
+ }
+ function net(u,m,e){
+  if(e&&e.name==='AbortError')return;
+  if(typeof navigator!=='undefined'&&navigator.onLine===false)return;
+  var path=u.slice(SB_URL.length).split('?')[0],msg=String(e&&e.message||e||'network error');
+  var fn=path.match(/^\/functions\/v1\/([\w-]+)/);
+  if(fn){report('edge_function','Network error calling edge function '+fn[1]+': '+msg,m+' '+path,0,'fn:'+fn[1]);return}
+  if(m!=='GET'&&/^\/rest\//.test(path)){report('save','Network error writing to Supabase: '+msg,m+' '+path,0,'rest:'+(path.split('/')[3]||''));return}
+  if(/^\/rest\/v1\/items/.test(path)){report('load','Network error loading items: '+msg,m+' '+path,0,'rest:items');return}
+  report('supabase','Network error calling Supabase: '+msg,m+' '+path,0,'sb:'+path.split('/').slice(0,4).join('/'))
+ }
+ if(rawFetch){
+  window.fetch=function(input,init){
+   var p=rawFetch(input,init);
+   try{
+    var u=typeof input==='string'?input:(input&&input.url)||'';
+    var m=String((init&&init.method)||(input&&input.method)||'GET').toUpperCase();
+    if(on()&&u.indexOf(SB_URL)===0&&u.indexOf('/functions/v1/'+FN)<0){
+     p.then(function(r){try{http(u,m,r)}catch(x){}},function(e){try{net(u,m,e)}catch(x){}})
+    }
+   }catch(x){}
+   return p
+  }
+ }
+ window.addEventListener('error',function(e){
+  try{
+   var t=e.target;
+   if(t&&t!==window&&t.tagName){
+    if(t.tagName==='IMG'){
+     var s=t.currentSrc||t.src||'';
+     if(s&&!/^(data|blob):/i.test(s))report('image','Image failed to load: '+s,'',0,where())
+    }
+    return
+   }
+   var f=String(e.filename||'');
+   if(f&&f.indexOf(location.origin)!==0)return;
+   var m=String(e.message||'');
+   if(!m||/ResizeObserver loop/i.test(m)||m==='Script error.')return;
+   report('js_error',m,(e.error&&e.error.stack)||'',0,(f.replace(location.origin,'')||'inline')+':'+e.lineno+':'+e.colno)
+  }catch(x){}
+ },true);
+ window.addEventListener('unhandledrejection',function(e){
+  try{
+   var r=e.reason;
+   if(!r||typeof r!=='object')return;
+   var m=String(r.message||'');
+   if(!m)return;
+   report('promise',m,r.stack||'',0,where())
+  }catch(x){}
+ });
+ window.addEventListener('online',flush);
+ setTimeout(flush,6000);
+ setTimeout(function(){try{if(typeof LOADING!=='undefined'&&LOADING)report('load','Items still loading after 25 seconds','',0,'home')}catch(e){}},25000);
+ return {report:report,flush:flush}
+})();
 var SRC='';try{SRC=document.documentElement.outerHTML}catch(e){}
 var FB_URL='';var PUBLIC=false;
 var SB_URL='https://nnzfzmpvmnromnaumujg.supabase.co',SB_KEY='sb_publishable_BaoKQfoBoDPuw-mXZ3E2tQ_OGhiQhNz',imgBlob=null,LOADING=false;
@@ -727,7 +856,7 @@ function delItem(k){if(!isAdmin())return toast(NOPERM);archiveItem(k)}
 function archiveItem(k){if(!isAdmin())return toast(NOPERM);var o=Object.assign({},ITEMS[k]);o.archived=!o.archived;if(SB_URL)return guard('admin').then(function(){return sbSave(o,o._id)}).catch(function(){});ITEMS[k]=o;if(editing==k)resetForm();persist();toast(o.archived?'تمت أرشفة اللعبة ويمكن استرجاعها':'تم استرجاع اللعبة')}
 
 function resetAll(){if(!isAdmin())return toast(NOPERM);if(SB_URL)return toast('غير متاح مع قاعدة البيانات');ITEMS=JSON.parse(ORIG);try{localStorage.removeItem('zi')}catch(e){}resetForm();render();drawList();toast('رجعت الملفات الأصلية')}
-function drawList(){drawAdminStats();var term=$('adminQ')?$('adminQ').value.trim().toLowerCase():'';$('lst').innerHTML=ITEMS.map(function(o,k){return {o:o,k:k}}).filter(function(x){return !term||[x.o.n,x.o.a,x.o.c,(x.o.genres||[]).join(' ')].join(' ').toLowerCase().indexOf(term)>-1}).map(function(x){var o=x.o,k=x.k,t=TABS.filter(function(x){return x.id==o.c})[0]||{ar:o.c};return '<div class="li"><span>'+esc(o.a||o.n)+' · '+esc(t.ar)+(o.archived?' · (مؤرشفة)':'')+'</span><button class="btn g" onclick="editItem('+k+')">تعديل</button>'+(isAdmin()?'<button class="btn '+(o.archived?'g':'d')+'" onclick="archiveItem('+k+')">'+(o.archived?'استرجاع':'أرشفة')+'</button>':'')+'</div>'}).join('')||'<div style="font-size:13px;color:var(--mu)">لا توجد نتائج</div>';drawCategoryList()}
+function drawList(){drawAdminStats();var term=$('adminQ')?$('adminQ').value.trim().toLowerCase():'';$('lst').innerHTML=ITEMS.map(function(o,k){return {o:o,k:k}}).filter(function(x){return !term||[x.o.n,x.o.a,x.o.c,(x.o.genres||[]).join(' ')].join(' ').toLowerCase().indexOf(term)>-1}).map(function(x){var o=x.o,k=x.k,t=TABS.filter(function(x){return x.id==o.c})[0]||{ar:o.c};return '<div class="li"><span>'+esc(o.a||o.n)+' · '+esc(t.ar)+(o.archived?' · (مؤرشفة)':'')+'</span><button class="btn g" onclick="editItem('+k+')">تعديل</button><button class="btn g" title="فحص روابط هذه اللعبة" onclick="lcOne('+k+')">🔗</button>'+(isAdmin()?'<button class="btn '+(o.archived?'g':'d')+'" onclick="archiveItem('+k+')">'+(o.archived?'استرجاع':'أرشفة')+'</button>':'')+'</div>'}).join('')||'<div style="font-size:13px;color:var(--mu)">لا توجد نتائج</div>';drawCategoryList()}
 function drawAdminStats(){var el=$('adstats');if(!el)return;var total=Object.keys(counts||{}).reduce(function(n,k){return n+(+counts[k]||0)},0),ratings=Object.keys(STATS||{}).reduce(function(n,k){return n+((STATS[k]&&+STATS[k].n)||0)},0),likes=Object.keys(STATS||{}).reduce(function(n,k){return n+((STATS[k]&&+STATS[k].l)||0)},0);el.innerHTML=[['🎮','الألعاب',ITEMS.filter(function(x){return !x.archived}).length],['🗄️','المؤرشفة',ITEMS.filter(function(x){return !!x.archived}).length],['⬇️','التحميلات',total],['⭐','التقييمات',ratings],['👍','الإعجابات',likes]].map(function(x){return '<div style="flex:1;min-width:105px;background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:9px;text-align:center"><div style="font-size:19px">'+x[0]+'</div><b>'+x[2]+'</b><div style="font-size:11px;color:var(--mu)">'+x[1]+'</div></div>'}).join('')} 
 $('fi').onchange=function(){var f=this.files[0];if(!f)return;var r=new FileReader();r.onload=function(){var m=new Image();m.onload=function(){var k=Math.min(1,720/Math.max(m.width,m.height)),c=document.createElement('canvas');c.width=Math.round(m.width*k);c.height=Math.round(m.height*k);c.getContext('2d').drawImage(m,0,0,c.width,c.height);img=c.toDataURL('image/jpeg',.78);c.toBlob(function(b){imgBlob=b},'image/jpeg',.78);toast('تم تجهيز الصورة ✅')};m.src=r.result};r.readAsDataURL(f)};
 function exportSite(pub){
@@ -1031,22 +1160,46 @@ try{(function(){
    المفاتيح محفوظة كأسرار في Supabase، والدالة نفسها تتحقق أن المستخدم أدمن/مشرف.
    لا يحفظ شيئاً: يملأ حقول النموذج فقط، والحفظ يتم بزر «إضافة/حفظ التعديل» وبنفس صلاحياته. */
 var GF_FN='hyper-endpoint';/* اسم Edge Function كما هو منشور في Supabase */
-var GF={busy:false,seq:0,ids:[]};
+var GF={busy:false,seq:0,ids:[],autoSize:''};
+function gfSize(v){var m=String(v||'').match(/^(\d{1,4}(?:\.\d{1,2})?)\s?(MB|GB|TB)$/i);return m?m[1]+' '+m[2].toUpperCase():''}
+function gfHasImg(){return !!img||(editing>-1&&!!(ITEMS[editing]&&ITEMS[editing].img))}
+function gfCover(url,valid,done){
+ var m=new Image();
+ m.onload=function(){
+  var w=m.naturalWidth,h=m.naturalHeight;
+  if(!(h>w)){done('landscape');return}
+  var k=Math.min(1,600/w,800/h),cw=Math.round(w*k),ch=Math.round(h*k),cv=document.createElement('canvas');
+  cv.width=cw;cv.height=ch;
+  var cx=cv.getContext('2d');cx.fillStyle='#fff';cx.fillRect(0,0,cw,ch);cx.drawImage(m,0,0,cw,ch);
+  var du=cv.toDataURL('image/jpeg',.82);
+  cv.toBlob(function(b){
+   if(!b){done('fail');return}
+   if(!valid()){done('stale');return}
+   if(gfHasImg()){done('kept');return}
+   img=du;imgBlob=b;done('ok',cw,ch)
+  },'image/jpeg',.82)
+ };
+ m.onerror=function(){done('fail')};
+ m.src=url;
+}
 var GF_PLAT={ps5:1,ps4:1,ps3:1,ps2:1,ps1:1,psp:1,pc:1,x360:1};
 var GF_GENRE_AR={'Point-and-click':'اضغط وانقر','Fighting':'قتال','Shooter':'تصويب','Music':'موسيقى','Platform':'منصات','Puzzle':'ألغاز','Racing':'سباقات','Real Time Strategy (RTS)':'استراتيجية آنية','Role-playing (RPG)':'لعب أدوار','Simulator':'محاكاة','Sport':'رياضة','Strategy':'استراتيجية','Turn-based strategy (TBS)':'استراتيجية بالأدوار','Tactical':'تكتيكية',"Hack and slash/Beat 'em up":'قتال بالسيوف / ضرب','Quiz/Trivia':'أسئلة ومعلومات','Pinball':'بينبول','Adventure':'مغامرات','Indie':'مستقلة','Arcade':'أركيد','Visual Novel':'رواية بصرية','Card & Board Game':'ورق ولوحية','MOBA':'MOBA'};
 function gfName(){return $('fnE').value.trim()||$('fnA').value.trim()}
 function gfShow(m,k){var e=$('gfMsg');if(!e)return;if(!m){e.style.display='none';e.textContent='';return}e.style.display='block';e.textContent=m;e.style.color=k==='ok'?'#22c55e':k==='err'?'#f87171':k==='warn'?'#f59e0b':'var(--mu)'}
-function gfCands(list){var e=$('gfCands');if(!e)return;e.innerHTML='';GF.ids=list||[];if(!list||!list.length){e.style.display='none';return}e.style.display='flex';var t=document.createElement('div');t.style.cssText='flex-basis:100%;font-size:12px;color:var(--mu)';t.textContent='وُجدت عدة نسخ مؤكدة، اختر النسخة والمنطقة الصحيحة:';e.appendChild(t);list.forEach(function(x,i){var b=document.createElement('button');b.type='button';b.className='btn g';b.style.cssText='padding:6px 10px;font-size:13px';b.dir='ltr';b.textContent=(x.region?x.region+' · ':'')+x.cusa;b.onclick=function(){gfPick(i,b)};e.appendChild(b)})}
-function gfPick(i,btn){var x=GF.ids[i];if(!x||!isStaff())return;$('fcn').value=x.cusa;if(x.region)$('frg').value=x.region;var bs=$('gfCands').querySelectorAll('button');for(var k=0;k<bs.length;k++)bs[k].classList.remove('sel');if(btn)btn.classList.add('sel');toast('تم اختيار '+x.cusa)}
+function gfCands(list){var e=$('gfCands');if(!e)return;e.innerHTML='';GF.ids=list||[];if(!list||!list.length){e.style.display='none';return}e.style.display='flex';var t=document.createElement('div');t.style.cssText='flex-basis:100%;font-size:12px;color:var(--mu)';t.textContent='وُجدت عدة نسخ مؤكدة، اختر النسخة والمنطقة الصحيحة:';e.appendChild(t);list.forEach(function(x,i){var b=document.createElement('button');b.type='button';b.className='btn g';b.style.cssText='padding:6px 10px;font-size:13px';b.dir='ltr';b.textContent=(x.region?x.region+' · ':'')+x.cusa+(x.size?' · '+x.size:'');b.onclick=function(){gfPick(i,b)};e.appendChild(b)})}
+function gfPick(i,btn){var x=GF.ids[i];if(!x||!isStaff())return;$('fcn').value=x.cusa;if(x.region)$('frg').value=x.region;if(x.size){var fz=$('fs');if(!fz.value.trim()||fz.value===GF.autoSize){fz.value=x.size;GF.autoSize=x.size}}var bs=$('gfCands').querySelectorAll('button');for(var k=0;k<bs.length;k++)bs[k].classList.remove('sel');if(btn)btn.classList.add('sel');toast('تم اختيار '+x.cusa)}
 function gfUI(){var b=$('gfBox');if(!b)return;var show=isStaff()&&gfName().length>1;b.style.display=show?'flex':'none';if(!show){gfShow('');gfCands(null)}}
 function gfClean(d){
  var yr=String(d.year||''),now=new Date().getFullYear();if(!/^\d{4}$/.test(yr)||+yr<1970||+yr>now+2)yr='';
  var gs=(Array.isArray(d.genres)?d.genres:[]).filter(function(x){return typeof x==='string'&&x.length&&x.length<=60}).slice(0,6).map(function(x){return GF_GENRE_AR[x]||x});
  var mode=['single','multi','both'].indexOf(d.mode)>-1?d.mode:'';
- var ids=(Array.isArray(d.ids)?d.ids:[]).filter(function(x){return x&&/^(CUSA|PPSA)-\d{5}$/.test(x.cusa)&&['','USA','EUR','ASIA','JPN'].indexOf(x.region||'')>-1}).slice(0,8).map(function(x){return {cusa:x.cusa,region:x.region||''}});
+ var ids=(Array.isArray(d.ids)?d.ids:[]).filter(function(x){return x&&/^(CUSA|PPSA)-\d{5}$/.test(x.cusa)&&['','USA','EUR','ASIA','JPN'].indexOf(x.region||'')>-1}).slice(0,8).map(function(x){return {cusa:x.cusa,region:x.region||'',size:gfSize(x.size)}});
  var ver=/^[0-9A-Za-z.\-_ ]{1,20}$/.test(String(d.version||''))?String(d.version):'';
  var fmt=/^[0-9A-Za-z.\-_ ]{1,20}$/.test(String(d.format||''))?String(d.format):'';
- return {yr:yr,gs:gs,mode:mode,ids:ids,ver:ver,fmt:fmt};
+ var ds=typeof d.desc_ar==='string'?d.desc_ar.trim().slice(0,1500):'';
+ if((ds.match(/[؀-ۿ]/g)||[]).length<20)ds='';
+ var cv=d.cover&&typeof d.cover.data_url==='string'&&d.cover.data_url.length<3000000&&/^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+\/=]+$/.test(d.cover.data_url)?d.cover.data_url:'';
+ return {yr:yr,gs:gs,mode:mode,ids:ids,ver:ver,fmt:fmt,size:gfSize(d.size),desc:ds,cover:cv};
 }
 function gfApply(d){
  var st=d&&d.status;
@@ -1062,13 +1215,29 @@ function gfApply(d){
  if(c.ids.length===1){put('fcn',c.ids[0].cusa,'عنوان اللعبة (CUSA)');put('frg',c.ids[0].region,'المنطقة')}
  else if(multi){gfCands(c.ids)}
  else{none.push('المنطقة','عنوان اللعبة (CUSA)')}
+ var szv=c.size||(c.ids.length===1?c.ids[0].size:''),SZL='الحجم (حجم التحميل حسب المتجر)';
+ put('fs',szv,SZL);
+ if(filled.indexOf(SZL)>-1)GF.autoSize=szv;
+ put('fd',c.desc,'الوصف العربي');
+ var coverTodo=false;
+ if(c.cover){if(gfHasImg())kept.push('صورة الغلاف');else coverTodo=true}
+ else if(d.cover_note==='not_portrait')none.push('صورة الغلاف (المتوفر ليس عمودياً)');
+ else none.push('صورة الغلاف');
  var parts=[];
  if(filled.length)parts.push('✅ تم جلب المعلومات وملء: '+filled.join('، ')+'.\nراجعها وعدّلها قبل الحفظ.');
  else if(!multi)parts.push('لم تُملأ حقول جديدة.');
  if(multi)parts.push('اختر النسخة/المنطقة من الأزرار أدناه.');
+ if(filled.indexOf('الوصف العربي')>-1)parts.push('مصدر الوصف: '+(d.desc_source==='steam'?'متجر Steam (عربي)':'متجر PlayStation (عربي)')+'.');
  if(none.length)parts.push('لم تتوفر معلومة مؤكدة (تُركت فارغة): '+none.join('، ')+'.');
  if(kept.length)parts.push('لم تُستبدل لأنها مملوءة ومختلفة: '+kept.join('، ')+'.');
- gfShow(parts.join('\n'),(filled.length||multi)?'ok':'warn');
+ var msg=parts.join('\n'),kk=(filled.length||multi||coverTodo)?'ok':'warn',n0=gfName(),ed0=editing,seq=GF.seq;
+ gfShow(msg+(coverTodo?'\n⏳ جاري تجهيز صورة الغلاف...':''),kk);
+ if(coverTodo)gfCover(c.cover,function(){return seq===GF.seq&&gfName()===n0&&editing===ed0&&isStaff()},function(res,w,h){
+  if(res==='stale')return;
+  var t=res==='ok'?'✅ تم تجهيز صورة الغلاف ('+w+'×'+h+') وستُرفع عند الحفظ.':res==='kept'?'صورة الغلاف: لم تُستبدل لأنها مملوءة.':res==='landscape'?'صورة الغلاف: غير عمودية فلم تُستخدم.':'تعذر تجهيز صورة الغلاف.';
+  gfShow(msg+'\n'+t,(res==='ok'||filled.length||multi)?'ok':'warn');
+  if(res==='ok')toast('تم تجهيز الغلاف ✅')
+ });
 }
 function gfFetch(){
  if(!isStaff())return toast(NOPERM);
@@ -1077,7 +1246,7 @@ function gfFetch(){
  if(n.length<2)return toast('اكتب اسم اللعبة أولاً');
  if(!GF_PLAT[cat]){gfShow('جلب المعلومات متاح لأقسام الألعاب فقط.','warn');return}
  if(!SB_URL){gfShow('يلزم ربط قاعدة البيانات (Supabase) لتفعيل جلب المعلومات.','warn');return}
- GF.busy=true;$('gfBtn').disabled=true;gfCands(null);
+ GF.busy=true;GF.seq++;$('gfBtn').disabled=true;gfCands(null);
  gfShow('⏳ جاري البحث عن معلومات اللعبة...','');
  guard('staff').then(sbTok).then(function(tok){
   return fetch(SB_URL+'/functions/v1/'+GF_FN,{method:'POST',headers:sbH(tok),body:JSON.stringify({name:n,platform:cat})});
@@ -1094,6 +1263,7 @@ function gfFetch(){
    if(e.http===401||e.http===403)gfShow('ليست لديك صلاحية لاستخدام جلب المعلومات.','err');
    else if(e.http===404)gfShow('دالة جلب المعلومات غير منشورة بعد على Supabase ('+GF_FN+').','err');
    else if(code==='not_configured')gfShow('لم يتم إعداد مفاتيح البحث على الخادم بعد (IGDB). راجع خطوات الإعداد.','err');
+   else if(code==='igdb_auth_failed')gfShow('مفاتيح IGDB موجودة لكن Twitch رفضها'+(e.j&&e.j.detail?' ('+e.j.detail+')':'')+'. تحقق من Client ID وClient Secret في Supabase.','err');
    else if(e.http===429)gfShow('محاولات كثيرة خلال وقت قصير؛ انتظر قليلاً ثم أعد المحاولة.','warn');
    else gfShow('تعذر جلب المعلومات حالياً (رمز '+e.http+'). يمكنك إكمال الحقول يدوياً.','err');
    return;
@@ -1109,7 +1279,200 @@ function gfFetch(){
  var _re=resetForm;resetForm=function(){var r=_re.apply(this,arguments);try{gfShow('');gfCands(null);gfUI()}catch(e){}return r};
  var _ed=editItem;editItem=function(){var r=_ed.apply(this,arguments);try{gfShow('');gfCands(null);gfUI()}catch(e){}return r};
 })();
-applyAdm();if(SB_URL&&sess())loadRole().then(function(){applyAdm();if(location.hash=='#admin')openAdm();if(isAdm()){drawList();loadCategories()}});else if(location.hash=='#admin')openAdm();
+/* ===== مراقبة الموقع (للمالك) + فحص الروابط (للأدمن والمشرف) ===== */
+var ZMX={rows:[],n:0,busy:false};
+var LC={rows:{},busy:false};
+var ZM_KIND={supabase:'اتصال Supabase',edge_function:'Edge Function',upload:'رفع ملف',save:'حفظ بيانات',load:'تحميل بيانات',image:'تحميل صورة',js_error:'خطأ JavaScript',promise:'خطأ غير معالج',broken_link:'رابط تحميل معطل',other:'أخرى'};
+var ZM_HINT={
+ supabase_unreachable:'تعذر الوصول إلى Supabase: تحقق أن المشروع غير متوقف (Paused) وأن الخدمة تعمل.',
+ supabase_server_error:'Supabase يرجع خطأ خادم: راجع حالة المشروع وسجلات قاعدة البيانات.',
+ supabase_other:'طلب إلى Supabase فشل: راجع السجلات.',
+ edge_not_found:'الدالة غير منشورة أو اسمها في الموقع لا يطابق اسمها في Supabase.',
+ edge_unauthorized:'رُفض الطلب: انتهت الجلسة أو خيار Verify JWT يحتاج ضبطاً.',
+ edge_server_error:'الدالة أرجعت خطأ داخلياً: راجع Logs الخاصة بها في Supabase.',
+ edge_unreachable:'تعذر الوصول إلى الدالة: تحقق من نشرها ومن CORS.',
+ edge_other:'فشل استدعاء الدالة: راجع Logs الخاصة بها.',
+ upload_failed:'فشل رفع ملف: راجع سياسات bucket وحجم الملف.',
+ save_denied:'رُفض الحفظ: سياسات RLS أو انتهت الجلسة.',
+ save_invalid:'بيانات الحفظ مرفوضة: عمود ناقص أو قيمة غير صالحة.',
+ save_failed:'فشل حفظ البيانات: راجع سجلات قاعدة البيانات.',
+ load_failed:'فشل تحميل البيانات: راجع اتصال Supabase وسياسات القراءة.',
+ image_failed:'صورة لا تُحمَّل: الرابط محذوف أو الملف غير عام.',
+ js_error:'خطأ برمجي في الواجهة: راجع الموقع المذكور وسطر الكود.',
+ promise_rejection:'خطأ غير معالج في الواجهة: راجع التفاصيل.',
+ broken_link:'رابط التحميل لا يعمل: افتح قسم فحص الروابط وصحّح الرابط يدوياً.',
+ other:'غير معروف: راجع التفاصيل.'
+};
+var LC_FIELD={main:'رابط التحميل',direct_pkg:'رابط PKG المباشر',update:'التحديث / التعريب',addon:'الإضافة',addon2:'الإضافة الثانية',save:'ملف الحفظ',license:'ملف الترخيص'};
+var LC_REASON={
+ file_ok:'ملف مباشر يعمل',
+ page_ok:'صفحة الاستضافة تعمل (لم يُتأكد من الملف نفسه)',
+ http_404:'الرابط غير موجود (404)',
+ http_410:'الملف محذوف نهائياً (410)',
+ http_401:'يتطلب تسجيل دخول (401) — قد يعمل عند المستخدم',
+ http_403:'الموقع منع الفحص الآلي أو يتطلب صلاحية (403) — قد يعمل عند المستخدم',
+ http_5xx:'خطأ في خادم الاستضافة (5xx) — قد يكون مؤقتاً، أعد الفحص لاحقاً',
+ http_other:'رد غير متوقع من الخادم',
+ file_removed:'صفحة الاستضافة تقول إن الملف محذوف',
+ page_may_say_removed:'الصفحة قد تشير إلى حذف الملف — راجعه يدوياً',
+ not_a_file:'المتوقع ملف مباشر لكن الرابط يفتح صفحة',
+ size_mismatch:'حجم الملف يختلف كثيراً عن الحجم المعلن — راجعه يدوياً',
+ redirected_to_home:'الرابط يحوّل إلى الصفحة الرئيسية (غالباً محذوف) — راجعه يدوياً',
+ domain_not_found:'الدومين غير موجود',
+ invalid_url:'صيغة الرابط غير صحيحة',
+ blocked_host:'عنوان غير مسموح بفحصه',
+ blocked_port:'منفذ غير مسموح بفحصه',
+ timeout:'انتهت مهلة الاتصال — أعد الفحص لاحقاً',
+ dns_error:'تعذر تحليل اسم الدومين — أعد الفحص لاحقاً',
+ tls_error:'مشكلة في شهادة الأمان (SSL) للموقع',
+ network_error:'تعذر الاتصال بالموقع',
+ too_many_redirects:'تحويلات كثيرة جداً',
+ budget_exceeded:'لم يُفحص بسبب ضيق الوقت — أعد الفحص'
+};
+var LC_ST={ok:'✅ يعمل',broken:'❌ لا يعمل',unverified:'⚠️ تعذر التأكد'};
+function zmTime(s){try{return new Date(s).toLocaleString('ar-IQ')}catch(e){return String(s||'')}}
+function fnCall(name,body,level){
+ return guard(level).then(sbTok).then(function(tok){
+  return fetch(SB_URL+'/functions/v1/'+name,{method:'POST',headers:sbH(tok),body:JSON.stringify(body)})
+ }).then(function(r){
+  return r.text().then(function(t){var j=null;try{j=JSON.parse(t)}catch(e){}if(!r.ok)throw {http:r.status,j:j};return j})
+ })
+}
+function boxMsg(id,m,k){var e=$(id);if(!e)return;if(!m){e.style.display='none';e.textContent='';return}e.style.display='block';e.textContent=m;e.style.color=k==='ok'?'#22c55e':k==='err'?'#f87171':k==='warn'?'#f59e0b':'var(--mu)'}
+function fnErr(e,name){
+ if(e==='perm')return '';
+ if(e==='exp'||e==='no')return 'انتهت الجلسة؛ سجّل دخولك من جديد.';
+ if(e&&e.http===404)return 'الدالة '+name+' غير منشورة بعد على Supabase.';
+ if(e&&(e.http===401||e.http===403))return 'ليست لديك صلاحية لهذا الإجراء.';
+ if(e&&e.http===429)return 'محاولات كثيرة؛ انتظر قليلاً ثم أعد المحاولة.';
+ if(e&&e.http)return 'تعذر تنفيذ الطلب (رمز '+e.http+(e.j&&e.j.error?': '+e.j.error:'')+').';
+ return 'تعذر الاتصال بالخدمة. تحقق من الإنترنت ومن نشر الدالة '+name+'.'
+}
+/* ---- مراقبة الأخطاء (المالك فقط) ---- */
+function zmMsg(m,k){boxMsg('zmMsg',m,k)}
+function zmLoad(silent){
+ if(!SB_URL||!isAdmin()||!$('zmBox'))return;
+ var f=$('zmFilter');
+ fnCall('report-error',{action:'list',status:f&&f.value==='all'?'all':'new'},'admin').then(function(d){
+  ZMX.rows=d.rows||[];ZMX.n=+d.new_count||0;zmMsg('');zmDraw();
+  var prev=0;try{prev=+localStorage.getItem('zmSeen')||0}catch(e){}
+  if(silent&&ZMX.n>prev)toast('⚠️ أخطاء جديدة في الموقع: '+ZMX.n);
+  try{localStorage.setItem('zmSeen',String(ZMX.n))}catch(e){}
+ }).catch(function(e){
+  var t=fnErr(e,'report-error');if(t)zmMsg(t+' وتأكد من تشغيل ملف SQL.','err')
+ })
+}
+function zmDraw(){
+ var b=$('zmBadge');if(b){b.textContent=ZMX.n?(ZMX.n+' جديد'):'';b.style.display=ZMX.n?'inline-block':'none'}
+ var l=$('zmList');if(!l)return;
+ if(!ZMX.rows.length){l.innerHTML='<div style="font-size:13px;color:var(--mu)">لا توجد أخطاء مسجلة 🎉</div>';return}
+ l.innerHTML=ZMX.rows.map(function(r){
+  var done=r.status==='resolved',kd=ZM_KIND[r.kind]||r.kind;
+  var hint=ZM_HINT[r.hint]||'';
+  var det=[r.detail?esc(r.detail):'',r.ua?'UA: '+esc(r.ua):'','أول ظهور: '+esc(zmTime(r.first_seen)),done&&r.resolved_at?'عولج: '+esc(zmTime(r.resolved_at)):''].filter(Boolean).join('\n');
+  return '<div style="border:1px solid var(--bd);border-radius:10px;padding:8px 10px;background:var(--card);display:flex;flex-direction:column;gap:5px">'
+   +'<div style="display:flex;gap:6px;align-items:center;justify-content:space-between"><b style="font-size:13px">'+esc(kd)+(r.severity==='important'?' ⚠️':'')+'</b><span style="font-size:11px;padding:2px 8px;border-radius:99px;border:1px solid var(--bd);color:'+(done?'#22c55e':'#f59e0b')+'">'+(done?'تمت المعالجة':'جديد')+'</span></div>'
+   +'<div style="font-size:12px;color:var(--mu)">'+esc(zmTime(r.last_seen))+' · '+esc(r.location||'-')+' · ×'+esc(r.count)+'</div>'
+   +'<div dir="auto" style="font-size:13px;word-break:break-word">'+esc(r.message)+'</div>'
+   +'<details><summary style="cursor:pointer;font-size:12px">التفاصيل والسبب المحتمل</summary>'
+   +(hint?'<div style="font-size:12px;margin:6px 0;color:var(--mu)">السبب المحتمل: '+esc(hint)+'</div>':'')
+   +'<pre dir="ltr" style="white-space:pre-wrap;word-break:break-word;font-size:11px;margin:6px 0 0;color:var(--mu)">'+det+'</pre></details>'
+   +'<div class="r2"><button class="btn g" type="button" style="padding:5px 12px;font-size:12px" onclick="zmResolve('+(+r.id)+','+(done?'false':'true')+')">'+(done?'إعادة فتح':'تمت المعالجة')+'</button></div></div>'
+ }).join('')
+}
+function zmResolve(id,done){
+ fnCall('report-error',{action:'resolve',id:String(id),resolved:!!done},'admin').then(function(){zmLoad()}).catch(function(e){var t=fnErr(e,'report-error');if(t)zmMsg(t,'err')})
+}
+/* ---- فحص الروابط (الأدمن والمشرف) ---- */
+function lcMsg(m,k){boxMsg('lcMsg',m,k)}
+function lcKey(r){return r.item_id+'|'+r.field+'|'+r.url}
+function lcMerge(rows){
+ var ids={};rows.forEach(function(r){ids[String(r.item_id)]=1});
+ Object.keys(LC.rows).forEach(function(k){if(ids[LC.rows[k].item_id])delete LC.rows[k]});
+ rows.forEach(function(r){
+  var x={item_id:String(r.item_id),game:r.game||'',field:r.field,label:r.label||'',url:r.url,status:r.status,http:r.http!=null?r.http:(r.http_status||0),reason:r.reason||'',kind:r.kind||'',at:r.checked_at||new Date().toISOString()};
+  LC.rows[lcKey(x)]=x
+ })
+}
+function lcSummary(rows){
+ var c={ok:0,broken:0,unverified:0};rows.forEach(function(r){c[r.status]=(c[r.status]||0)+1});
+ return 'يعمل: '+c.ok+' · لا يعمل: '+c.broken+' · تعذر التأكد: '+c.unverified
+}
+function lcDraw(){
+ var l=$('lcList');if(!l)return;
+ var f=$('lcFilter'),bad=!f||f.value!=='all';
+ var rows=Object.keys(LC.rows).map(function(k){return LC.rows[k]});
+ var rank={broken:0,unverified:1,ok:2};
+ var show=rows.filter(function(r){return !bad||r.status!=='ok'}).sort(function(a,b){return (rank[a.status]-rank[b.status])||String(a.game).localeCompare(String(b.game))});
+ if(!rows.length){l.innerHTML='<div style="font-size:13px;color:var(--mu)">لا توجد نتائج محفوظة بعد. اضغط «فحص كل الألعاب» أو زر 🔗 بجانب لعبة.</div>';return}
+ if(!show.length){l.innerHTML='<div style="font-size:13px;color:#22c55e">لا توجد مشاكل في الروابط المفحوصة ✅</div>';return}
+ l.innerHTML=show.slice(0,200).map(function(r){
+  var lab=LC_FIELD[r.field]||r.label||r.field,col=r.status==='ok'?'#22c55e':r.status==='broken'?'#f87171':'#f59e0b';
+  var u=/^https?:\/\//i.test(r.url)?'<a href="'+esc(r.url)+'" target="_blank" rel="noopener noreferrer" style="color:inherit">'+esc(r.url)+'</a>':esc(r.url);
+  return '<div style="border:1px solid var(--bd);border-radius:10px;padding:8px 10px;background:var(--card);display:flex;flex-direction:column;gap:3px;font-size:13px">'
+   +'<div style="display:flex;justify-content:space-between;gap:8px"><b>'+esc(r.game)+'</b><span style="color:'+col+';white-space:nowrap">'+LC_ST[r.status]+'</span></div>'
+   +'<div style="color:var(--mu);font-size:12px">'+esc(lab)+(r.http?' · HTTP '+esc(r.http):'')+' · '+esc(zmTime(r.at))+'</div>'
+   +'<div dir="ltr" style="font-size:12px;word-break:break-all;color:var(--mu)">'+u+'</div>'
+   +'<div>'+esc(LC_REASON[r.reason]||r.reason)+'</div></div>'
+ }).join('')+(show.length>200?'<div style="font-size:12px;color:var(--mu)">يُعرض أول 200 نتيجة فقط.</div>':'')
+}
+function lcLoad(silent){
+ if(!SB_URL||!isStaff()||!$('lcBox'))return;
+ fnCall('check-links',{action:'list'},'staff').then(function(d){
+  LC.rows={};lcMerge(d.rows||[]);lcDraw()
+ }).catch(function(e){
+  if(silent)return;var t=fnErr(e,'check-links');if(t)lcMsg(t+' وتأكد من تشغيل ملف SQL.','err')
+ })
+}
+function lcOne(k){
+ var o=ITEMS[k];
+ if(!isStaff())return toast(NOPERM);
+ if(!SB_URL)return toast('يلزم ربط Supabase لفحص الروابط');
+ if(!o||o._id==null)return toast('احفظ اللعبة أولاً ثم افحص روابطها');
+ if(LC.busy)return toast('هناك فحص جارٍ، انتظر لحظة');
+ LC.busy=true;lcMsg('⏳ جاري فحص روابط «'+(o.a||o.n)+'»...','');
+ fnCall('check-links',{item_id:String(o._id)},'staff').then(function(d){
+  var rs=d.results||[];lcMerge(rs);lcDraw();
+  lcMsg(rs.length?('نتيجة «'+(o.a||o.n)+'»: '+lcSummary(rs)):'لا توجد روابط تحميل في هذه اللعبة.',rs.length?'ok':'warn')
+ }).catch(function(e){var t=fnErr(e,'check-links');if(t)lcMsg(t,'err')}).then(function(){LC.busy=false})
+}
+function lcAll(){
+ if(!isStaff())return toast(NOPERM);
+ if(!SB_URL)return toast('يلزم ربط Supabase لفحص الروابط');
+ if(LC.busy)return toast('هناك فحص جارٍ، انتظر لحظة');
+ LC.busy=true;
+ var off=0,tot=0,all=[];
+ (function step(){
+  fnCall('check-links',{offset:off,limit:4},'staff').then(function(d){
+   tot=d.total||tot;var rs=d.results||[];all=all.concat(rs);lcMerge(rs);lcDraw();
+   off=d.next_offset||0;
+   if(d.done){LC.busy=false;lcMsg('انتهى فحص '+tot+' لعبة. '+lcSummary(all),'ok');return}
+   lcMsg('⏳ تم فحص '+Math.min(off,tot)+' من '+tot+' لعبة... '+lcSummary(all),'');
+   setTimeout(step,900)
+  }).catch(function(e){LC.busy=false;var t=fnErr(e,'check-links');if(t)lcMsg(t,'err')})
+ })()
+}
+function lcRecheck(){
+ if(!isStaff())return toast(NOPERM);
+ if(LC.busy)return toast('هناك فحص جارٍ، انتظر لحظة');
+ var ids={};Object.keys(LC.rows).forEach(function(k){var r=LC.rows[k];if(r.status!=='ok')ids[r.item_id]=1});
+ var list=Object.keys(ids);
+ if(!list.length)return lcMsg('لا توجد روابط بها مشاكل لإعادة فحصها.','warn');
+ LC.busy=true;var i=0,all=[];
+ (function step(){
+  if(i>=list.length){LC.busy=false;lcMsg('انتهت إعادة الفحص. '+lcSummary(all),'ok');return}
+  lcMsg('⏳ إعادة فحص '+(i+1)+' من '+list.length+' لعبة...','');
+  fnCall('check-links',{item_id:list[i++]},'staff').then(function(d){
+   var rs=d.results||[];all=all.concat(rs);lcMerge(rs);lcDraw();setTimeout(step,700)
+  }).catch(function(e){LC.busy=false;var t=fnErr(e,'check-links');if(t)lcMsg(t,'err')})
+ })()
+}
+(function(){
+ var _oa=openAdm;
+ openAdm=function(){var r=_oa.apply(this,arguments);try{if(isAdmin())zmLoad(true);if(isStaff())lcLoad(true)}catch(e){}return r};
+ setInterval(function(){try{var a=$('adm');if(a&&a.classList.contains('on')&&isAdmin())zmLoad(true)}catch(e){}},60000);
+})();
+applyAdm();if(SB_URL&&sess())loadRole().then(function(){applyAdm();if(location.hash=='#admin')openAdm();if(isAdm()){drawList();loadCategories()}if(isAdmin())zmLoad(true);if(isStaff())lcLoad(true)});else if(location.hash=='#admin')openAdm();
 render();if(!SB_URL)openFromHash();
 </script>
 </body>
