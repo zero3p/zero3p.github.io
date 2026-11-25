@@ -994,8 +994,9 @@ function sbSave(o,id){
     o.img=SB_URL+'/storage/v1/object/public/covers/'+nm;
    });
   }
-  return p.then(function(){return fetch(SB_URL+'/rest/v1/items'+(id?'?id=eq.'+id:''),{method:id?'PATCH':'POST',headers:sbH(tok),body:JSON.stringify({data:o})})})
-   .then(function(r){if(!r.ok)return r.text().then(function(t){throw {kind:'db',status:r.status,detail:sbErrText(t)}});resetForm();sbLoad();toast('تم الحفظ في قاعدة البيانات ✅')});
+  return p.then(function(){var hp=sbH(tok);if(!id)hp.Prefer='return=representation';return fetch(SB_URL+'/rest/v1/items'+(id?'?id=eq.'+id:''),{method:id?'PATCH':'POST',headers:hp,body:JSON.stringify({data:o})})})
+   .then(function(r){if(!r.ok)return r.text().then(function(t){throw {kind:'db',status:r.status,detail:sbErrText(t)}});return id?[]:r.json().catch(function(){return []})})
+   .then(function(rows){resetForm();sbLoad();toast('تم الحفظ في قاعدة البيانات ✅');if(!id&&!o.archived&&rows&&rows[0]&&rows[0].id)tgNotify(rows[0].id,o)});
 
  }).catch(function(e){
   if(e==='perm')return;
@@ -1004,6 +1005,18 @@ function sbSave(o,id){
   console.error('ZERO Supabase save error:',e);
   if(e==='exp'||e==='no'){setSess(null);applyAdm()}
  });
+}
+function tgNotify(id,o){
+ try{
+  var t=TABS.filter(function(x){return x.id==o.c})[0];
+  sbTok().then(function(tok){
+   var h=sbH(tok);
+   return fetch(SB_URL+'/functions/v1/telegram-post',{method:'POST',headers:h,body:JSON.stringify({id:id,cat:t?t.ar:''})})
+  }).then(function(r){return r.json().catch(function(){return {}})}).then(function(j){
+   if(j&&j.status==='sent')toast('تم نشر اللعبة في Telegram ✅');
+   else if(j&&j.status==='failed')toast('تم حفظ اللعبة لكن تعذر نشرها في Telegram');
+  }).catch(function(){})
+ }catch(e){}
 }
 function sbDel(id){if(!isAdmin())return toast(NOPERM);guard('admin').then(sbTok).then(function(tok){return fetch(SB_URL+'/rest/v1/items?id=eq.'+id,{method:'DELETE',headers:sbH(tok)})}).then(function(r){if(!r.ok)throw 0;resetForm();sbLoad();toast('تم الحذف')}).catch(function(e){if(e!=='perm')toast('فشل الحذف')})}
 function sbMigrate(){if(!isAdmin())return toast(NOPERM);var seed=JSON.parse(ORIG).filter(function(o){return o&&o.n});if(!seed.length)return toast('لا توجد ملفات للنقل');guard('admin').then(sbTok).then(function(tok){var rows=[],ch=Promise.resolve();seed.forEach(function(o,i){ch=ch.then(function(){if(o.img&&o.img.indexOf('data:')==0){var nm=Date.now()+'-'+i+'.jpg',h=sbH(tok);h['Content-Type']='image/jpeg';return fetch(SB_URL+'/storage/v1/object/covers/'+nm,{method:'POST',headers:h,body:d2b(o.img)}).then(function(r){if(r.ok)o.img=SB_URL+'/storage/v1/object/public/covers/'+nm;else delete o.img})}}).then(function(){delete o._id;rows.push({data:o})})});return ch.then(function(){return fetch(SB_URL+'/rest/v1/items',{method:'POST',headers:sbH(tok),body:JSON.stringify(rows.reverse())})})}).then(function(r){if(!r.ok)throw 0;sbLoad();toast('تم نقل '+seed.length+' ملف ✅')}).catch(function(e){if(e!=='perm')toast('فشل النقل')})}
