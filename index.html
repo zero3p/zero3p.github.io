@@ -8,7 +8,7 @@
 <meta name="description" content="ZE – ZERO منصة ألعاب وملفات PlayStation، تصفح الألعاب حسب المنصة والتصنيف، وابحث عن التحديثات والتعريبات وروابط التحميل.">
 <meta name="theme-color" content="#0a0612">
 <meta name="robots" content="index,follow,max-image-preview:large">
-<link rel="icon" href="logo.png" type="image/png">
+<link rel="icon" href="/logo.png" type="image/png">
 <link rel="canonical" href="https://zero3p.github.io/">
 <meta property="og:type" content="website">
 <meta property="og:title" content="ZE – ZERO | زيرو">
@@ -464,11 +464,26 @@ html[dir=rtl] .hero-suggest:before{background:linear-gradient(270deg,rgba(2,9,20
 
 /* ===== role-based admin UI ===== */
 body:not(.r-admin) .ao{display:none!important}
+
+.gp-top{display:flex;gap:14px;margin-top:10px;align-items:flex-start}
+.gp-cv{width:190px;min-width:190px;aspect-ratio:3/4;border-radius:12px;display:flex;align-items:center;justify-content:center;text-align:center}
+.gp-in{flex:1;display:flex;flex-direction:column;gap:6px;min-width:0}
+.gp-n{font-size:14px;color:var(--mu)}.gp-n b{color:var(--g,#00f19a)}
+.gp-r{display:flex;justify-content:space-between;gap:10px;font-size:13px;color:var(--mu);padding:3px 0;border-bottom:1px solid var(--bd)}.gp-r b{color:var(--tx,#e8eefc);font-weight:600;text-align:end}
+.gp-v{background:var(--bar);border:1px solid var(--bd);border-radius:14px;padding:12px;margin:10px 0;display:flex;flex-direction:column;gap:4px}
+.gp-vh{font-weight:700;margin-bottom:4px}
+.gp-l{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+@media(max-width:560px){.gp-top{flex-direction:column;align-items:center}.gp-cv{width:60%;min-width:0}.gp-in{width:100%}}
+
+.gp-tx{color:var(--mu);font-size:14px;white-space:pre-wrap;margin:6px 0}
+.gp-img{max-width:100%;border-radius:12px;margin:6px 0;display:block}
+.gp-vid{position:relative;aspect-ratio:16/9;margin:6px 0}
+.gp-vid iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:0;border-radius:12px}
 </style>
 </head> 
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><linearGradient id="gz" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d946ef"/><stop offset=".35" stop-color="#ec4899"/><stop offset=".7" stop-color="#f97316"/><stop offset="1" stop-color="#fbbf24"/></linearGradient></defs></svg>
-<div id="splash"><span class="lgo bolt" style="width:150px;height:150px"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="#000"/><text x="50" y="62" text-anchor="middle" font-family="Arial Black,Impact,sans-serif" font-weight="900" font-size="46" fill="url(#gz)" stroke="#f5d0fe" stroke-width="1">ZE</text></svg><img src="logo.png" alt="ZE" onerror="this.style.display='none'"></span><div class="wm"><span class="wmb">ZERO</span></div><div class="wm2">زيرو</div></div>
+<div id="splash"><span class="lgo bolt" style="width:150px;height:150px"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="#000"/><text x="50" y="62" text-anchor="middle" font-family="Arial Black,Impact,sans-serif" font-weight="900" font-size="46" fill="url(#gz)" stroke="#f5d0fe" stroke-width="1">ZE</text></svg><img src="/logo.png" alt="ZE" onerror="this.style.display='none'"></span><div class="wm"><span class="wmb">ZERO</span></div><div class="wm2">زيرو</div></div>
 <div class="top">
 <div class="logo" id="logo"><span class="ze-mark" aria-hidden="true">Z</span><span class="ze-word"><b>ZE <i>–</i> ZERO</b><small>كل ألعابك في مكان واحد</small></span></div><button class="gear" id="gear" onclick="openAdm()">⚙️</button><button class="lang" id="accb" onclick="openAcc()" aria-label="account">👤</button><button class="lang" id="thm" aria-label="theme"></button><button class="lang" id="lang"></button>
 <input class="search" id="q" type="search">
@@ -521,12 +536,14 @@ body:not(.r-admin) .ao{display:none!important}
 <div class="r2"><input id="frg" placeholder="المنطقة (مثال USA / EUR / ASIA)" list="lrg"><input id="ffm" placeholder="صيغة اللعبة (مثال PKG / FPKG)" list="lfm" dir="ltr"></div>
 <datalist id="lrg"><option value="USA"><option value="EUR"><option value="ASIA"><option value="JPN"><option value="ALL"></datalist><datalist id="lfm"><option value="PKG"><option value="FPKG"><option value="ISO"><option value="Backport"></datalist>
 <input id="frq" placeholder="متطلبات التشغيل (مثال: جلبريك 9.00 فما فوق)">
-<input id="fup" placeholder="رابط التحديث / التعريب https://..." dir="ltr">
+<input id="fup" placeholder="رابط التحديث https://..." dir="ltr">
+<input id="ftr" placeholder="رابط التعريب https://..." dir="ltr">
 <input id="fad" placeholder="رابط الإضافة https://..." dir="ltr">
 <input id="fad2" placeholder="رابط الإضافة الثانية https://..." dir="ltr">
 <input id="fsv" placeholder="رابط ملف الحفظ https://..." dir="ltr">
 <input id="flc" placeholder="رابط ملف الترخيص https://..." dir="ltr">
 <input id="frv" placeholder="رابط المراجعة (يوتيوب) https://..." dir="ltr">
+<div id="vsBox" style="display:flex;flex-direction:column;gap:8px"></div>
 <input id="fpw" placeholder="كلمة سر الملف (إن وجدت)">
 <textarea id="fd" rows="3" dir="rtl" placeholder="عنوان / وصف اللعبة"></textarea>
 <textarea id="fnt" rows="2" placeholder="ملاحظة (اختياري)"></textarea>
@@ -546,13 +563,14 @@ body:not(.r-admin) .ao{display:none!important}
 <div class="ao" id="zmBox" style="display:flex;flex-direction:column;gap:8px"><div style="font-weight:800;margin-top:12px">🛡️ مراقبة الموقع والأخطاء <span id="zmBadge" style="display:none;font-size:11px;padding:2px 8px;border-radius:99px;background:#f59e0b;color:#000"></span></div><div class="r2" style="flex-wrap:wrap;gap:8px"><select id="zmFilter" onchange="zmLoad()" style="flex:1"><option value="new">الأخطاء الجديدة فقط</option><option value="all">الكل (مع المعالَجة)</option></select><button class="btn g" type="button" onclick="zmLoad()">تحديث</button></div><div id="zmMsg" style="display:none;font-size:13px;white-space:pre-wrap"></div><div id="zmList" style="display:flex;flex-direction:column;gap:6px"></div></div>
 <div style="font-weight:800;margin-top:6px">إحصائيات الموقع</div><div id="adstats" class="r2" style="flex-wrap:wrap;gap:8px"></div><div class="ao" style="display:flex;flex-direction:column;gap:10px"><div style="font-weight:800">طلبات الاشتراك</div><div id="reqs" style="display:flex;flex-direction:column;gap:6px"></div>
 <div class="r2"><input id="aun" placeholder="تفعيل يدوي: اسم المستخدم"><input id="adays" inputmode="numeric" placeholder="30" style="max-width:80px"><button class="btn" onclick="activate()">تفعيل</button></div></div>
+<div class="ao" id="dvBox" style="display:flex;flex-direction:column;gap:8px"><div style="font-weight:800;margin-top:6px">🔐 حماية روابط التحميل</div><select id="dvMode"><option value="off">بدون تحقق (تحميل مباشر)</option><option value="countdown">عدّاد انتظار فقط</option><option value="turnstile">Cloudflare Turnstile (تحقق من الخادم)</option></select><div class="r2"><input id="dvSec" inputmode="numeric" placeholder="ثواني العدّاد (0-30)"><input id="dvKey" dir="ltr" placeholder="Turnstile Site key"></div><label style="display:flex;align-items:center;gap:6px;font-size:13px"><input id="dvSkip" type="checkbox" style="width:auto">استثناء المشتركين Premium من التحقق</label><label style="display:flex;align-items:center;gap:6px;font-size:13px"><input id="dvProt" type="checkbox" style="width:auto">إخفاء الروابط الحقيقية عن الجمهور عند الحفظ (بعد تشغيل ملفات SQL)</label><button class="btn" type="button" onclick="dvSave()">حفظ إعدادات الحماية</button><div id="dvMsg" style="display:none;font-size:13px;white-space:pre-wrap"></div></div>
 <div id="lcBox" style="display:flex;flex-direction:column;gap:8px"><div style="font-weight:800;margin-top:6px">🔗 فحص روابط التحميل</div><div class="r2" style="flex-wrap:wrap;gap:8px"><button class="btn" type="button" onclick="arm(this,lcAll)">فحص كل الألعاب</button><button class="btn g" type="button" onclick="lcRecheck()">إعادة فحص المشاكل</button><button class="btn g" type="button" onclick="lcLoad()">آخر النتائج</button><select id="lcFilter" onchange="lcDraw()" style="flex:1"><option value="bad">المشاكل فقط</option><option value="all">كل الروابط</option></select></div><div style="font-size:12px;color:var(--mu)">الفحص للعرض فقط: لا يحذف ولا يعدّل أي رابط. بعض المواقع تمنع الفحص الآلي، فتظهر «تعذر التأكد» بدل «لا يعمل».</div><div id="lcMsg" style="display:none;font-size:13px;white-space:pre-wrap"></div><div id="lcList" style="display:flex;flex-direction:column;gap:6px"></div></div>
 <input id="adminQ" placeholder="ابحث عن لعبة لإدارتها..." oninput="drawList()"><div id="lst" style="display:flex;flex-direction:column;gap:6px"></div>
 <div class="r2" style="flex-wrap:wrap"><button class="btn ao" onclick="exportSite(1)">تصدير الموقع</button><button class="btn g ao" onclick="exportSite(0)">نسخة بلوحة الإدارة</button><button class="btn g" onclick="logoutAdm()">خروج</button><button class="btn d ao" onclick="arm(this,resetAll)">إرجاع الأصل</button></div>
 </div></div></div>
 <div id="acc" onclick="if(event.target==this)closeAcc()"><div class="pn" id="abox"></div></div>
 <div id="det" onclick="if(event.target==this)closeDet()"><div class="pn" id="dbox"></div></div>
-<div id="cdw"><div class="pn" style="text-align:center;align-items:center"><div style="align-self:flex-end"><button class="btn g" onclick="closeCd()">✕</button></div><div id="cdt" style="font-size:15px"></div><div class="cdn" id="cdn">5</div><a class="btn g" id="cdb" target="_blank" rel="noopener" href="#" style="text-decoration:none;min-width:180px;pointer-events:none"></a></div></div>
+<div id="cdw"><div class="pn" style="text-align:center;align-items:center"><div style="align-self:flex-end"><button class="btn g" onclick="closeCd()">✕</button></div><div id="cdt" style="font-size:15px"></div><div class="cdn" id="cdn">5</div><div id="tsw" style="display:none;min-height:70px"></div><div id="cdm" style="font-size:13px;color:var(--mu);min-height:16px"></div><a class="btn g" id="cdb" target="_blank" rel="noopener" href="#" style="text-decoration:none;min-width:180px;pointer-events:none"></a></div></div>
 <div class="toast" id="toast"></div>
 <nav id="mobileNav" aria-label="التنقل الرئيسي">
 <button type="button" onclick="setTab('all')" id="mn-home"><span>⌂</span><span>الرئيسية</span></button>
@@ -877,17 +895,17 @@ function login(){if(SB_URL)return sbLogin();if(!PUBLIC&&ADMIN_PASS&&$('pw').valu
 function logoutAdm(){setSess(null);ROLE='';try{localStorage.removeItem('za')}catch(e){}applyAdm();closeAdm()}
 function arm(b,fn){if(b.dataset.a){fn();return}b.dataset.a=1;var t=b.textContent;b.textContent='تأكيد؟';setTimeout(function(){delete b.dataset.a;b.textContent=t},2500)}
 function persist(){try{localStorage.setItem('zi',JSON.stringify(ITEMS))}catch(e){toast('المساحة ممتلئة، استخدم صور أصغر')}render();drawList()}
-function resetForm(){editing=-1;img='';imgBlob=null;['fnE','fnA','fs','fu','fdp','fi','fup','fad','frv','fpw','fd','fcn','fyr','fad2','fsv','flc','fnt','fgv','frg','ffm','frq'].forEach(function(k){$(k).value=''});$('fnw').checked=false;$('ffeat').checked=false;$('fgenres').value='';$('fmode').value='';$('fnetwork').value='';$('fl').value='';setLinks([]);$('fsave').textContent='إضافة'}
+function resetForm(){editing=-1;img='';imgBlob=null;['fnE','fnA','fs','fu','fdp','fi','fup','ftr','fad','frv','fpw','fd','fcn','fyr','fad2','fsv','flc','fnt','fgv','frg','ffm','frq'].forEach(function(k){$(k).value=''});$('fnw').checked=false;$('ffeat').checked=false;$('fgenres').value='';$('fmode').value='';$('fnetwork').value='';$('fl').value='';setLinks([]);$('fsave').textContent='إضافة'}
 function saveItem(){if(!isStaff())return toast(NOPERM);var n=$('fnE').value.trim(),a=$('fnA').value.trim(),u=$('fu').value.trim();
  if(!n&&!a)return toast('اكتب الاسم');
  var lks=getLinks();if(lks===null)return toast('كل رابط لازم يبدأ بـ https://');
- if([u,$('fdp').value,$('fup').value,$('fad').value,$('fad2').value,$('fsv').value,$('flc').value,$('frv').value].some(function(v){v=v.trim();return v&&!/^https?:\/\//i.test(v)}))return toast('الرابط لازم يبدأ بـ https://');
- var o={c:$('fc').value,n:n||a,a:a||n,s:$('fs').value.trim(),u:u||'#'},old=editing>-1?ITEMS[editing]:null;if(old&&old.archived)o.archived=true;var pls=plgGet();if(pls&&pls.length)o.plats=pls;else if(!pls&&old&&old.plats)o.plats=old.plats;
- if($('fl').value)o.l=$('fl').value;if(lks.length)o.links=lks;var gs=$('fgenres').value.split(/[،,]/).map(function(x){return x.trim()}).filter(Boolean);if(gs.length)o.genres=gs;if($('fmode').value)o.mode=$('fmode').value;if($('fnetwork').value)o.network=$('fnetwork').value;if($('ffeat').checked)o.featured=true;[['dp','fdp'],['up','fup'],['ad','fad'],['ad2','fad2'],['sv','fsv'],['lc','flc'],['rv','frv'],['nt','fnt'],['rg','frg'],['fm','ffm'],['rq','frq']].forEach(function(p){var v=$(p[1]).value.trim();if(v)o[p[0]]=v});if($('fpw').value.trim())o.pw=$('fpw').value.trim();if($('fd').value.trim())o.d=$('fd').value.trim();if($('fcn').value.trim())o.cn=$('fcn').value.trim();if($('fyr').value.trim())o.yr=$('fyr').value.trim();if($('fgv').value.trim())o.gv=$('fgv').value.trim();if($('fnw').checked)o.new=1;
- if(img)o.img=img;else if(old&&old.img)o.img=old.img;
+ if([u,$('fdp').value,$('fup').value,$('ftr').value,$('fad').value,$('fad2').value,$('fsv').value,$('flc').value,$('frv').value].some(function(v){v=v.trim();return v&&!/^https?:\/\//i.test(v)}))return toast('الرابط لازم يبدأ بـ https://');
+ var o={c:$('fc').value,n:n||a,a:a||n,s:$('fs').value.trim(),u:u||'#'},old=editing>-1?ITEMS[editing]:null;if(old&&old.archived)o.archived=true;if(old)['versions','sections'].forEach(function(f){if(old[f])o[f]=old[f]});o.slug=gpSlugFor(o,editing,old);var pls=plgGet();if(pls&&pls.length)o.plats=pls;else if(!pls&&old&&old.plats)o.plats=old.plats;
+ if($('fl').value)o.l=$('fl').value;if(lks.length)o.links=lks;var gs=$('fgenres').value.split(/[،,]/).map(function(x){return x.trim()}).filter(Boolean);if(gs.length)o.genres=gs;if($('fmode').value)o.mode=$('fmode').value;if($('fnetwork').value)o.network=$('fnetwork').value;if($('ffeat').checked)o.featured=true;[['dp','fdp'],['up','fup'],['tr','ftr'],['ad','fad'],['ad2','fad2'],['sv','fsv'],['lc','flc'],['rv','frv'],['nt','fnt'],['rg','frg'],['fm','ffm'],['rq','frq']].forEach(function(p){var v=$(p[1]).value.trim();if(v)o[p[0]]=v});if($('fpw').value.trim())o.pw=$('fpw').value.trim();if($('fd').value.trim())o.d=$('fd').value.trim();if($('fcn').value.trim())o.cn=$('fcn').value.trim();if($('fyr').value.trim())o.yr=$('fyr').value.trim();if($('fgv').value.trim())o.gv=$('fgv').value.trim();if($('fnw').checked)o.new=1;
+ var ve=veGet();if(ve===null)return;if(ve.versions.length)o.versions=ve.versions;else delete o.versions;if(ve.sections.length)o.sections=ve.sections;else delete o.sections;if(JSON.stringify(o).indexOf(':"@"')>-1)return toast('الروابط المحمية لم تُحمّل، أعد فتح التعديل');if(img)o.img=img;else if(old&&old.img)o.img=old.img;
  if(SB_URL)return sbSave(o,editing>-1?ITEMS[editing]._id:0);if(editing>-1)ITEMS[editing]=o;else ITEMS.unshift(o);
  resetForm();persist();toast('تم الحفظ ✅')}
-function editItem(k){if(!isStaff())return toast(NOPERM);var o=ITEMS[k];editing=k;img='';imgBlob=null;gfPrevSync();plgSet(o.plats);$('fnE').value=o.n||'';$('fnA').value=o.a||'';$('fc').value=o.c;$('fl').value=o.l||'';$('fgenres').value=(o.genres||[]).join('، ');$('fmode').value=o.mode||'';$('fnetwork').value=o.network||'';$('ffeat').checked=!!o.featured;$('fs').value=o.s||'';$('fu').value=o.u=='#'?'':o.u;$('fup').value=o.up||'';$('fad').value=o.ad||'';$('frv').value=o.rv||'';$('fad2').value=o.ad2||'';$('fsv').value=o.sv||'';$('flc').value=o.lc||'';$('fnt').value=o.nt||'';$('fpw').value=o.pw||'';$('fd').value=o.d||'';$('fcn').value=o.cn||'';$('fyr').value=o.yr||'';$('fgv').value=o.gv||'';$('frg').value=o.rg||'';$('ffm').value=o.fm||'';$('frq').value=o.rq||'';$('fdp').value=o.dp||'';setLinks(o.links);$('fnw').checked=!!o.new;$('fsave').textContent='حفظ التعديل';$('adm').scrollTo(0,0)}
+function editItem(k){if(!isStaff())return toast(NOPERM);var o=ITEMS[k];editing=k;img='';imgBlob=null;gfPrevSync();plgSet(o.plats);$('fnE').value=o.n||'';$('fnA').value=o.a||'';$('fc').value=o.c;$('fl').value=o.l||'';$('fgenres').value=(o.genres||[]).join('، ');$('fmode').value=o.mode||'';$('fnetwork').value=o.network||'';$('ffeat').checked=!!o.featured;$('fs').value=o.s||'';$('fu').value=o.u=='#'?'':o.u;$('fup').value=o.up||'';$('ftr').value=o.tr||'';$('fad').value=o.ad||'';$('frv').value=o.rv||'';$('fad2').value=o.ad2||'';$('fsv').value=o.sv||'';$('flc').value=o.lc||'';$('fnt').value=o.nt||'';$('fpw').value=o.pw||'';$('fd').value=o.d||'';$('fcn').value=o.cn||'';$('fyr').value=o.yr||'';$('fgv').value=o.gv||'';$('frg').value=o.rg||'';$('ffm').value=o.fm||'';$('frq').value=o.rq||'';$('fdp').value=o.dp||'';setLinks(o.links);$('fnw').checked=!!o.new;$('fsave').textContent='حفظ التعديل';$('adm').scrollTo(0,0)}
 function delItem(k){if(!isAdmin())return toast(NOPERM);archiveItem(k)}
 function archiveItem(k){if(!isAdmin())return toast(NOPERM);var o=Object.assign({},ITEMS[k]);o.archived=!o.archived;if(SB_URL)return guard('admin').then(function(){return sbSave(o,o._id)}).catch(function(){});ITEMS[k]=o;if(editing==k)resetForm();persist();toast(o.archived?'تمت أرشفة اللعبة ويمكن استرجاعها':'تم استرجاع اللعبة')}
 
@@ -905,11 +923,11 @@ function exportSite(pub){
 $('logo').onclick=function(){var n=Date.now();if(n-tp>3000)taps=0;tp=n;taps++;if(taps>=5){taps=0;openAdm()}};
 function refreshCategorySelect(){var active=TABS.filter(function(x){return ['all','fav','new','top','recent'].indexOf(x.id)<0});$('fc').innerHTML=active.map(function(x){return '<option value="'+esc(x.id)+'">'+esc(x.ar)+'</option>'}).join('')}
 refreshCategorySelect();
-var DT={ar:{g:'تحميل',u:'التحديث / التعريب',a:'الإضافة',a2:'الإضافة الثانية',sv:'ملف الحفظ',lc:'ملف الترخيص',nt:'ملاحظة',r:'مراجعة اللعبة',p:'كلمة السر',cp:'نسخ',sz:'الحجم'},en:{g:'Download',u:'Update / Translation',a:'Add-on',a2:'Add-on 2',sv:'Save file',lc:'License file',nt:'Note',r:'Review',p:'Password',cp:'Copy',sz:'Size'}};
+var DT={ar:{g:'تحميل',u:'رابط التحديث',tr:'رابط التعريب',a:'الإضافة',a2:'الإضافة الثانية',sv:'ملف الحفظ',lc:'ملف الترخيص',nt:'ملاحظة',r:'مراجعة اللعبة',p:'كلمة السر',cp:'نسخ',sz:'الحجم'},en:{g:'Download',u:'Update link',tr:'Arabic patch link',a:'Add-on',a2:'Add-on 2',sv:'Save file',lc:'License file',nt:'Note',r:'Review',p:'Password',cp:'Copy',sz:'Size'}};
 function lnk(k,f,u,t,g){if(!u||u=='#')return '';var c='btn'+(g?' g':''),s='style="text-align:center;text-decoration:none"';return f=='rv'?'<a class="'+c+'" target="_blank" rel="noopener" href="'+esc(u)+'" '+s+'>'+t+'</a>':'<a class="'+c+'" href="#" onclick="return cd('+k+',\''+f+'\')" '+s+'>'+t+'</a>'}
 var detHistoryOpen=false;
 function showDet(k){var o=ITEMS[k],D=DT[lang],c=COL[o.c]||COL.app,nm=esc(lang=='ar'?o.a:o.n);
- $('dbox').innerHTML='<h3><span>'+nm+'</span><button class="btn g" onclick="closeDet()">✕</button></h3><div class="cover dcv" style="border-radius:12px;background:'+(o.img?'#000 url('+o.img+') center/cover no-repeat':'linear-gradient(135deg,'+c[0]+','+c[1]+')')+'">'+(o.img?'':'<strong>'+nm+'</strong>')+'</div><div id="gmed"></div>'+(o.d?'<p style="margin:0;color:var(--mu);font-size:14px;white-space:pre-wrap">'+esc(o.d)+'</p>':'')+(o.genres&&o.genres.length?'<div style="font-size:13px;color:var(--mu)">'+(lang=='ar'?'النوع':'Genres')+': '+esc(o.genres.join('، '))+'</div>':'')+(o.mode?'<div style="font-size:13px;color:var(--mu)">'+(lang=='ar'?'اللعب':'Play mode')+': '+esc(o.mode=='single'?'فردي':o.mode=='multi'?'جماعي':'فردي وجماعي')+'</div>':'')+(o.network?'<div style="font-size:13px;color:var(--mu)">'+(lang=='ar'?'الاتصال':'Network')+': '+esc(o.network)+'</div>':'')+(o.featured?'<div style="font-size:13px;color:#f59e0b">★ '+(lang=='ar'?'لعبة مميزة':'Featured')+'</div>':'')+plgDet(o)+[[D.sz,o.s],[lang=='ar'?'رقم النسخة':'Version ID',o.cn],[lang=='ar'?'سنة الإصدار':'Release year',o.yr],[lang=='ar'?'إصدار اللعبة':'Game version',o.gv],[lang=='ar'?'المنطقة':'Region',o.rg],[lang=='ar'?'صيغة اللعبة':'Format',o.fm],[lang=='ar'?'متطلبات التشغيل':'Requirements',o.rq],[lang=='ar'?'التحميلات':'Downloads',String(counts[ckey(o.n)]||0)]].map(function(r){return r[1]?'<div style="font-size:13px;color:var(--mu)">'+r[0]+': <span dir="auto">'+esc(r[1])+'</span></div>':''}).join('')+lnk(k,'u',o.u,D.g)+(o.links||[]).map(function(l,i){return l&&l.u?lnk(k,'L'+i,l.u,esc(l.t||D.g)):''}).join('')+(o.dp?'<div class="r2"><input id="ps4ip" dir="ltr" inputmode="decimal" placeholder="PS4 IP  192.168.x.x" value="'+esc(ps4ip())+'"><button class="btn" style="white-space:nowrap" onclick="sendPs4('+k+')">'+(lang=='ar'?'إرسال للبلايستيشن':'Send to PS4')+'</button></div>':'')+lnk(k,'up',o.up,D.u,1)+lnk(k,'ad',o.ad,D.a,1)+lnk(k,'ad2',o.ad2,D.a2,1)+lnk(k,'sv',o.sv,D.sv,1)+lnk(k,'lc',o.lc,D.lc,1)+lnk(k,'rv',o.rv,D.r,1)+(o.nt?'<div style="font-size:13px;color:var(--mu);white-space:pre-wrap">'+D.nt+': '+esc(o.nt)+'</div>':'')+(o.pw?'<div style="font-size:13px;color:var(--mu)">'+D.p+'</div><div class="r2"><input readonly dir="ltr" value="'+esc(o.pw)+'"><button class="btn g" onclick="copyPw('+k+')">'+D.cp+'</button></div>':'')+'<div id="soc"></div>';
+ $('dbox').innerHTML='<h3><span>'+nm+'</span><button class="btn g" onclick="closeDet()">✕</button></h3><div class="cover dcv" style="border-radius:12px;background:'+(o.img?'#000 url('+o.img+') center/cover no-repeat':'linear-gradient(135deg,'+c[0]+','+c[1]+')')+'">'+(o.img?'':'<strong>'+nm+'</strong>')+'</div><div id="gmed"></div>'+(o.d?'<p style="margin:0;color:var(--mu);font-size:14px;white-space:pre-wrap">'+esc(o.d)+'</p>':'')+(o.genres&&o.genres.length?'<div style="font-size:13px;color:var(--mu)">'+(lang=='ar'?'النوع':'Genres')+': '+esc(o.genres.join('، '))+'</div>':'')+(o.mode?'<div style="font-size:13px;color:var(--mu)">'+(lang=='ar'?'اللعب':'Play mode')+': '+esc(o.mode=='single'?'فردي':o.mode=='multi'?'جماعي':'فردي وجماعي')+'</div>':'')+(o.network?'<div style="font-size:13px;color:var(--mu)">'+(lang=='ar'?'الاتصال':'Network')+': '+esc(o.network)+'</div>':'')+(o.featured?'<div style="font-size:13px;color:#f59e0b">★ '+(lang=='ar'?'لعبة مميزة':'Featured')+'</div>':'')+plgDet(o)+[[D.sz,o.s],[lang=='ar'?'رقم النسخة':'Version ID',o.cn],[lang=='ar'?'سنة الإصدار':'Release year',o.yr],[lang=='ar'?'إصدار اللعبة':'Game version',o.gv],[lang=='ar'?'المنطقة':'Region',o.rg],[lang=='ar'?'صيغة اللعبة':'Format',o.fm],[lang=='ar'?'متطلبات التشغيل':'Requirements',o.rq],[lang=='ar'?'التحميلات':'Downloads',String(counts[ckey(o.n)]||0)]].map(function(r){return r[1]?'<div style="font-size:13px;color:var(--mu)">'+r[0]+': <span dir="auto">'+esc(r[1])+'</span></div>':''}).join('')+gpBtn(k,o)+(o.dp?'<div class="r2"><input id="ps4ip" dir="ltr" inputmode="decimal" placeholder="PS4 IP  192.168.x.x" value="'+esc(ps4ip())+'"><button class="btn" style="white-space:nowrap" onclick="sendPs4('+k+')">'+(lang=='ar'?'إرسال للبلايستيشن':'Send to PS4')+'</button></div>':'')+lnk(k,'up',o.up,D.u,1)+lnk(k,'tr',o.tr,D.tr,1)+lnk(k,'ad',o.ad,D.a,1)+lnk(k,'ad2',o.ad2,D.a2,1)+lnk(k,'sv',o.sv,D.sv,1)+lnk(k,'lc',o.lc,D.lc,1)+lnk(k,'rv',o.rv,D.r,1)+(o.nt?'<div style="font-size:13px;color:var(--mu);white-space:pre-wrap">'+D.nt+': '+esc(o.nt)+'</div>':'')+(o.pw?'<div style="font-size:13px;color:var(--mu)">'+D.p+'</div><div class="r2"><input readonly dir="ltr" value="'+esc(o.pw)+'"><button class="btn g" onclick="copyPw('+k+')">'+D.cp+'</button></div>':'')+'<div id="soc"></div>';
  rememberGame(o.n);curK=k;try{gmedDet(o)}catch(e){}var det=$('det');
  if(!det.classList.contains('on')){
   det.classList.add('on');
@@ -960,6 +978,315 @@ contact:function(){return wrap('contact',lang=='ar'?`<p>يسعدنا تواصل�
 };
 function curPg(){var h=(location.hash||'').slice(1);return PGS[h]?h:''}
 function pageUI(){var h=curPg();var zh=document.querySelector('.zero-hero'),zb=document.querySelector('.zero-benefits');if(zh)zh.style.display=h?'none':'';if(zb)zb.style.display=h?'none':'';$('main').style.display=h?'none':'';$('tabs').style.display=h?'none':'';$('page').style.display=h?'block':'none';if(h){$('page').innerHTML=PGS[h]();document.title=PG[h][lang]+' | ZERO'}else document.title='ZE – ZERO | زيرو';var t=lang=='ar'?'إعلان':'Advertisement';$('ad-top').dataset.l=t;$('ad-bot').dataset.l=t;document.body.classList.toggle('ads',ADS&&!isPrem())}
+
+(function(){var m=/[?&]gp=([^&]+)/.exec(location.search);if(m){try{var p=decodeURIComponent(m[1]).split(/[?#]/)[0];if(/^\/game\/[^\/]+\/?$/.test(p))history.replaceState(null,'',p)}catch(e){}}})();
+function gpSlugify(s){return String(s||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,60).replace(/-+$/,'')}
+function gpSlugs(){
+ var used={},out=[];
+ ITEMS.forEach(function(o,i){
+  var base=o.slug||gpSlugify(o.n)||('game-'+(o._id||i+1)),s=base,n=1;
+  while(used[s]){n++;s=base+'-'+n}
+  used[s]=1;out.push(s)});
+ return out}
+function gpSlugFor(o,idx,old){
+ if(old&&old.slug)return old.slug;
+ var all=gpSlugs(),used={};
+ all.forEach(function(s,i){if(i!==idx)used[s]=1});
+ if(old&&idx>-1&&all[idx])return all[idx];
+ var base=gpSlugify(o.n)||'game',s=base,n=1;
+ while(used[s]){n++;s=base+'-'+n}
+ return s}
+function gpUrl(k){return '/game/'+gpSlugs()[k]+'/'}
+function gpPathSlug(){var m=/^\/game\/([^\/]+)\/?$/.exec(location.pathname);if(!m)return '';try{return decodeURIComponent(m[1])}catch(e){return ''}}
+function gpRoute(){return !!gpPathSlug()&&!location.hash}
+function gpIndex(){var s=gpPathSlug(),a=gpSlugs();for(var i=0;i<a.length;i++)if(a[i]===s)return i;return -1}
+var _gpCp=curPg;curPg=function(){return gpRoute()?'game':_gpCp()};
+PG.game={get ar(){var k=gpIndex();return k>-1?ITEMS[k].a||ITEMS[k].n:'ZERO'},get en(){var k=gpIndex();return k>-1?ITEMS[k].n||ITEMS[k].a:'ZERO'}};
+function gpVers(o){
+ if(Array.isArray(o.versions)&&o.versions.length)return o.versions.map(function(v,i){return {label:v.label||'',cn:v.cn,rg:v.rg,gv:v.gv,s:v.s,fm:v.fm,lang:v.lang,rq:v.rq,links:(v.links||[]).map(function(l,j){return {f:'V'+i+'_'+j,t:l.t,u:l.u}})}});
+ var ls=[];if(o.u&&o.u!='#')ls.push({f:'u',t:'',u:o.u});
+ (o.links||[]).forEach(function(l,i){if(l&&l.u)ls.push({f:'L'+i,t:l.t||'',u:l.u})});
+ return [{label:'',cn:o.cn,rg:o.rg,gv:o.gv,s:o.s,fm:o.fm,lang:o.lang,rq:o.rq,links:ls}]}
+function gpHasLinks(o){return gpVers(o).some(function(v){return v.links.length>0})}
+function gpBtn(k,o){
+ if(!gpHasLinks(o))return '';
+ return '<a class="btn" id="gpGo" href="'+gpUrl(k)+'" onclick="return gpGo('+k+')" style="text-align:center;text-decoration:none">⬇ '+(lang=='ar'?'تحميل الآن':'Download now')+'</a>'}
+function gpGo(k){
+ var o=ITEMS[k];if(!o)return false;
+ closeDet(true);
+ history.pushState({gp:1},'',gpUrl(k));
+ render();window.scrollTo(0,0);return false}
+function gpBack(){
+ if(history.state&&history.state.gp){history.back();return false}
+ history.replaceState(null,'','/');render();window.scrollTo(0,0);return false}
+function gpLeave(){if(gpPathSlug()){history.replaceState(null,'','/');var c=document.querySelector('link[rel=canonical]');if(c)c.href='https://zero3p.github.io/'}}
+function gpRow(a,b){return b?'<div class="gp-r"><span>'+a+'</span><b dir="auto">'+esc(b)+'</b></div>':''}
+function gpYt(u){var m=/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([\w-]{11})/.exec(u||'');return m?m[1]:''}
+function gpSecs(o){var h='';(o.sections||[]).forEach(function(s){
+ if(!s)return;var t=s.title?'<h3>'+esc(s.title)+'</h3>':'',v=s.v||'';
+ if(s.type=='text'&&v)h+=t+'<p class="gp-tx" dir="auto">'+esc(v)+'</p>';
+ else if(s.type=='image'&&/^https?:\/\//i.test(v))h+=t+'<img class="gp-img" loading="lazy" alt="" src="'+esc(v)+'">';
+ else if(s.type=='video'&&/^https?:\/\//i.test(v)){var y=gpYt(v);h+=t+(y?'<div class="gp-vid"><iframe src="https://www.youtube-nocookie.com/embed/'+y+'" allowfullscreen loading="lazy"></iframe></div>':'<video class="gp-img" controls preload="metadata" src="'+esc(v)+'"></video>')}});
+ return h}
+function gpHtml(){
+ var L=lang=='ar',D=DT[lang],k=gpIndex(),o=k>-1?ITEMS[k]:null,col='';
+ var back='<a class="back" href="/" onclick="return gpBack()">'+(L?'→ رجوع':'← Back')+'</a>';
+ if(!o||(o.archived&&!isStaff())){
+  document.title='ZERO';
+  return back+'<h2>'+(LOADING?(L?'جاري التحميل...':'Loading...'):(L?'الصفحة غير موجودة':'Page not found'))+'</h2>'+(LOADING?'':'<p style="color:var(--mu)">'+(L?'قد تكون اللعبة حُذفت أو تغيّر رابطها.':'The game may have been removed or its link changed.')+'</p>')}
+ var c=COL[o.c]||COL.app,nm=esc(L?o.a:o.n),sub=L?o.n:o.a,vs=gpVers(o);
+ try{var cn=document.querySelector('link[rel=canonical]');if(cn)cn.href='https://zero3p.github.io'+gpUrl(k)}catch(e){}
+ var h=back+'<div class="gp-top"><div class="cover gp-cv" style="background:'+(o.img?'#000 url('+esc(o.img)+') center/cover no-repeat':'linear-gradient(135deg,'+c[0]+','+c[1]+')')+'">'+(o.img?'':'<strong>'+nm+'</strong>')+'</div><div class="gp-in"><h2 style="margin:0">'+nm+'</h2>'+(sub&&sub!=(L?o.a:o.n)?'<div style="color:var(--mu);font-size:14px" dir="auto">'+esc(sub)+'</div>':'')+plgDet(o)
+  +'<div class="gp-n">'+(L?'عدد النسخ':'Versions')+': <b>'+vs.length+'</b></div>'
+  +gpRow(L?'النوع':'Genres',o.genres&&o.genres.length?o.genres.join('، '):'')
+  +gpRow(L?'اللعب':'Play mode',o.mode=='single'?(L?'فردي':'Single'):o.mode=='multi'?(L?'جماعي':'Multi'):o.mode=='both'?(L?'فردي وجماعي':'Single & multi'):'')
+  +gpRow(L?'الاتصال':'Network',o.network)+gpRow(L?'سنة الإصدار':'Release year',o.yr)+gpRow(L?'التحميلات':'Downloads',String(counts[ckey(o.n)]||0))+'</div></div>';
+ if(o.d)h+='<p style="color:var(--mu);font-size:14px;white-space:pre-wrap;margin:10px 0 0">'+esc(o.d)+'</p>';
+ h+=gpSecs(o);h+='<h3>'+(L?'النسخ وروابط التحميل':'Versions & downloads')+'</h3>';
+ vs.forEach(function(v,i){
+  h+='<div class="gp-v"><div class="gp-vh">'+(L?'النسخة ':'Version ')+(i+1)+(v.label?' — '+esc(v.label):'')+'</div>'
+   +gpRow(L?'رقم النسخة':'Version ID',v.cn)+gpRow(L?'المنطقة':'Region',v.rg)+gpRow(L?'إصدار اللعبة':'Game version',v.gv)+gpRow(D.sz,v.s)+gpRow(L?'صيغة اللعبة':'Format',v.fm)+gpRow(L?'اللغة':'Language',v.lang)+gpRow(L?'متطلبات التشغيل':'Requirements',v.rq)
+   +(v.links.length?'<div class="gp-l">'+v.links.map(function(l){return lnk(k,l.f,l.u,esc(l.t||D.g))}).join('')+'</div>':'<div style="color:var(--mu);font-size:13px">'+(L?'لا توجد روابط لهذه النسخة بعد':'No links for this version yet')+'</div>')+'</div>'});
+ var ex=lnk(k,'up',o.up,D.u,1)+lnk(k,'tr',o.tr,D.tr,1)+lnk(k,'ad',o.ad,D.a,1)+lnk(k,'ad2',o.ad2,D.a2,1)+lnk(k,'sv',o.sv,D.sv,1)+lnk(k,'lc',o.lc,D.lc,1)+lnk(k,'rv',o.rv,D.r,1);
+ if(ex)h+='<h3>'+(L?'روابط إضافية':'More links')+'</h3><div class="gp-l">'+ex+'</div>';
+ if(o.nt)h+='<div style="font-size:13px;color:var(--mu);white-space:pre-wrap;margin-top:8px">'+D.nt+': '+esc(o.nt)+'</div>';
+ if(o.pw)h+='<div style="font-size:13px;color:var(--mu);margin-top:8px">'+D.p+'</div><div class="r2"><input readonly dir="ltr" value="'+esc(o.pw)+'"><button class="btn g" onclick="copyPw('+k+')">'+D.cp+'</button></div>';
+ return h}
+PGS.game=gpHtml;
+window.addEventListener('hashchange',function(){if(gpPathSlug()&&location.hash){history.replaceState(null,'','/'+location.hash);var c=document.querySelector('link[rel=canonical]');if(c)c.href='https://zero3p.github.io/'}});
+window.addEventListener('popstate',function(e){
+ var st=e.state||history.state;render();window.scrollTo(0,0);
+ if(!gpRoute()&&st&&st.zeroDet&&typeof curK!=='undefined'&&curK>-1&&ITEMS[curK]&&!$('det').classList.contains('on')){detHistoryOpen=true;showDet(curK)}});
+var _gpSt=setTab;setTab=function(t){gpLeave();_gpSt(t)};
+(function(){var q=document.getElementById('q');if(q)q.addEventListener('input',gpLeave)})();
+
+
+var DVSENT='@',DVF=['u','up','tr','ad','ad2','sv','lc','dp'],DVK={},DVRUN=0,DVTS=0,DVTQ=[],DVTW=null,VEL=0,VE={versions:[],sections:[]};
+var DV={mode:'countdown',seconds:3,sitekey:'',skip_premium:true,protect:false};
+function dvReal(u){return /^https?:\/\//i.test(u||'')}
+function dvSecs(){var n=parseInt(DV.seconds,10);return isNaN(n)?3:Math.max(0,Math.min(30,n))}
+function dvSkip(){return isStaff()||(DV.skip_premium&&isPrem())}
+function dvFill(){
+ if(!$('dvMode'))return;
+ $('dvMode').value=DV.mode;$('dvSec').value=DV.seconds;$('dvKey').value=DV.sitekey||'';
+ $('dvSkip').checked=!!DV.skip_premium;$('dvProt').checked=!!DV.protect}
+function dvLoad(){
+ if(!SB_URL)return;
+ fetch(SB_URL+'/rest/v1/site_settings?select=value&key=eq.dl_verify',{headers:sbH()}).then(function(r){return r.ok?r.json():[]}).then(function(rows){
+  var v=rows&&rows[0]&&rows[0].value;
+  if(v){
+   if(v.mode=='off'||v.mode=='countdown'||v.mode=='turnstile')DV.mode=v.mode;
+   if(v.seconds!=null)DV.seconds=v.seconds;
+   DV.sitekey=v.sitekey||'';DV.skip_premium=v.skip_premium!==false;DV.protect=!!v.protect}
+  dvFill()}).catch(function(){})}
+function dvMsg(t,bad){var m=$('dvMsg');if(!m)return;m.style.display=t?'block':'none';m.textContent=t||'';m.style.color=bad?'#ff6b6b':'var(--g,#00f19a)'}
+function dvSave(){
+ if(!isAdmin())return toast(NOPERM);
+ var mode=$('dvMode').value,sec=parseInt($('dvSec').value,10),key=$('dvKey').value.trim();
+ if(isNaN(sec))sec=3;if(sec<0||sec>30)return dvMsg('الثواني من 0 إلى 30',1);
+ if(mode=='turnstile'&&!/^[0-9A-Za-z_-]{10,}$/.test(key))return dvMsg('اكتب Site key الخاص بـ Turnstile (يبدأ غالباً بـ 0x)',1);
+ var v={mode:mode,seconds:sec,sitekey:key,skip_premium:$('dvSkip').checked,protect:$('dvProt').checked};
+ dvMsg('جاري الحفظ...');
+ guard('admin').then(function(){return sbTok()}).then(function(tok){
+  var h=sbH(tok);h.Prefer='resolution=merge-duplicates,return=minimal';
+  return fetch(SB_URL+'/rest/v1/site_settings?on_conflict=key',{method:'POST',headers:h,body:JSON.stringify({key:'dl_verify',value:v,updated_at:new Date().toISOString()})})}).then(function(r){
+  if(!r.ok)return r.text().then(function(t){throw {status:r.status,detail:t}});
+  DV=v;dvMsg('تم حفظ إعدادات الحماية ✅');toast('تم الحفظ ✅')}).catch(function(e){
+  if(e&&e.status)dvMsg((e.status==404||/42P01|does not exist|schema cache/i.test(e.detail||''))?'جدول الإعدادات غير موجود: شغّل ملف protect_links.sql أولاً':'تعذر الحفظ ('+e.status+')',1);
+  else if(e!=='perm')dvMsg('تعذر الحفظ',1)})}
+function dvLocal(o,f){
+ var m=/^V(\d+)_(\d+)$/.exec(f);
+ if(m){var v=(o.versions||[])[+m[1]];return v&&v.links&&v.links[+m[2]]?v.links[+m[2]].u:''}
+ if(/^L\d+$/.test(f))return (o.links&&o.links[+f.slice(1)]||{}).u||'';
+ return o[f]||''}
+function dvCall(o,tsTok,extra){
+ return sbTok().then(function(t){return t},function(){return null}).then(function(t){
+  var b={id:o._id,token:tsTok||''};
+  if(extra)Object.keys(extra).forEach(function(x){b[x]=extra[x]});
+  return fetch(SB_URL+'/functions/v1/get-links',{method:'POST',headers:sbH(t),body:JSON.stringify(b)})}).then(function(r){
+  if(r.status===403)return r.json().catch(function(){return {}}).then(function(j){throw {c:j&&j.error=='early'?'early':'verify',w:j&&j.wait}});
+  if(r.status===429)throw {c:'rate'};if(r.status===404)throw {c:'gone'};
+  if(!r.ok)throw {c:'fail'};return r.json()}).then(function(j){return j||{}})}
+function dvTsLoad(cb){
+ if(window.turnstile)return cb();
+ DVTQ.push(cb);
+ if(DVTS)return;DVTS=1;
+ var s=document.createElement('script');s.src='https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';s.async=true;
+ s.onload=function(){DVTS=2;var q=DVTQ;DVTQ=[];q.forEach(function(f){f()})};
+ s.onerror=function(){DVTS=0;DVTQ=[];dvCdMsg('تعذر تحميل التحقق. تأكد من الإنترنت ثم أعد المحاولة.',1)};
+ document.head.appendChild(s)}
+function dvCdMsg(t,bad){var m=$('cdm');if(!m)return;m.textContent=t||'';m.style.color=bad?'#ff6b6b':'var(--mu)'}
+function dvOpen(k,f,cb){
+ var o=ITEMS[k],L=lang=='ar';
+ if(!o)return false;
+ var loc=dvLocal(o,f);
+ if(!loc||loc=='#'){toast(L?'لا يوجد رابط بعد':'No link yet');return false}
+ var need=DV.mode=='turnstile'&&!dvSkip()&&!!SB_URL&&!!o._id;
+ var remote=!!SB_URL&&!!o._id&&(need||loc===DVSENT);
+ if(!remote&&!dvReal(loc)){toast(L?'رابط غير صالح':'Invalid link');return false}
+ var b=$('cdb'),run=++DVRUN,n=need?0:(DV.mode=='off'?0:dvSecs()),got=remote?null:loc,tdone=n<=0&&!need,st={t:tdone};
+ cdKey=o.n;cdHit=false;clearInterval(cdTimer);
+ $('cdt').textContent=(L?'جاري تجهيز التحميل: ':'Preparing download: ')+(L?o.a:o.n);
+ b.className='btn g';b.href='#';b.style.pointerEvents='none';b.textContent=L?'انتظر...':'Please wait...';
+ $('cdn').style.display=need?'none':'';$('cdn').textContent=n;
+ $('tsw').style.display=need?'block':'none';$('tsw').innerHTML='';dvCdMsg('');
+ $('cdw').classList.add('on');
+ function fin(){
+  if(run!==DVRUN||!st.t||!got)return;
+  if(!dvReal(got)){dvCdMsg(L?'الرابط غير متاح':'Link unavailable',1);return}
+  $('cdn').style.display='';$('cdn').textContent='✓';
+  if(cb){closeCd();cb(got);return}
+  b.className='btn';b.href=got;b.style.pointerEvents='auto';b.textContent=L?'تحميل الآن':'Download now'}
+ function errMsg(e){var c=e&&e.c||e;return c=='verify'?(L?'فشل التحقق، حاول مرة ثانية':'Verification failed, try again'):c=='early'?(L?'لم تكتمل مدة الانتظار':'Wait time not over'):c=='rate'?(L?'محاولات كثيرة، انتظر قليلاً':'Too many tries, wait a bit'):c=='gone'?(L?'اللعبة غير متاحة':'Game unavailable'):(L?'تعذر جلب الرابط، حاول لاحقاً':'Could not fetch the link, try later')}
+ function take(j,tk){
+  if(run!==DVRUN)return;
+  if(j&&j.links){got=j.links[f]||'';dvCdMsg('');if(!got){dvCdMsg(L?'الرابط غير متاح':'Link unavailable',1);return}st.t=true;fin();return}
+  if(j&&j.ticket){var w=Math.max(1,j.wait|0),tt=j.ticket;n=w;$('cdn').style.display='';$('cdn').textContent=n;dvCdMsg('');clearInterval(cdTimer);
+   cdTimer=setInterval(function(){n--;$('cdn').textContent=n;if(n<=0){clearInterval(cdTimer);redeem(tt)}},1000);return}
+  dvCdMsg(errMsg('fail'),1)}
+ function redeem(tt){
+  dvCall(o,'',{ticket:tt}).then(function(j){take(j)}).catch(function(e){
+   if(run!==DVRUN)return;
+   if(e&&e.c=='early'){n=Math.max(1,e.w|0);$('cdn').textContent=n;clearInterval(cdTimer);cdTimer=setInterval(function(){n--;$('cdn').textContent=n;if(n<=0){clearInterval(cdTimer);redeem(tt)}},1000);return}
+   dvCdMsg(errMsg(e),1)})}
+ function fetchLinks(tok){
+  dvCdMsg(L?'جاري التحقق...':'Verifying...');
+  return dvCall(o,tok).then(function(j){take(j)}).catch(function(e){
+   if(run!==DVRUN)return;
+   dvCdMsg(errMsg(e),1);
+   if(need&&window.turnstile&&DVTW!==null){try{turnstile.reset(DVTW)}catch(x){}}})}
+ if(need){
+  dvCdMsg(L?'أكمل التحقق ثم سيظهر زر التحميل':'Complete the check to continue');
+  dvTsLoad(function(){
+   if(run!==DVRUN)return;
+   try{DVTW=turnstile.render('#tsw',{sitekey:DV.sitekey,theme:'dark',callback:function(tok){fetchLinks(tok)},'error-callback':function(){dvCdMsg(L?'تعذر التحقق، أعد تحميل الصفحة':'Check failed, reload the page',1)}})}
+   catch(x){dvCdMsg(L?'تعذر تشغيل التحقق':'Could not start the check',1)}});
+  return false}
+ if(remote){
+  dvCdMsg(L?'جاري التجهيز...':'Preparing...');
+  dvCall(o,'',{step:'start'}).then(function(j){take(j)}).catch(function(e){if(run===DVRUN)dvCdMsg(errMsg(e),1)});
+  return false}
+ if(n<=0){st.t=true;fin();return false}
+ cdTimer=setInterval(function(){n--;$('cdn').textContent=n;if(n<=0){clearInterval(cdTimer);st.t=true;fin()}},1000);
+ return false}
+var cdOld=cd;
+cd=function(k,f){return dvOpen(k,f)};
+var _cc=closeCd;closeCd=function(){DVRUN++;try{if(window.turnstile&&DVTW!==null)turnstile.remove(DVTW)}catch(x){}DVTW=null;_cc()};
+var _sp=sendPs4;
+sendPs4=function(k){
+ var o=ITEMS[k];
+ if(o&&o.dp&&(o.dp===DVSENT||(DV.mode=='turnstile'&&!dvSkip()&&SB_URL&&o._id))){
+  var a=lang=='ar',ip=($('ps4ip').value||'').trim();
+  if(!/^(\d{1,3}\.){3}\d{1,3}$/.test(ip))return toast(a?'اكتب IP البلايستيشن بشكل صحيح':'Enter a valid PS4 IP');
+  return dvOpen(k,'dp',function(u){var t=Object.assign({},o);t.dp=u;ITEMS[k]=t;try{_sp(k)}finally{ITEMS[k]=o}})}
+ return _sp(k)};
+function dvHasSent(o){return /:"@"/.test(JSON.stringify(o||{}))}
+function dvMerge(o,m){
+ var p=JSON.parse(JSON.stringify(o));
+ DVF.forEach(function(f){if(p[f]===DVSENT&&dvReal(m[f]))p[f]=m[f]});
+ (p.links||[]).forEach(function(l,i){if(l&&l.u===DVSENT&&dvReal(m['L'+i]))l.u=m['L'+i]});
+ (p.versions||[]).forEach(function(v,i){(v.links||[]).forEach(function(l,j){if(l&&l.u===DVSENT&&dvReal(m['V'+i+'_'+j]))l.u=m['V'+i+'_'+j]})});
+ return p}
+function dvSplit(o){
+ var p=JSON.parse(JSON.stringify(o)),m={};
+ DVF.forEach(function(f){if(dvReal(p[f])){m[f]=p[f];p[f]=DVSENT}});
+ (p.links||[]).forEach(function(l,i){if(l&&dvReal(l.u)){m['L'+i]=l.u;l.u=DVSENT}});
+ (p.versions||[]).forEach(function(v,i){(v.links||[]).forEach(function(l,j){if(l&&dvReal(l.u)){m['V'+i+'_'+j]=l.u;l.u=DVSENT}})});
+ delete p._id;
+ return {p:p,m:m}}
+function dvStaffLinks(o){
+ return sbTok().then(function(t){return fetch(SB_URL+'/rest/v1/game_links?select=links&item_id=eq.'+o._id,{headers:sbH(t)})}).then(function(r){if(!r.ok)throw 0;return r.json()}).then(function(rows){return (rows&&rows[0]&&rows[0].links)||{}})}
+function dvPersist(o,id,hp){
+ if(!DV.protect)return fetch(SB_URL+'/rest/v1/items'+(id?'?id=eq.'+id:''),{method:id?'PATCH':'POST',headers:hp,body:JSON.stringify({data:o})});
+ var s=dvSplit(o),h=Object.assign({},hp);delete h.Prefer;
+ return fetch(SB_URL+'/rest/v1/rpc/save_game',{method:'POST',headers:h,body:JSON.stringify({p_id:id||null,p_data:s.p,p_links:s.m})}).then(function(r){
+  if(!r.ok)return r;
+  return r.json().then(function(n){return {ok:true,json:function(){return Promise.resolve(id?[]:[{id:n}])}}})})}
+var _ei=editItem;
+editItem=function(k){
+ if(!isStaff())return toast(NOPERM);
+ var o=ITEMS[k];
+ if(!o)return;
+ if(!dvHasSent(o)||!SB_URL||!o._id){_ei(k);veLoad(o);return}
+ VEL=1;toast('جاري تحميل الروابط المحمية...');
+ dvStaffLinks(o).then(function(m){
+  var mo=dvMerge(o,m);
+  if(dvHasSent(mo))throw 0;
+  var keep=ITEMS[k];ITEMS[k]=mo;
+  try{_ei(k)}finally{ITEMS[k]=keep}
+  veLoad(mo);VEL=0}).catch(function(){VEL=0;toast('تعذر تحميل الروابط المحمية، لم يُفتح التعديل حتى لا تضيع الروابط')})};
+var _rf=resetForm;
+resetForm=function(){_rf();VE={versions:[],sections:[]};VEL=0;veDraw()};
+function veLoad(o){
+ VE={versions:JSON.parse(JSON.stringify(o.versions||[])),sections:JSON.parse(JSON.stringify(o.sections||[]))};
+ VE.versions.forEach(function(v){if(!v.links)v.links=[]});
+ veDraw()}
+function veI(h,id,ph,val,ev,dir){return '<input '+(id||'')+' placeholder="'+ph+'" value="'+esc(val||'')+'" oninput="'+ev+'"'+(dir?' dir="ltr"':'')+'>'}
+function veB(t,fn,cls){return '<button class="btn '+(cls||'g')+'" type="button" style="padding:4px 10px;min-width:0" onclick="'+fn+'">'+t+'</button>'}
+function veDraw(){
+ var bx=$('vsBox');if(!bx)return;
+ var h='<div style="font-weight:800;margin-top:6px">📦 النسخ (أي عدد) — لكل نسخة رقمها ومنطقتها وحجمها وروابطها</div>'
+  +'<div style="font-size:12px;color:var(--mu)">عند وجود نسخ هنا تُعرض هي في صفحة اللعبة بدل الحقول البسيطة أعلاه.</div>';
+ VE.versions.forEach(function(v,i){
+  h+='<div class="ve-c" style="border:1px solid var(--bd);border-radius:12px;padding:10px;display:flex;flex-direction:column;gap:6px"><div class="r2" style="align-items:center"><b>نسخة '+(i+1)+'</b><span style="display:flex;gap:4px">'+veB('↑','veMv('+i+',-1)')+veB('↓','veMv('+i+',1)')+'<button class="btn g" type="button" style="padding:4px 10px;min-width:0" onclick="arm(this,function(){veDel('+i+')})">حذف</button></span></div>'
+  +veI(0,'','اسم النسخة (مثال: النسخة الأمريكية)',v.label,'veF('+i+',\'label\',this.value)')
+  +'<div class="r2">'+veI(0,'','رقم النسخة CUSA',v.cn,'veF('+i+',\'cn\',this.value)',1)+veI(0,'','المنطقة',v.rg,'veF('+i+',\'rg\',this.value)')+'</div>'
+  +'<div class="r2">'+veI(0,'','إصدار اللعبة v1.05',v.gv,'veF('+i+',\'gv\',this.value)',1)+veI(0,'','الحجم',v.s,'veF('+i+',\'s\',this.value)')+'</div>'
+  +'<div class="r2">'+veI(0,'','الصيغة PKG / FPKG',v.fm,'veF('+i+',\'fm\',this.value)',1)+veI(0,'','اللغة',v.lang,'veF('+i+',\'lang\',this.value)')+'</div>'
+  +veI(0,'','متطلبات التشغيل',v.rq,'veF('+i+',\'rq\',this.value)');
+  (v.links||[]).forEach(function(l,j){
+   h+='<div class="r2 ve-l" style="align-items:center">'+veI(0,'','اسم الرابط',l.t,'veLF('+i+','+j+',\'t\',this.value)')+veI(0,'','https://...',l.u,'veLF('+i+','+j+',\'u\',this.value)',1)+'<span style="display:flex;gap:4px">'+veB('↑','veLMv('+i+','+j+',-1)')+veB('↓','veLMv('+i+','+j+',1)')+veB('✕','veLDel('+i+','+j+')')+'</span></div>'});
+  h+=veB('+ رابط لهذه النسخة','veAddL('+i+')')+'</div>'});
+ h+='<div class="r2" style="flex-wrap:wrap">'+veB('+ نسخة جديدة','veAddV()','')+veB('تحويل بيانات النسخة الحالية إلى نسخة','veFromLegacy()')+'</div>';
+ h+='<div style="font-weight:800;margin-top:8px">🧩 أقسام الصفحة (نصوص / صور / فيديو، أي عدد)</div>';
+ VE.sections.forEach(function(s,i){
+  var ty=s.type=='image'?'صورة':s.type=='video'?'فيديو':'نص';
+  h+='<div class="ve-s" style="border:1px solid var(--bd);border-radius:12px;padding:10px;display:flex;flex-direction:column;gap:6px"><div class="r2" style="align-items:center"><b>'+ty+'</b><span style="display:flex;gap:4px">'+veB('↑','veSMv('+i+',-1)')+veB('↓','veSMv('+i+',1)')+'<button class="btn g" type="button" style="padding:4px 10px;min-width:0" onclick="arm(this,function(){veSDel('+i+')})">حذف</button></span></div>'
+  +veI(0,'','عنوان القسم (اختياري)',s.title,'veSF('+i+',\'title\',this.value)')
+  +(s.type=='text'?'<textarea rows="4" placeholder="النص" oninput="veSF('+i+',\'v\',this.value)">'+esc(s.v||'')+'</textarea>':veI(0,'',s.type=='image'?'رابط الصورة https://...':'رابط الفيديو (يوتيوب أو ملف) https://...',s.v,'veSF('+i+',\'v\',this.value)',1))+'</div>'});
+ h+='<div class="r2" style="flex-wrap:wrap">'+veB('+ نص','veAddS(\'text\')')+veB('+ صورة','veAddS(\'image\')')+veB('+ فيديو','veAddS(\'video\')')+'</div>';
+ bx.innerHTML=h}
+function veMove(a,i,d){var j=i+d;if(j<0||j>=a.length)return false;var t=a[i];a[i]=a[j];a[j]=t;return true}
+function veF(i,f,v){if(VE.versions[i])VE.versions[i][f]=v}
+function veLF(i,j,f,v){var l=VE.versions[i]&&VE.versions[i].links[j];if(l)l[f]=v}
+function veMv(i,d){if(veMove(VE.versions,i,d))veDraw()}
+function veDel(i){VE.versions.splice(i,1);veDraw()}
+function veAddV(){VE.versions.push({label:'',cn:'',rg:'',gv:'',s:'',fm:'',lang:'',rq:'',links:[]});veDraw()}
+function veAddL(i){if(VE.versions[i]){VE.versions[i].links.push({t:'',u:''});veDraw()}}
+function veLMv(i,j,d){if(veMove(VE.versions[i].links,j,d))veDraw()}
+function veLDel(i,j){VE.versions[i].links.splice(j,1);veDraw()}
+function veSF(i,f,v){if(VE.sections[i])VE.sections[i][f]=v}
+function veSMv(i,d){if(veMove(VE.sections,i,d))veDraw()}
+function veSDel(i){VE.sections.splice(i,1);veDraw()}
+function veAddS(t){VE.sections.push({type:t,title:'',v:''});veDraw()}
+function veFromLegacy(){
+ var lks=getLinks();if(lks===null)return toast('كل رابط لازم يبدأ بـ https://');
+ var u=$('fu').value.trim(),a=[];
+ if(u)a.push({t:'',u:u});lks.forEach(function(l){a.push(l)});
+ VE.versions.push({label:'',cn:$('fcn').value.trim(),rg:$('frg').value.trim(),gv:$('fgv').value.trim(),s:$('fs').value.trim(),fm:$('ffm').value.trim(),lang:'',rq:$('frq').value.trim(),links:a});
+ veDraw();toast('تمت إضافة النسخة، عدّل عليها ما تريد')}
+function veGet(){
+ if(VEL){toast('انتظر تحميل الروابط ثم اضغط حفظ');return null}
+ var vs=[],ss=[],bad=false;
+ VE.versions.forEach(function(v){
+  var ls=[];
+  (v.links||[]).forEach(function(l){
+   var t=(l.t||'').trim(),u=(l.u||'').trim();
+   if(!t&&!u)return;
+   if(!dvReal(u)){bad=true;return}
+   ls.push({t:t,u:u})});
+  var c={label:(v.label||'').trim(),cn:(v.cn||'').trim(),rg:(v.rg||'').trim(),gv:(v.gv||'').trim(),s:(v.s||'').trim(),fm:(v.fm||'').trim(),lang:(v.lang||'').trim(),rq:(v.rq||'').trim(),links:ls};
+  if(c.label||c.cn||c.rg||c.gv||c.s||c.fm||c.lang||c.rq||ls.length)vs.push(c)});
+ VE.sections.forEach(function(s){
+  var t=(s.title||'').trim(),v=(s.v||'').trim();
+  if(!v&&!t)return;
+  if(s.type!='text'&&!dvReal(v)){if(v)bad=true;return}
+  if(!v)return;
+  ss.push({type:s.type,title:t,v:v})});
+ if(bad){toast('كل رابط في النسخ والأقسام لازم يبدأ بـ https://');return null}
+ return {versions:vs,sections:ss}}
+veDraw();
+
 function footUI(){$('fnav').innerHTML=['home','about','privacy','contact'].map(function(k){return '<a href="#'+k+'">'+PG[k][lang]+'</a>'}).join('')}
 window.addEventListener('hashchange',function(){render();window.scrollTo(0,0);openFromHash()});
 /* ===== Dynamic categories ===== */
@@ -994,7 +1321,7 @@ function sbSave(o,id){
     o.img=SB_URL+'/storage/v1/object/public/covers/'+nm;
    });
   }
-  return p.then(function(){var hp=sbH(tok);if(!id)hp.Prefer='return=representation';return fetch(SB_URL+'/rest/v1/items'+(id?'?id=eq.'+id:''),{method:id?'PATCH':'POST',headers:hp,body:JSON.stringify({data:o})})})
+  return p.then(function(){var hp=sbH(tok);if(!id)hp.Prefer='return=representation';return dvPersist(o,id,hp)})
    .then(function(r){if(!r.ok)return r.text().then(function(t){throw {kind:'db',status:r.status,detail:sbErrText(t)}});return id?[]:r.json().catch(function(){return []})})
    .then(function(rows){resetForm();sbLoad();toast('تم الحفظ في قاعدة البيانات ✅');if(!id&&!o.archived&&rows&&rows[0]&&rows[0].id)tgNotify(rows[0].id,o)});
 
@@ -1064,7 +1391,7 @@ function postCm(k){
  rpc('add_comment',{p_game:o.n,p_name:n,p_body:b}).then(function(){lastCm=t;$('cmb').value='';toast(a?'تم نشر تعليقك ✅':'Posted ✅');loadComments(k)}).catch(function(e){console.error('ZERO comment post error:',e);var m=String(e&&e.message||e||'');toast(/reserved/i.test(m)?(a?'هذا الاسم محجوز لمستخدم مسجّل':'That name belongs to a registered user'):(a?'تعذر النشر: تحقق من دالة add_comment وصلاحياتها':'Could not post: check add_comment RPC and permissions'))}).finally(function(){if(btn&&btn.isConnected)btn.disabled=false});
 }
 function delCm(id){if(!isAdmin())return toast(NOPERM);guard('admin').then(sbTok).then(function(tok){return fetch(SB_URL+'/rest/v1/comments?id=eq.'+encodeURIComponent(id),{method:'DELETE',headers:sbH(tok)}).then(function(r){if(!r.ok)return r.text().then(function(t){throw new Error('HTTP '+r.status+': '+sbErrText(t))})})}).then(function(){loadComments(curK);toast('تم الحذف')}).catch(function(e){if(e==='perm')return;console.error('ZERO comment delete error:',e);toast('فشل الحذف: '+String(e&&e.message||e||'خطأ'))})}
-function shareGame(k){var o=ITEMS[k],u=location.origin+location.pathname+'#g='+encodeURIComponent(o.n),a=lang=='ar';
+function shareGame(k){var o=ITEMS[k],u=location.origin+gpUrl(k),a=lang=='ar';
  if(navigator.share){navigator.share({title:(a?o.a:o.n)+' | ZERO',url:u}).catch(function(){});return}
  try{navigator.clipboard.writeText(u).then(function(){toast(a?'تم نسخ رابط اللعبة ✅':'Link copied ✅')},function(){toast(u)})}catch(e){toast(u)}}
 function openFromHash(){var m=/^#g=(.+)$/.exec(location.hash||'');if(!m)return;var n;try{n=decodeURIComponent(m[1])}catch(e){return}for(var i=0;i<ITEMS.length;i++)if(ITEMS[i].n==n){history.replaceState(null,'',location.pathname+location.search);showDet(i);return}}
@@ -1884,7 +2211,7 @@ function lcRecheck(){
  openAdm=function(){var r=_oa.apply(this,arguments);try{if(isAdmin())zmLoad(true);if(isStaff())lcLoad(true)}catch(e){}return r};
  setInterval(function(){try{var a=$('adm');if(a&&a.classList.contains('on')&&isAdmin())zmLoad(true)}catch(e){}},60000);
 })();
-applyAdm();if(SB_URL&&sess())loadRole().then(function(){applyAdm();if(location.hash=='#admin')openAdm();if(isAdm()){drawList();loadCategories()}if(isAdmin())zmLoad(true);if(isStaff())lcLoad(true)});if(SB_URL)plgLoad();else if(location.hash=='#admin')openAdm();
+applyAdm();if(SB_URL&&sess())loadRole().then(function(){applyAdm();if(location.hash=='#admin')openAdm();if(isAdm()){drawList();loadCategories()}if(isAdmin())zmLoad(true);if(isStaff())lcLoad(true)});if(SB_URL){plgLoad();dvLoad()}else if(location.hash=='#admin')openAdm();
 render();if(!SB_URL)openFromHash();
 </script>
 </body>
