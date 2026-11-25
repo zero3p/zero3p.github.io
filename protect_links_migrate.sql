@@ -1,3 +1,4 @@
+
 BEGIN;
 
 DO $mig$
@@ -12,17 +13,33 @@ DECLARE
   n INT := 0;
   settings_rows INT;
 BEGIN
-  IF to_regclass('public.game_links') IS NULL THEN
-    RAISE EXCEPTION 'game_links table is missing';
+  IF to_regclass('public.items') IS NULL
+     OR to_regclass('public.game_links') IS NULL
+     OR to_regclass('public.site_settings') IS NULL THEN
+    RAISE EXCEPTION 'Required table is missing';
   END IF;
 
-  IF to_regclass('public.items_links_backup_20261125_1940') IS NOT NULL THEN
-    RAISE EXCEPTION 'Backup table already exists; stop safely';
+  IF to_regclass('public.items_links_backup_20261125_1940') IS NOT NULL
+     OR to_regclass('public.game_links_backup_20261125_1940') IS NOT NULL THEN
+    RAISE EXCEPTION 'Backup already exists; stop safely';
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM public.site_settings
+    WHERE key = 'dl_verify'
+      AND value->>'mode' = 'countdown'
+      AND value->>'protect' = 'false'
+  ) THEN
+    RAISE EXCEPTION 'Unexpected protection settings; migration stopped';
   END IF;
 
   CREATE TABLE public.items_links_backup_20261125_1940 AS
   SELECT id, data, now() AS backed_up_at
   FROM public.items;
+
+  CREATE TABLE public.game_links_backup_20261125_1940 AS
+  SELECT item_id, links, updated_at, now() AS backed_up_at
+  FROM public.game_links;
 
   FOR r IN
     SELECT id, data FROM public.items ORDER BY id
@@ -51,7 +68,6 @@ BEGIN
           m := m || jsonb_build_object(
             'L' || i, d->'links'->i->>'u'
           );
-
           d := jsonb_set(
             d, ARRAY['links', i::text, 'u'], '"@"'::jsonb
           );
@@ -71,7 +87,6 @@ BEGIN
               m := m || jsonb_build_object(
                 'V' || i || '_' || j, vl->j->>'u'
               );
-
               d := jsonb_set(
                 d,
                 ARRAY['versions', i::text, 'links', j::text, 'u'],
@@ -102,6 +117,51 @@ BEGIN
     RAISE EXCEPTION 'No download URLs found; migration stopped';
   END IF;
 
+  IF EXISTS (
+    SELECT 1
+    FROM public.items x
+    WHERE EXISTS (
+      SELECT 1
+      FROM jsonb_each_text(x.data) e
+      WHERE e.key IN ('u','up','tr','ad','ad2','sv','lc','dp')
+        AND e.value ~* '^https?://'
+    )
+  ) THEN
+    RAISE EXCEPTION 'Direct URLs remain in top-level fields';
+  END IF;
+
+  IF EXISTS (
+    SELECT 1
+    FROM public.items x
+    WHERE
+      (
+        jsonb_typeof(x.data->'links') = 'array'
+        AND EXISTS (
+          SELECT 1
+          FROM jsonb_array_elements(x.data->'links') l
+          WHERE l->>'u' ~* '^https?://'
+        )
+      )
+      OR
+      (
+        jsonb_typeof(x.data->'versions') = 'array'
+        AND EXISTS (
+          SELECT 1
+          FROM jsonb_array_elements(x.data->'versions') v
+          CROSS JOIN LATERAL jsonb_array_elements(
+            CASE
+              WHEN jsonb_typeof(v->'links') = 'array'
+              THEN v->'links'
+              ELSE '[]'::jsonb
+            END
+          ) l
+          WHERE l->>'u' ~* '^https?://'
+        )
+      )
+  ) THEN
+    RAISE EXCEPTION 'Direct URLs remain in nested links';
+  END IF;
+
   UPDATE public.site_settings
   SET value = jsonb_set(
     COALESCE(value, '{}'::jsonb),
@@ -114,7 +174,7 @@ BEGIN
   GET DIAGNOSTICS settings_rows = ROW_COUNT;
 
   IF settings_rows <> 1 THEN
-    RAISE EXCEPTION 'dl_verify setting missing; migration stopped';
+    RAISE EXCEPTION 'dl_verify setting missing';
   END IF;
 
   RAISE NOTICE 'Protected items: %', n;
