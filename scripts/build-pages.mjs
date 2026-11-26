@@ -1,16 +1,42 @@
+
 import fs from "node:fs";
 import path from "node:path";
 
 const ROOT = process.cwd();
-const SITE_URL = (
-  process.env.SITE_URL || "https://zero3p.github.io"
-).replace(/\/+$/, "");
+const SITE_URL = (process.env.SITE_URL || "https://zero3p.github.io").replace(/\/+$/, "");
+const RAW_SUPABASE_URL = (process.env.SUPABASE_URL || "").trim();
+const SUPABASE_KEY = (process.env.SUPABASE_KEY || "").trim();
 
-const SUPABASE_URL = (process.env.SUPABASE_URL || "").replace(/\/+$/, "");
-const SUPABASE_KEY = process.env.SUPABASE_KEY || "";
+function getSupabaseOrigin() {
+  if (!RAW_SUPABASE_URL) {
+    throw new Error("Missing SUPABASE_URL repository secret");
+  }
 
-if (!SUPABASE_URL || !SUPABASE_KEY) {
-  throw new Error("Missing SUPABASE_URL or SUPABASE_KEY");
+  let parsed;
+
+  try {
+    parsed = new URL(RAW_SUPABASE_URL);
+  } catch {
+    throw new Error("SUPABASE_URL must begin with https://");
+  }
+
+  if (parsed.protocol !== "https:") {
+    throw new Error("SUPABASE_URL must use https://");
+  }
+
+  if (!parsed.hostname.endsWith(".supabase.co")) {
+    throw new Error("SUPABASE_URL must end with .supabase.co");
+  }
+
+  // Use only the project origin.
+  // This removes /rest/v1 if it was included in the secret.
+  return parsed.origin;
+}
+
+const SUPABASE_ORIGIN = getSupabaseOrigin();
+
+if (!SUPABASE_KEY) {
+  throw new Error("Missing SUPABASE_KEY repository secret");
 }
 
 const OUT_DIR = path.join(ROOT, "game");
@@ -36,11 +62,14 @@ function slugify(value) {
     .slice(0, 100);
 }
 
-function safeSlug(item) {
-  const data = item.data || {};
-  const supplied = slugify(data.slug);
-  const name = slugify(data.n);
-  return supplied || name || `game-${item.id}`;
+function getSlug(item) {
+  const data = item?.data || {};
+
+  return (
+    slugify(data.slug) ||
+    slugify(data.n) ||
+    `game-${item.id}`
+  );
 }
 
 function xmlEscape(value) {
@@ -53,11 +82,15 @@ function xmlEscape(value) {
 }
 
 async function fetchGames() {
-  const url = new URL(`${SUPABASE_URL}/rest/v1/items`);
-  url.searchParams.set("select", "id,data");
-  url.searchParams.set("order", "id.desc");
+  const endpoint = new URL(
+    "/rest/v1/items",
+    SUPABASE_ORIGIN
+  );
 
-  const response = await fetch(url, {
+  endpoint.searchParams.set("select", "id,data");
+  endpoint.searchParams.set("order", "id.desc");
+
+  const response = await fetch(endpoint, {
     headers: {
       apikey: SUPABASE_KEY,
       Authorization: `Bearer ${SUPABASE_KEY}`,
@@ -65,20 +98,27 @@ async function fetchGames() {
   });
 
   if (!response.ok) {
+    const detail = await response.text();
+
     throw new Error(
-      `Supabase request failed: ${response.status} ${await response.text()}`
+      `Supabase returned HTTP ${response.status}: ${detail.slice(0, 500)}`
     );
   }
 
   const rows = await response.json();
 
   if (!Array.isArray(rows)) {
-    throw new Error("Supabase response is not an array");
+    throw new Error("Supabase response was not an array");
   }
 
   return rows.filter((item) => {
     const data = item?.data || {};
-    return item?.id != null && data.n && !data.archived;
+
+    return (
+      item?.id != null &&
+      data.n &&
+      !data.archived
+    );
   });
 }
 
@@ -86,12 +126,16 @@ function makeGameHtml(item, slug) {
   const data = item.data || {};
 
   const title = String(data.n || "لعبة").trim();
+
   const description = String(
     data.d || `تحميل لعبة ${title} للاندرويد`
   ).trim();
 
   const canonical = `${SITE_URL}/game/${slug}/`;
   const image = data.img || `${SITE_URL}/logo.png`;
+
+  const target =
+    `${SITE_URL}/?gp=${encodeURIComponent(slug)}`;
 
   const facts = [
     ["الحجم", data.s],
@@ -118,38 +162,57 @@ function makeGameHtml(item, slug) {
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+
   <title>${safeTitle} - ZE ZERO</title>
   <meta name="description" content="${safeDescription}">
+
   <link rel="canonical" href="${safeCanonical}">
+
   <meta property="og:type" content="website">
   <meta property="og:title" content="${safeTitle}">
   <meta property="og:description" content="${safeDescription}">
   <meta property="og:url" content="${safeCanonical}">
   <meta property="og:image" content="${safeImage}">
+
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="${safeTitle}">
   <meta name="twitter:description" content="${safeDescription}">
   <meta name="twitter:image" content="${safeImage}">
+
   <meta name="robots" content="index,follow">
 </head>
+
 <body>
   <!-- ZE-GENERATED-GAME-PAGE -->
+
   <main>
     <h1>${safeTitle}</h1>
-    <img src="${safeImage}" alt="${safeTitle}" style="max-width:100%;height:auto">
+
+    <img
+      src="${safeImage}"
+      alt="${safeTitle}"
+      style="max-width:100%;height:auto"
+    >
+
     <p>${safeDescription}</p>
+
     ${factsHtml ? `<ul>${factsHtml}</ul>` : ""}
+
     <p>
-      <a href="${SITE_URL}/?gp=${encodeURIComponent(slug)}">
+      <a href="${escapeHtml(target)}">
         عرض اللعبة في ZE ZERO
       </a>
     </p>
-    <p><a href="${SITE_URL}/">العودة إلى الموقع</a></p>
+
+    <p>
+      <a href="${escapeHtml(SITE_URL)}/">
+        العودة إلى الموقع
+      </a>
+    </p>
   </main>
+
   <script>
-    window.location.replace(
-      ${JSON.stringify(`${SITE_URL}/?gp=${slug}`)}
-    );
+    window.location.replace(${JSON.stringify(target)});
   </script>
 </body>
 </html>`;
@@ -164,56 +227,85 @@ async function main() {
   const sitemapUrls = [];
 
   for (const item of games) {
-    const slug = safeSlug(item);
+    const slug = getSlug(item);
 
     if (!slug || activeSlugs.has(slug)) {
-      console.warn("Skipping duplicate or invalid slug:", slug);
+      console.warn(
+        `Skipping duplicate or invalid slug: ${slug}`
+      );
       continue;
     }
 
     activeSlugs.add(slug);
 
     const gameDir = path.join(OUT_DIR, slug);
-    const pageFile = path.join(gameDir, "index.html");
 
     fs.mkdirSync(gameDir, { recursive: true });
-    fs.writeFileSync(pageFile, makeGameHtml(item, slug), "utf8");
+
+    const pageFile = path.join(
+      gameDir,
+      "index.html"
+    );
+
+    fs.writeFileSync(
+      pageFile,
+      makeGameHtml(item, slug),
+      "utf8"
+    );
 
     sitemapUrls.push(
-      `<url><loc>${xmlEscape(`${SITE_URL}/game/${slug}/`)}</loc></url>`
+      `<url><loc>${xmlEscape(
+        `${SITE_URL}/game/${slug}/`
+      )}</loc></url>`
     );
   }
 
-  // Remove only old pages created by this generator.
-  for (const entry of fs.readdirSync(OUT_DIR, { withFileTypes: true })) {
+  // Remove only pages created by this generator.
+  for (const entry of fs.readdirSync(OUT_DIR, {
+    withFileTypes: true,
+  })) {
     if (!entry.isDirectory()) continue;
 
-    const pageFile = path.join(OUT_DIR, entry.name, "index.html");
+    const gameDir = path.join(OUT_DIR, entry.name);
+
+    const pageFile = path.join(
+      gameDir,
+      "index.html"
+    );
 
     if (!fs.existsSync(pageFile)) continue;
 
-    const content = fs.readFileSync(pageFile, "utf8");
+    const content = fs.readFileSync(
+      pageFile,
+      "utf8"
+    );
 
     if (
       content.includes("ZE-GENERATED-GAME-PAGE") &&
       !activeSlugs.has(entry.name)
     ) {
-      fs.rmSync(path.join(OUT_DIR, entry.name), {
+      fs.rmSync(gameDir, {
         recursive: true,
         force: true,
       });
     }
   }
 
-  const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${sitemapUrls.join("\n")}
-</urlset>
-`;
+  const sitemap =
+    `<?xml version="1.0" encoding="UTF-8"?>\n` +
+    `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` +
+    `${sitemapUrls.join("\n")}\n` +
+    `</urlset>\n`;
 
-  fs.writeFileSync(SITEMAP_FILE, sitemap, "utf8");
+  fs.writeFileSync(
+    SITEMAP_FILE,
+    sitemap,
+    "utf8"
+  );
 
-  console.log(`pages: ${activeSlugs.size}`);
+  console.log(
+    `Generated ${activeSlugs.size} game pages.`
+  );
 }
 
 main().catch((error) => {
