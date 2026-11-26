@@ -13,7 +13,6 @@ function getSupabaseOrigin() {
   }
 
   let parsed;
-
   try {
     parsed = new URL(RAW_SUPABASE_URL);
   } catch {
@@ -28,8 +27,6 @@ function getSupabaseOrigin() {
     throw new Error("SUPABASE_URL must end with .supabase.co");
   }
 
-  // Use only the project origin.
-  // This removes /rest/v1 if it was included in the secret.
   return parsed.origin;
 }
 
@@ -134,8 +131,9 @@ function makeGameHtml(item, slug) {
   const canonical = `${SITE_URL}/game/${slug}/`;
   const image = data.img || `${SITE_URL}/logo.png`;
 
+  // FIX: send the complete game path to index.html
   const target =
-    `${SITE_URL}/?gp=${encodeURIComponent(slug)}`;
+    `${SITE_URL}/?gp=${encodeURIComponent("/game/" + slug + "/")}`;
 
   const facts = [
     ["الحجم", data.s],
@@ -167,7 +165,6 @@ function makeGameHtml(item, slug) {
   <meta name="description" content="${safeDescription}">
 
   <link rel="canonical" href="${safeCanonical}">
-
   <meta property="og:type" content="website">
   <meta property="og:title" content="${safeTitle}">
   <meta property="og:description" content="${safeDescription}">
@@ -178,7 +175,6 @@ function makeGameHtml(item, slug) {
   <meta name="twitter:title" content="${safeTitle}">
   <meta name="twitter:description" content="${safeDescription}">
   <meta name="twitter:image" content="${safeImage}">
-
   <meta name="robots" content="index,follow">
 </head>
 
